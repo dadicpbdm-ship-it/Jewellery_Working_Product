@@ -81,6 +81,23 @@ const orderSchema = mongoose.Schema({
     deliveryAgent: {
         type: mongoose.Schema.Types.ObjectId,
         ref: 'User'
+    },
+    // BNPL Details
+    bnplDetails: {
+        provider: {
+            type: String,
+            enum: ['Simpl', 'LazyPay', 'ZestMoney', 'None'],
+            default: 'None'
+        },
+        installments: Number,
+        installmentAmount: Number,
+        nextPaymentDate: Date,
+        bnplOrderId: String,
+        bnplStatus: {
+            type: String,
+            enum: ['pending', 'approved', 'active', 'completed', 'failed'],
+            default: 'pending'
+        }
     }
 }, {
     timestamps: true

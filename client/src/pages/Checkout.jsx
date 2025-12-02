@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { useCart } from '../context/CartContext';
 import { AuthContext } from '../context/AuthContext';
 import { API_URL } from '../config';
+import BNPLOption from '../components/BNPLOption';
 import './Checkout.css';
 
 const Checkout = () => {
@@ -28,6 +29,13 @@ const Checkout = () => {
     });
 
     const [paymentMethod, setPaymentMethod] = useState('Cash on Delivery');
+    const [bnplProvider, setBnplProvider] = useState(null);
+
+    const bnplProviders = [
+        { name: 'Simpl', logo: 'simpl-logo', installments: 3 },
+        { name: 'LazyPay', logo: 'lazypay-logo', installments: 3 },
+        { name: 'ZestMoney', logo: 'zestmoney-logo', installments: 6 }
+    ];
 
     useEffect(() => {
         if (user) {
@@ -113,6 +121,21 @@ const Checkout = () => {
 
         if (paymentMethod === 'Razorpay') {
             await processRazorpayPayment();
+        } else if (paymentMethod === 'BNPL') {
+            // Simulate BNPL flow
+            if (!bnplProvider) {
+                alert('Please select a BNPL provider');
+                return;
+            }
+            // In a real app, we would redirect to provider's page
+            const confirm = window.confirm(`Redirecting to ${bnplProvider}... Payment successful?`);
+            if (confirm) {
+                await placeOrder(true, {
+                    id: `bnpl_${Date.now()}`,
+                    status: 'completed',
+                    provider: bnplProvider
+                });
+            }
         } else {
             await placeOrder();
         }
@@ -274,11 +297,16 @@ const Checkout = () => {
                 isPaid,
                 paidAt: isPaid ? new Date() : null,
                 paymentResult: isPaid ? {
-                    id: paymentResult.razorpay_payment_id,
+                    id: paymentResult.id || paymentResult.razorpay_payment_id,
                     status: 'completed',
                     update_time: new Date().toISOString(),
                     email_address: user ? user.email : guestInfo.email
-                } : {}
+                } : {},
+                bnplDetails: paymentMethod === 'BNPL' ? {
+                    provider: bnplProvider,
+                    installments: bnplProviders.find(p => p.name === bnplProvider)?.installments || 3,
+                    bnplStatus: 'completed'
+                } : undefined
             };
 
             const headers = {
@@ -475,6 +503,37 @@ const Checkout = () => {
                                     </div>
                                 </div>
                             </label>
+                        </div>
+
+                        {/* BNPL Options */}
+                        <div className="bnpl-section" style={{ marginTop: '20px' }}>
+                            <label className={`payment-option ${paymentMethod === 'BNPL' ? 'selected' : ''}`}>
+                                <input
+                                    type="radio"
+                                    value="BNPL"
+                                    checked={paymentMethod === 'BNPL'}
+                                    onChange={(e) => setPaymentMethod(e.target.value)}
+                                />
+                                <span className="radio-custom"></span>
+                                <div className="payment-details">
+                                    <span className="payment-name">Buy Now, Pay Later</span>
+                                    <span className="payment-desc">Pay in interest-free installments</span>
+                                </div>
+                            </label>
+
+                            {paymentMethod === 'BNPL' && (
+                                <div className="bnpl-providers" style={{ marginLeft: '30px', marginTop: '15px' }}>
+                                    {bnplProviders.map(provider => (
+                                        <BNPLOption
+                                            key={provider.name}
+                                            provider={provider.name}
+                                            installments={provider.installments}
+                                            selected={bnplProvider === provider.name}
+                                            onSelect={() => setBnplProvider(provider.name)}
+                                        />
+                                    ))}
+                                </div>
+                            )}
                         </div>
 
                         <button type="submit" className="place-order-btn">

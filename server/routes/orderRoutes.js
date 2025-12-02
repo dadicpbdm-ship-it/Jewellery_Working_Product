@@ -82,6 +82,18 @@ router.post('/', optionalProtect, async (req, res) => {
         }
 
         const createdOrder = await order.save();
+
+        // Award loyalty points for logged-in users
+        if (req.user) {
+            try {
+                const loyaltyService = require('../services/loyaltyService');
+                await loyaltyService.awardPoints(req.user._id, totalPrice, createdOrder._id);
+            } catch (error) {
+                console.error('[Order] Error awarding loyalty points:', error);
+                // Don't fail the order if loyalty points fail
+            }
+        }
+
         res.status(201).json(createdOrder);
     }
 });
@@ -142,6 +154,38 @@ router.put('/:id/deliver', protect, delivery, async (req, res) => {
 
             if (order.deliveryAgent) {
                 await decrementActiveOrders(order.deliveryAgent);
+            }
+
+            // Generate Blockchain Certificates for products
+            try {
+                const certificateService = require('../services/certificateService');
+                const Product = require('../models/Product');
+
+                // Get full order with product details
+                const fullOrder = await Order.findById(req.params.id).populate('orderItems.product');
+
+                for (const item of fullOrder.orderItems) {
+                    if (item.product) {
+                        const product = await Product.findById(item.product._id);
+                        // Only generate if not already generated
+                        if (product && !product.certification?.certificateNumber) {
+                            const certData = await certificateService.generateCertificate(
+                                product,
+                                fullOrder,
+                                fullOrder.user ? await require('../models/User').findById(fullOrder.user) : { name: fullOrder.guestInfo.name }
+                            );
+
+                            product.certification = {
+                                ...product.certification,
+                                ...certData
+                            };
+                            await product.save();
+                        }
+                    }
+                }
+            } catch (error) {
+                console.error('Error generating certificates:', error);
+                // Don't fail delivery update if certificate generation fails
             }
 
             const updatedOrder = await order.save();

@@ -26,6 +26,9 @@ import { ToastProvider } from './context/ToastContext';
 import Contact from './pages/Contact';
 import DeliveryAgentRegister from './pages/DeliveryAgentRegister';
 import ManageDeliveryAgents from './pages/ManageDeliveryAgents';
+import LoyaltyDashboard from './pages/LoyaltyDashboard';
+import CertificateVerify from './pages/CertificateVerify';
+import CustomDesigner from './pages/CustomDesigner';
 
 function App() {
   return (
@@ -108,6 +111,16 @@ function App() {
                         </ProtectedRoute>
                       }
                     />
+                    <Route
+                      path="/rewards"
+                      element={
+                        <ProtectedRoute>
+                          <LoyaltyDashboard />
+                        </ProtectedRoute>
+                      }
+                    />
+                    <Route path="/verify-certificate/:certificateNumber?" element={<CertificateVerify />} />
+                    <Route path="/designer" element={<CustomDesigner />} />
                   </Routes>
                 </main>
                 <Footer />

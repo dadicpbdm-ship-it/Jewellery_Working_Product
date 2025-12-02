@@ -42,6 +42,19 @@ const UserDashboard = () => {
                     const statsData = await statsRes.json();
                     setStats(statsData);
                 }
+
+                // Fetch loyalty data for summary
+                try {
+                    const loyaltyRes = await fetch(`${API_URL}/api/loyalty/dashboard`, {
+                        headers: { 'Authorization': `Bearer ${user.token}` }
+                    });
+                    if (loyaltyRes.ok) {
+                        const loyaltyData = await loyaltyRes.json();
+                        setStats(prev => ({ ...prev, loyalty: loyaltyData }));
+                    }
+                } catch (err) {
+                    console.error('Error fetching loyalty summary:', err);
+                }
             } catch (err) {
                 console.error('Error fetching stats:', err);
             }
@@ -225,6 +238,42 @@ const UserDashboard = () => {
                                 <p className="stat-value">{stats.pendingOrders}</p>
                             </div>
                         </div>
+                    </div>
+                )}
+
+                {/* Loyalty Summary */}
+                {stats && stats.loyalty && (
+                    <div className="loyalty-summary-card" style={{
+                        background: 'linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%)',
+                        borderRadius: '12px',
+                        padding: '20px',
+                        marginBottom: '30px',
+                        display: 'flex',
+                        justifyContent: 'space-between',
+                        alignItems: 'center',
+                        border: '1px solid #dee2e6'
+                    }}>
+                        <div>
+                            <h3 style={{ margin: '0 0 5px 0', color: '#333' }}>My Rewards</h3>
+                            <div style={{ display: 'flex', alignItems: 'center', gap: '15px' }}>
+                                <span style={{ fontSize: '1.2rem', fontWeight: 'bold', color: '#FFD700' }}>
+                                    🪙 {stats.loyalty.points} Points
+                                </span>
+                                <span style={{
+                                    background: '#333',
+                                    color: 'white',
+                                    padding: '2px 8px',
+                                    borderRadius: '12px',
+                                    fontSize: '0.8rem',
+                                    textTransform: 'uppercase'
+                                }}>
+                                    {stats.loyalty.tier} Member
+                                </span>
+                            </div>
+                        </div>
+                        <Link to="/rewards" className="btn-primary" style={{ textDecoration: 'none' }}>
+                            View Rewards
+                        </Link>
                     </div>
                 )}
 

@@ -1,0 +1,96 @@
+/* Custom Designer Animations */
+@keyframes pulse {
+
+    0%,
+    100% {
+        transform: scale(1);
+    }
+
+    50% {
+        transform: scale(1.02);
+    }
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes slideIn {
+    from {
+        transform: translateX(-100%);
+        opacity: 0;
+    }
+
+    to {
+        transform: translateX(0);
+        opacity: 1;
+    }
+}
+
+.custom-designer-page {
+    animation: fadeIn 0.5s ease-out;
+}
+
+.template-card:hover {
+    transform: translateY(-5px) !important;
+    box-shadow: 0 8px 20px rgba(102, 126, 234, 0.3) !important;
+}
+
+.occasion-btn {
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.occasion-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.price-section {
+    transition: all 0.3s ease;
+}
+
+.price-breakdown {
+    animation: slideIn 0.3s ease-out;
+}
+
+/* Mobile Responsive */
+@media (max-width: 768px) {
+    .main-grid {
+        grid-template-columns: 1fr !important;
+    }
+
+    .template-grid {
+        grid-template-columns: repeat(2, 1fr) !important;
+    }
+
+    .hero h1 {
+        font-size: 1.8rem !important;
+    }
+
+    .button-group {
+        flex-direction: column;
+    }
+}
+
+/* Tooltip Styles */
+.info-icon:hover {
+    transform: scale(1.2);
+    transition: transform 0.2s;
+}
+
+/* Share Modal Animation */
+.modal {
+    animation: fadeIn 0.3s ease-out;
+}
+
+.modal-content {
+    animation: slideIn 0.3s ease-out;
+}

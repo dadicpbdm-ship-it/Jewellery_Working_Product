@@ -97,6 +97,34 @@ const productSchema = new mongoose.Schema({
         type: Boolean,
         default: false,
     },
+    // Blockchain Certification
+    certification: {
+        certificateNumber: {
+            type: String,
+            unique: true,
+            sparse: true
+        },
+        certificateType: {
+            type: String,
+            enum: ['BIS', 'IGI', 'GIA', 'SGL', 'Internal'],
+            default: 'Internal'
+        },
+        hallmarkId: String,
+        purity: String, // e.g., "22K", "18K"
+        weight: Number,
+        diamondDetails: {
+            carat: Number,
+            color: String,
+            clarity: String,
+            cut: String
+        },
+        qrCode: String, // Base64 QR code image
+        blockchainHash: String, // SHA-256 hash
+        certificatePdfUrl: String,
+        issuedDate: Date,
+        expiryDate: Date,
+        verificationUrl: String
+    }
 }, { timestamps: true });
 
 // Database Indexes for Performance

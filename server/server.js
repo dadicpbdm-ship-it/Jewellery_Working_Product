@@ -13,6 +13,9 @@ const wishlistRoutes = require('./routes/wishlistRoutes');
 const contactRoutes = require('./routes/contactRoutes');
 const deliveryAgentRoutes = require('./routes/deliveryAgentRoutes');
 const adminRoutes = require('./routes/adminRoutes');
+const loyaltyRoutes = require('./routes/loyaltyRoutes');
+const certificateRoutes = require('./routes/certificateRoutes');
+const customDesignRoutes = require('./routes/customDesignRoutes');
 const { errorHandler, notFound } = require('./middleware/errorMiddleware');
 
 const app = express();
@@ -74,6 +77,9 @@ app.use('/api/wishlist', wishlistRoutes);
 app.use('/api/contacts', contactRoutes);
 app.use('/api/delivery-agents', deliveryAgentRoutes);
 app.use('/api/admin', adminRoutes);
+app.use('/api/loyalty', loyaltyRoutes);
+app.use('/api/certificates', certificateRoutes);
+app.use('/api/custom-designs', customDesignRoutes);
 
 app.get('/', (req, res) => {
     res.send('Jewellery App API is running');

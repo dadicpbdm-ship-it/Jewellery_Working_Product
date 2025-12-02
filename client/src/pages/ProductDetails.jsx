@@ -6,6 +6,8 @@ import ProductCard from '../components/ProductCard';
 import ImageGallery from '../components/ImageGallery';
 import ProductReviews from '../components/ProductReviews';
 import Breadcrumbs from '../components/Breadcrumbs';
+import EMICalculator from '../components/EMICalculator';
+import ARTryOn from '../components/ARTryOn';
 import { API_URL } from '../config';
 import './ProductDetails.css';
 
@@ -151,6 +153,9 @@ const ProductDetails = () => {
                     </div>
                     <p className="details-price">₹{product.price.toLocaleString('en-IN')}</p>
 
+                    {/* EMI Calculator */}
+                    <EMICalculator price={product.price} />
+
                     {/* Stock Status */}
                     {product.stock !== undefined && (
                         <div className="stock-status">
@@ -274,6 +279,7 @@ const ProductDetails = () => {
                     <div className="details-actions">
                         <button className="btn-primary" onClick={handleAddToCart}>Add to Cart</button>
                         <button className="btn-secondary" onClick={handleBuyNow}>Buy Now</button>
+                        <ARTryOn productName={product.name} productImage={product.imageUrl} />
                         <button
                             className={`btn-wishlist ${isWishlisted ? 'active' : ''}`}
                             onClick={handleWishlistClick}
