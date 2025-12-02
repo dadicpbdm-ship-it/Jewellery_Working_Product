@@ -1,0 +1,152 @@
+.form-input-group {
+    position: relative;
+    margin-bottom: 1.5rem;
+}
+
+.form-label {
+    display: block;
+    margin-bottom: 0.5rem;
+    color: #333;
+    font-weight: 600;
+    font-size: 0.95rem;
+}
+
+.form-label .required {
+    color: #e74c3c;
+    margin-left: 0.25rem;
+}
+
+.form-input {
+    width: 100%;
+    padding: 12px 16px;
+    border: 2px solid #e0e0e0;
+    border-radius: 8px;
+    font-size: 16px;
+    /* Prevents zoom on iOS */
+    font-family: inherit;
+    transition: all 0.3s ease;
+    background: white;
+}
+
+.form-input:focus {
+    outline: none;
+    border-color: #667eea;
+    box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+}
+
+.form-input.error {
+    border-color: #e74c3c;
+    background: #fff5f5;
+}
+
+.form-input.error:focus {
+    box-shadow: 0 0 0 3px rgba(231, 76, 60, 0.1);
+}
+
+.form-input.valid {
+    border-color: #43e97b;
+    padding-right: 40px;
+    /* Make room for checkmark */
+}
+
+.error-message {
+    display: block;
+    color: #e74c3c;
+    font-size: 0.85rem;
+    margin-top: 0.5rem;
+    animation: slideDown 0.3s ease;
+}
+
+@keyframes slideDown {
+    from {
+        opacity: 0;
+        transform: translateY(-5px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.success-indicator {
+    position: absolute;
+    right: 12px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: #43e97b;
+    font-size: 1.25rem;
+    font-weight: bold;
+    animation: scaleIn 0.3s ease;
+}
+
+@keyframes scaleIn {
+    from {
+        opacity: 0;
+        transform: translateY(-50%) scale(0.5);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(-50%) scale(1);
+    }
+}
+
+/* Adjust success indicator position when label exists */
+.form-label+.form-input+.success-indicator {
+    top: calc(50% + 12px);
+    /* Account for label height */
+}
+
+/* Placeholder styling */
+.form-input::placeholder {
+    color: #999;
+    opacity: 1;
+}
+
+/* Disabled state */
+.form-input:disabled {
+    background: #f5f5f5;
+    cursor: not-allowed;
+    opacity: 0.6;
+}
+
+/* Mobile optimization */
+@media (max-width: 640px) {
+    .form-input {
+        font-size: 16px;
+        /* Prevents iOS zoom */
+        padding: 14px 16px;
+        /* Larger touch target */
+    }
+
+    .form-label {
+        font-size: 0.9rem;
+    }
+
+    .error-message {
+        font-size: 0.8rem;
+    }
+}
+
+/* Dark mode support */
+@media (prefers-color-scheme: dark) {
+    .form-label {
+        color: #f0f0f0;
+    }
+
+    .form-input {
+        background: #2d2d2d;
+        border-color: #444;
+        color: #f0f0f0;
+    }
+
+    .form-input:focus {
+        border-color: #667eea;
+        background: #333;
+    }
+
+    .form-input.error {
+        background: #3d2626;
+    }
+}

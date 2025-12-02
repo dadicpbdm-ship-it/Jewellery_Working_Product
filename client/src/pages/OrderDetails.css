@@ -1,0 +1,267 @@
+.order-details-page {
+    padding: 2rem 0;
+    min-height: 80vh;
+}
+
+.order-details-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 2rem;
+}
+
+.back-link {
+    color: #2c3e50;
+    text-decoration: none;
+    font-weight: 600;
+    font-size: 1rem;
+}
+
+.back-link:hover {
+    color: #c9a961;
+}
+
+.invoice-buttons {
+    display: flex;
+    gap: 1rem;
+}
+
+.btn-download-invoice,
+.btn-print-invoice {
+    padding: 0.75rem 1.5rem;
+    border: none;
+    border-radius: 6px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.btn-download-invoice {
+    background: #2c3e50;
+    color: white;
+}
+
+.btn-download-invoice:hover {
+    background: #34495e;
+}
+
+.btn-print-invoice {
+    background: white;
+    color: #2c3e50;
+    border: 2px solid #2c3e50;
+}
+
+.btn-print-invoice:hover {
+    background: #2c3e50;
+    color: white;
+}
+
+.order-details-card {
+    background: white;
+    padding: 2rem;
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.order-summary-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 2rem;
+    padding-bottom: 1rem;
+    border-bottom: 2px solid #eee;
+}
+
+.order-summary-header h2 {
+    margin: 0;
+    font-size: 1.8rem;
+    color: #2c3e50;
+}
+
+.status-badge {
+    padding: 0.5rem 1rem;
+    border-radius: 20px;
+    font-weight: 600;
+    font-size: 0.9rem;
+}
+
+.status-badge.delivered {
+    background: #d4edda;
+    color: #155724;
+}
+
+.status-badge.processing {
+    background: #fff3cd;
+    color: #856404;
+}
+
+.order-info-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 2rem;
+    margin-bottom: 2rem;
+}
+
+.info-section h3 {
+    font-size: 1.1rem;
+    color: #2c3e50;
+    margin-bottom: 1rem;
+}
+
+.info-section p {
+    margin: 0.5rem 0;
+    color: #666;
+    line-height: 1.6;
+}
+
+.info-section strong {
+    color: #2c3e50;
+}
+
+.text-success {
+    color: #28a745;
+    font-weight: 600;
+}
+
+.text-warning {
+    color: #ffc107;
+    font-weight: 600;
+}
+
+.order-items-section {
+    margin-bottom: 2rem;
+}
+
+.order-items-section h3 {
+    font-size: 1.3rem;
+    color: #2c3e50;
+    margin-bottom: 1.5rem;
+}
+
+.items-list {
+    border-top: 1px solid #eee;
+}
+
+.order-item-detail {
+    display: flex;
+    align-items: center;
+    gap: 1.5rem;
+    padding: 1.5rem 0;
+    border-bottom: 1px solid #eee;
+}
+
+.order-item-detail img {
+    width: 80px;
+    height: 80px;
+    object-fit: cover;
+    border-radius: 6px;
+}
+
+.item-info {
+    flex: 1;
+}
+
+.item-info h4 {
+    margin: 0 0 0.5rem 0;
+    color: #2c3e50;
+    font-size: 1.1rem;
+}
+
+.item-price {
+    color: #666;
+    margin: 0;
+}
+
+.item-total {
+    font-size: 1.2rem;
+    font-weight: 700;
+    color: #2c3e50;
+}
+
+.price-summary {
+    background: #f8f9fa;
+    padding: 1.5rem;
+    border-radius: 6px;
+}
+
+.price-summary h3 {
+    font-size: 1.2rem;
+    color: #2c3e50;
+    margin-bottom: 1rem;
+}
+
+.summary-row {
+    display: flex;
+    justify-content: space-between;
+    padding: 0.75rem 0;
+    font-size: 1rem;
+}
+
+.summary-row.total {
+    border-top: 2px solid #2c3e50;
+    margin-top: 0.5rem;
+    padding-top: 1rem;
+    font-size: 1.3rem;
+    font-weight: 700;
+    color: #2c3e50;
+}
+
+@media (max-width: 768px) {
+    .order-details-header {
+        flex-direction: column;
+        gap: 1rem;
+        align-items: flex-start;
+    }
+
+    .invoice-buttons {
+        width: 100%;
+        flex-direction: column;
+    }
+
+    .btn-download-invoice,
+    .btn-print-invoice {
+        width: 100%;
+    }
+
+    .order-info-grid {
+        grid-template-columns: 1fr;
+        gap: 1.5rem;
+    }
+
+    .order-item-detail {
+        flex-direction: column;
+        text-align: center;
+    }
+
+    .item-total {
+        width: 100%;
+    }
+}
+
+@media print {
+
+    .order-details-header,
+    .invoice-buttons {
+        display: none !important;
+    }
+
+    .order-details-card {
+        box-shadow: none;
+        border: 1px solid #ddd;
+    }
+
+    .order-info-grid {
+        display: grid !important;
+        grid-template-columns: 1fr 1fr !important;
+        gap: 2rem;
+        page-break-inside: avoid;
+    }
+
+    .info-section {
+        page-break-inside: avoid;
+    }
+
+    .order-item-detail {
+        page-break-inside: avoid;
+    }
+}

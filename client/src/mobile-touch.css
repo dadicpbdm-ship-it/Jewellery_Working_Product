@@ -1,0 +1,179 @@
+/* Touch-Friendly Interactions & Mobile Optimization */
+
+/* Minimum touch target size (Apple HIG & Material Design) */
+button,
+a,
+input,
+select,
+textarea,
+.clickable {
+    min-height: 44px;
+    min-width: 44px;
+}
+
+/* Remove hover effects on touch devices */
+@media (hover: none) and (pointer: coarse) {
+
+    button:hover,
+    a:hover,
+    .card:hover {
+        transform: none;
+        box-shadow: none;
+    }
+
+    /* Keep active states for touch feedback */
+    button:active,
+    a:active {
+        transform: scale(0.98);
+        opacity: 0.8;
+    }
+}
+
+/* Improve tap highlighting */
+* {
+    -webkit-tap-highlight-color: rgba(102, 126, 234, 0.2);
+    -webkit-touch-callout: none;
+}
+
+/* Smooth scrolling for better mobile experience */
+html {
+    scroll-behavior: smooth;
+    -webkit-overflow-scrolling: touch;
+}
+
+/* Prevent text selection on buttons */
+button,
+.btn,
+.clickable {
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+}
+
+/* Larger form inputs on mobile */
+@media (max-width: 768px) {
+
+    input,
+    select,
+    textarea {
+        font-size: 16px;
+        /* Prevents zoom on iOS */
+        padding: 12px;
+    }
+
+    button,
+    .btn {
+        padding: 12px 24px;
+        font-size: 16px;
+    }
+}
+
+/* Sticky elements optimization for mobile */
+.sticky-header,
+.sticky-nav {
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    background: white;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+/* Prevent horizontal scroll */
+body {
+    overflow-x: hidden;
+}
+
+/* Optimize images for mobile */
+img {
+    max-width: 100%;
+    height: auto;
+    display: block;
+}
+
+/* Better spacing for mobile */
+@media (max-width: 640px) {
+    .container {
+        padding: 1rem;
+    }
+
+    h1 {
+        font-size: 1.75rem;
+    }
+
+    h2 {
+        font-size: 1.5rem;
+    }
+
+    h3 {
+        font-size: 1.25rem;
+    }
+}
+
+/* Swipe gestures hint */
+.swipeable {
+    touch-action: pan-x;
+    cursor: grab;
+}
+
+.swipeable:active {
+    cursor: grabbing;
+}
+
+/* Loading states */
+.loading {
+    pointer-events: none;
+    opacity: 0.6;
+    cursor: wait;
+}
+
+/* Focus visible for keyboard navigation */
+*:focus-visible {
+    outline: 3px solid #667eea;
+    outline-offset: 2px;
+}
+
+/* Remove outline for mouse users */
+*:focus:not(:focus-visible) {
+    outline: none;
+}
+
+/* Safe area insets for notched devices */
+@supports (padding: max(0px)) {
+    body {
+        padding-left: max(0px, env(safe-area-inset-left));
+        padding-right: max(0px, env(safe-area-inset-right));
+        padding-bottom: max(0px, env(safe-area-inset-bottom));
+    }
+}
+
+/* Reduce motion for accessibility */
+@media (prefers-reduced-motion: reduce) {
+
+    *,
+    *::before,
+    *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+        scroll-behavior: auto !important;
+    }
+}
+
+/* High contrast mode support */
+@media (prefers-contrast: high) {
+
+    button,
+    a {
+        border: 2px solid currentColor;
+    }
+}
+
+/* Dark mode support */
+@media (prefers-color-scheme: dark) {
+    :root {
+        --background-color: #1a1a1a;
+        --text-color: #f0f0f0;
+        --card-background: #2d2d2d;
+    }
+}

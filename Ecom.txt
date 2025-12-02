@@ -1,0 +1,70 @@
+###Search used in Antigravity
+
+create a new ecommerce website for Jewellery online
+with all the latest models available in india
+taking similar website features from meesho website
+
+####Detailed steps from chatgpt
+
+how to build simple online jewellery platform something like meesho?
+
+I want to use React + Node, Please give detailed steps for building online jewellery app?
+
+Cool, let’s turn “React + Node jewellery app” into a concrete, step-by-step plan you can actually execute.
+
+I’ll assume:
+
+Frontend: React (with React Router)
+
+Backend: Node.js + Express
+
+DB: MongoDB (via Mongoose)
+
+Auth: JWT (email/password)
+
+Payments: Razorpay / Stripe (conceptual steps)
+
+You can swap pieces later, but this gives you a solid default.
+
+0. Prerequisites
+
+Make sure you have:
+
+Node.js + npm
+
+MongoDB (Atlas cloud or local)
+
+A code editor (VS Code)
+
+Basic knowledge of JS, React, Node, HTTP
+
+
+
+---------------------admin login Details--------------
+Email: admin@jewelindia.com
+Password: admin123
+
+
+I've integrated Razorpay! You can now select "Online Payment (Razorpay)" at checkout.
+
+Important: I've added placeholder keys to your .env file. You need to replace them with your actual Razorpay Test Key ID and Secret for payments to work.
+
+File: server/.env
+
+
+I see the PowerShell execution policy issue again. Let me work around this by creating the components first and documenting the npm install command for you to run manually:
+
+
+Emails Not Sending?
+Check your server console for "Failed to send email notification" errors.
+Ensure you have added the following to your .env file:
+EMAIL_SERVICE=gmail
+EMAIL_USERNAME=your-email@gmail.com
+EMAIL_PASSWORD=your-app-specific-password
+ADMIN_EMAIL=admin-email@example.com
+
+
+
+Important: Please make sure you have added your Razorpay Test Keys to server/.env file. RAZORPAY_KEY_ID=rzp_test_... RAZORPAY_KEY_SECRET=...
+
+You can now test the payment flow by selecting "Online Payment (Razorpay)" at checkout.
