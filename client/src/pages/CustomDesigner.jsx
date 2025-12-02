@@ -418,6 +418,7 @@ const CustomDesigner = () => {
                     {/* 3D Preview Section */}
                     <div className="preview-section">
                         <Preview3D
+                            type={design.type}
                             metal={design.metal}
                             gemstone={design.gemstone}
                             gemstoneSize={design.gemstoneSize}
@@ -436,9 +437,10 @@ const CustomDesigner = () => {
                                 value={design.type}
                                 onChange={(e) => setDesign({ ...design, type: e.target.value })}
                             >
-                                <option value="Ring">Ring</option>
-                                <option value="Necklace" disabled>Necklace (Coming Soon)</option>
-                                <option value="Earrings" disabled>Earrings (Coming Soon)</option>
+                                <option value="Ring">💍 Ring</option>
+                                <option value="Necklace">📿 Necklace</option>
+                                <option value="Earrings">💎 Earrings</option>
+                                <option value="Bracelet">⌚ Bracelet</option>
                             </select>
                         </div>
 
