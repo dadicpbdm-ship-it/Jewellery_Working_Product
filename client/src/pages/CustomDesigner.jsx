@@ -4,6 +4,8 @@ import { AuthContext } from '../context/AuthContext';
 import { useCart } from '../context/CartContext';
 import { API_URL } from '../config';
 import Preview3D from '../components/designer/Preview3D';
+import DesignGallery from '../components/designer/DesignGallery';
+import BudgetHelper from '../components/designer/BudgetHelper';
 import LoadingSpinner from '../components/LoadingSpinner';
 import './CustomDesigner.css';
 
@@ -38,6 +40,8 @@ const CustomDesigner = () => {
     const [selectedOccasion, setSelectedOccasion] = useState('All');
     const [showPriceBreakdown, setShowPriceBreakdown] = useState(false);
     const [showShareModal, setShowShareModal] = useState(false);
+    const [budgetLimit, setBudgetLimit] = useState(50000);
+    const [showEngravingPreview, setShowEngravingPreview] = useState(false);
 
     // Pricing Constants
     const PRICES = {
@@ -112,6 +116,17 @@ const CustomDesigner = () => {
             gemstoneSize: template.gemstoneSize,
             size: template.size
         });
+    };
+
+    const handleGalleryDesignSelect = (galleryDesign) => {
+        setDesign({
+            ...design,
+            metal: galleryDesign.metal,
+            gemstone: galleryDesign.gemstone,
+            gemstoneSize: galleryDesign.gemstoneSize,
+            size: galleryDesign.size
+        });
+        window.scrollTo({ top: 0, behavior: 'smooth' });
     };
 
     const handleSaveDesign = async () => {
@@ -396,6 +411,9 @@ const CustomDesigner = () => {
                     </div>
                 </div>
 
+                {/* Budget Helper */}
+                <BudgetHelper onBudgetChange={setBudgetLimit} />
+
                 <div style={styles.mainGrid}>
                     {/* 3D Preview Section */}
                     <div className="preview-section">
@@ -491,6 +509,20 @@ const CustomDesigner = () => {
                                 onChange={(e) => setDesign({ ...design, engravingText: e.target.value })}
                             />
                             <small style={{ color: '#666' }}>{design.engravingText.length}/20 characters</small>
+                            {design.engravingText && (
+                                <div style={{
+                                    marginTop: '10px',
+                                    padding: '10px',
+                                    background: '#f8f9fa',
+                                    borderRadius: '6px',
+                                    textAlign: 'center',
+                                    fontStyle: 'italic',
+                                    color: '#333',
+                                    border: '1px dashed #ddd'
+                                }}>
+                                    Preview: "{design.engravingText}"
+                                </div>
+                            )}
                         </div>
 
                         {/* Price Section with Breakdown */}
@@ -570,6 +602,9 @@ const CustomDesigner = () => {
                         </div>
                     </div>
                 )}
+
+                {/* Design Gallery */}
+                <DesignGallery onSelectDesign={handleGalleryDesignSelect} />
             </div>
 
             {/* Share Modal */}
