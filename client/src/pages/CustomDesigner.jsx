@@ -62,6 +62,9 @@ const CustomDesigner = () => {
     };
 
     useEffect(() => {
+        // Scroll to top when component mounts
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+
         if (user) {
             fetchSavedDesigns();
         }
@@ -195,20 +198,22 @@ const CustomDesigner = () => {
         hero: {
             textAlign: 'center',
             marginBottom: '40px',
-            background: 'linear-gradient(135deg, #C9A961 0%, #E5D4A6 100%)',
-            padding: '40px 20px',
+            background: 'linear-gradient(135deg, #667eea 0%, #764ba2 50%, #f093fb 100%)',
+            padding: '60px 20px',
             borderRadius: '16px',
-            color: '#0F1419'
+            color: '#fff',
+            boxShadow: '0 10px 40px rgba(102, 126, 234, 0.3)'
         },
         promoBar: {
-            background: '#28a745',
+            background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
             color: 'white',
             padding: '12px',
             textAlign: 'center',
             borderRadius: '8px',
             marginBottom: '30px',
             fontWeight: '600',
-            animation: 'pulse 2s infinite'
+            animation: 'pulse 2s infinite',
+            boxShadow: '0 4px 15px rgba(102, 126, 234, 0.3)'
         },
         templatesSection: {
             marginBottom: '40px'
@@ -372,9 +377,9 @@ const CustomDesigner = () => {
                             key={occasion}
                             style={{
                                 ...styles.occasionBtn,
-                                background: selectedOccasion === occasion ? '#C9A961' : 'white',
-                                color: selectedOccasion === occasion ? '#0F1419' : '#333',
-                                borderColor: selectedOccasion === occasion ? '#C9A961' : '#ddd'
+                                background: selectedOccasion === occasion ? '#667eea' : 'white',
+                                color: selectedOccasion === occasion ? 'white' : '#333',
+                                borderColor: selectedOccasion === occasion ? '#667eea' : '#ddd'
                             }}
                             onClick={() => setSelectedOccasion(occasion)}
                         >
@@ -394,7 +399,8 @@ const CustomDesigner = () => {
                                 onClick={() => applyTemplate(template)}
                                 onMouseEnter={(e) => {
                                     e.currentTarget.style.transform = 'translateY(-5px)';
-                                    e.currentTarget.style.borderColor = '#C9A961';
+                                    e.currentTarget.style.borderColor = '#667eea';
+                                    e.currentTarget.style.boxShadow = '0 8px 20px rgba(102, 126, 234, 0.2)';
                                 }}
                                 onMouseLeave={(e) => {
                                     e.currentTarget.style.transform = 'translateY(0)';
