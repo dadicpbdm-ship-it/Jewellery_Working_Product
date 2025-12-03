@@ -9,6 +9,8 @@ const AdminDashboard = () => {
     const [products, setProducts] = useState([]);
     const [contacts, setContacts] = useState([]);
     const [orders, setOrders] = useState([]);
+    const [tryAtHomeRequests, setTryAtHomeRequests] = useState([]);
+    const [deliveryAgents, setDeliveryAgents] = useState([]);
     const [analytics, setAnalytics] = useState(null);
     const [topProducts, setTopProducts] = useState([]);
     const [stats, setStats] = useState(null);
@@ -31,6 +33,8 @@ const AdminDashboard = () => {
         fetchContacts();
         fetchOrders();
         fetchAnalytics();
+        fetchTryAtHomeRequests();
+        fetchDeliveryAgents();
     }, []);
 
     const fetchAnalytics = async () => {
@@ -85,6 +89,28 @@ const AdminDashboard = () => {
         }
     };
 
+    const fetchTryAtHomeRequests = async () => {
+        try {
+            const response = await fetch(`${API_URL}/api/try-at-home`, {
+                headers: { 'Authorization': `Bearer ${user.token}` }
+            });
+            if (response.ok) setTryAtHomeRequests(await response.json());
+        } catch (error) {
+            console.error('Error fetching try at home requests:', error);
+        }
+    };
+
+    const fetchDeliveryAgents = async () => {
+        try {
+            const response = await fetch(`${API_URL}/api/delivery-agents`, {
+                headers: { 'Authorization': `Bearer ${user.token}` }
+            });
+            if (response.ok) setDeliveryAgents(await response.json());
+        } catch (error) {
+            console.error('Error fetching delivery agents:', error);
+        }
+    };
+
     const updateContactStatus = async (contactId, newStatus) => {
         try {
             const response = await fetch(`${API_URL}/api/contacts/${contactId}`, {
@@ -128,6 +154,33 @@ const AdminDashboard = () => {
         } catch (error) {
             console.error('Error:', error);
             alert('Error updating status');
+        }
+    };
+
+    const updateTryAtHomeStatus = async (requestId, status, assignedAgent = null) => {
+        try {
+            const body = { status };
+            if (assignedAgent) body.assignedAgent = assignedAgent;
+
+            const response = await fetch(`${API_URL}/api/try-at-home/${requestId}/status`, {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${user.token}`
+                },
+                body: JSON.stringify(body)
+            });
+
+            if (response.ok) {
+                fetchTryAtHomeRequests();
+                alert('Request updated successfully');
+            } else {
+                const data = await response.json();
+                alert(data.message || 'Failed to update request');
+            }
+        } catch (error) {
+            console.error('Error:', error);
+            alert('Error updating request');
         }
     };
 
@@ -239,6 +292,12 @@ const AdminDashboard = () => {
                         onClick={() => window.location.href = '/admin/delivery-agents'}
                     >
                         Delivery Agents
+                    </button>
+                    <button
+                        className={`tab-btn ${activeTab === 'tryathome' ? 'active' : ''}`}
+                        onClick={() => setActiveTab('tryathome')}
+                    >
+                        Try At Home ({tryAtHomeRequests.filter(r => r.status === 'Requested').length})
                     </button>
                     <button
                         className="tab-btn"
