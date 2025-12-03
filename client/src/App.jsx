@@ -29,6 +29,8 @@ import ManageDeliveryAgents from './pages/ManageDeliveryAgents';
 import LoyaltyDashboard from './pages/LoyaltyDashboard';
 import CertificateVerify from './pages/CertificateVerify';
 import CustomDesigner from './pages/CustomDesigner';
+import ManagePincodes from './pages/ManagePincodes';
+import ManageWarehouses from './pages/ManageWarehouses';
 
 function App() {
   return (
@@ -121,6 +123,22 @@ function App() {
                     />
                     <Route path="/verify-certificate/:certificateNumber?" element={<CertificateVerify />} />
                     <Route path="/designer" element={<CustomDesigner />} />
+                    <Route
+                      path="/admin/pincodes"
+                      element={
+                        <ProtectedRoute adminOnly={true}>
+                          <ManagePincodes />
+                        </ProtectedRoute>
+                      }
+                    />
+                    <Route
+                      path="/admin/warehouses"
+                      element={
+                        <ProtectedRoute adminOnly={true}>
+                          <ManageWarehouses />
+                        </ProtectedRoute>
+                      }
+                    />
                   </Routes>
                 </main>
                 <Footer />

@@ -104,6 +104,9 @@ router.put('/:id', protect, admin, async (req, res) => {
             deliveryAgent.email = email || deliveryAgent.email;
             deliveryAgent.phone = phone || deliveryAgent.phone;
             deliveryAgent.assignedArea = assignedArea !== undefined ? assignedArea : deliveryAgent.assignedArea;
+            if (req.body.assignedPincodes) {
+                deliveryAgent.assignedPincodes = req.body.assignedPincodes;
+            }
 
             const updatedAgent = await deliveryAgent.save();
             res.json(updatedAgent);

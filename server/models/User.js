@@ -25,6 +25,10 @@ const userSchema = new mongoose.Schema({
         type: String,
         default: ''
     },
+    assignedPincodes: [{
+        type: String,
+        trim: true
+    }],
     activeOrders: {
         type: Number,
         default: 0

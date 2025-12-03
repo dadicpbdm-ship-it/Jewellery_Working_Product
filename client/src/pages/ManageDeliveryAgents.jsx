@@ -18,7 +18,8 @@ const ManageDeliveryAgents = () => {
         name: '',
         email: '',
         phone: '',
-        assignedArea: ''
+        assignedArea: '',
+        assignedPincodes: []
     });
 
     useEffect(() => {
@@ -69,7 +70,8 @@ const ManageDeliveryAgents = () => {
             name: agent.name,
             email: agent.email,
             phone: agent.phone || '',
-            assignedArea: agent.assignedArea || ''
+            assignedArea: agent.assignedArea || '',
+            assignedPincodes: agent.assignedPincodes || []
         });
         setSelectedAgent(agent);
         setShowEditModal(true);
@@ -82,7 +84,8 @@ const ManageDeliveryAgents = () => {
             name: '',
             email: '',
             phone: '',
-            assignedArea: ''
+            assignedArea: '',
+            assignedPincodes: []
         });
     };
 
@@ -126,6 +129,22 @@ const ManageDeliveryAgents = () => {
                 <p className="subtitle">View and manage all delivery agents in your system</p>
 
                 <div className="action-bar">
+                    <button
+                        className="btn-back"
+                        onClick={() => navigate('/admin/dashboard')}
+                        style={{
+                            background: '#6c757d',
+                            color: 'white',
+                            border: 'none',
+                            padding: '10px 20px',
+                            borderRadius: '8px',
+                            cursor: 'pointer',
+                            fontWeight: '600',
+                            marginRight: '10px'
+                        }}
+                    >
+                        ← Back to Dashboard
+                    </button>
                     <button
                         className="btn-register"
                         onClick={() => navigate('/admin/delivery-agents/register')}
@@ -529,6 +548,41 @@ const ManageDeliveryAgents = () => {
                                         />
                                         <small style={{ color: '#888', fontSize: '0.85rem', marginTop: '5px', display: 'block' }}>
                                             This agent will be automatically assigned orders from this city
+                                        </small>
+                                    </div>
+
+                                    <div style={{ marginBottom: '30px' }}>
+                                        <label style={{
+                                            display: 'block',
+                                            marginBottom: '8px',
+                                            color: '#555',
+                                            fontWeight: '600',
+                                            fontSize: '0.9rem'
+                                        }}>
+                                            Assigned Pincodes (comma-separated)
+                                        </label>
+                                        <input
+                                            type="text"
+                                            name="assignedPincodes"
+                                            placeholder="e.g., 400001, 400002, 400003"
+                                            value={editFormData.assignedPincodes.join(', ')}
+                                            onChange={(e) => {
+                                                const pincodes = e.target.value
+                                                    .split(',')
+                                                    .map(p => p.trim())
+                                                    .filter(p => p);
+                                                setEditFormData({ ...editFormData, assignedPincodes: pincodes });
+                                            }}
+                                            style={{
+                                                width: '100%',
+                                                padding: '12px 15px',
+                                                border: '2px solid #e0e0e0',
+                                                borderRadius: '10px',
+                                                fontSize: '1rem'
+                                            }}
+                                        />
+                                        <small style={{ color: '#888', fontSize: '0.85rem', marginTop: '5px', display: 'block' }}>
+                                            Agent will be prioritized for orders to these pincodes
                                         </small>
                                     </div>
 

@@ -69,7 +69,7 @@ router.post('/', optionalProtect, async (req, res) => {
 
         // Assign delivery agent logic
         try {
-            const assignedAgent = await assignDeliveryAgent(shippingAddress.city);
+            const assignedAgent = await assignDeliveryAgent(shippingAddress.city, shippingAddress.postalCode);
             if (assignedAgent) {
                 order.deliveryAgent = assignedAgent._id;
                 await decrementActiveOrders(assignedAgent._id);

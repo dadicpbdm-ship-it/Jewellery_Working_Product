@@ -20,6 +20,9 @@ const ProductDetails = () => {
     const [relatedProducts, setRelatedProducts] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
+    const [pincode, setPincode] = useState('');
+    const [checkResult, setCheckResult] = useState(null);
+    const [checkLoading, setCheckLoading] = useState(false);
 
     useEffect(() => {
         const fetchProduct = async () => {
@@ -92,6 +95,41 @@ const ProductDetails = () => {
             } else {
                 addToWishlist(product._id);
             }
+        }
+    }
+
+
+    const checkAvailability = async () => {
+        if (pincode.length !== 6) return;
+
+        setCheckLoading(true);
+        setCheckResult(null);
+
+        try {
+            const response = await fetch(`${API_URL}/api/pincodes/check/${pincode}`);
+            const data = await response.json();
+
+            if (response.ok && data.serviceable) {
+                const date = new Date();
+                date.setDate(date.getDate() + (data.deliveryDays || 5));
+                setCheckResult({
+                    serviceable: true,
+                    message: `Delivery available to ${data.city}, ${data.state} by ${date.toDateString()}${data.codAvailable ? ' (COD Available)' : ''}`
+                });
+            } else {
+                setCheckResult({
+                    serviceable: false,
+                    message: data.message || 'Sorry, delivery not available to this pincode.'
+                });
+            }
+        } catch (error) {
+            console.error('Error checking pincode:', error);
+            setCheckResult({
+                serviceable: false,
+                message: 'Error checking availability. Please try again.'
+            });
+        } finally {
+            setCheckLoading(false);
         }
     };
 
@@ -208,26 +246,31 @@ const ProductDetails = () => {
                                 type="text"
                                 placeholder="Enter Pincode"
                                 maxLength="6"
-                                onKeyPress={(e) => {
-                                    if (!/[0-9]/.test(e.key)) e.preventDefault();
+                                value={pincode}
+                                onChange={(e) => {
+                                    const val = e.target.value;
+                                    if (/^\d*$/.test(val)) setPincode(val);
+                                    setCheckResult(null); // Reset result on change
                                 }}
-                                id="pincode-input"
+                                onKeyPress={(e) => {
+                                    if (e.key === 'Enter' && pincode.length === 6) {
+                                        checkAvailability();
+                                    }
+                                }}
+                                disabled={checkLoading}
                             />
-                            <button onClick={() => {
-                                const input = document.getElementById('pincode-input');
-                                const msg = document.getElementById('pincode-msg');
-                                if (input.value.length === 6) {
-                                    const date = new Date();
-                                    date.setDate(date.getDate() + 5);
-                                    msg.textContent = `Expected Delivery by ${date.toDateString()} (Free)`;
-                                    msg.className = 'pincode-msg success';
-                                } else {
-                                    msg.textContent = 'Please enter a valid 6-digit pincode';
-                                    msg.className = 'pincode-msg error';
-                                }
-                            }}>Check</button>
+                            <button
+                                onClick={checkAvailability}
+                                disabled={checkLoading || pincode.length !== 6}
+                            >
+                                {checkLoading ? 'Checking...' : 'Check'}
+                            </button>
                         </div>
-                        <p id="pincode-msg" className="pincode-msg"></p>
+                        {checkResult && (
+                            <p className={`pincode-msg ${checkResult.serviceable ? 'success' : 'error'}`}>
+                                {checkResult.message}
+                            </p>
+                        )}
                     </div>
 
                     <p className="details-description">{product.description}</p>

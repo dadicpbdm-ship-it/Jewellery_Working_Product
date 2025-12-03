@@ -105,12 +105,34 @@ const Checkout = () => {
         setGuestInfo({ ...guestInfo, [e.target.name]: e.target.value });
     };
 
+    const validatePincode = async (pincode) => {
+        try {
+            const response = await fetch(`${API_URL}/api/pincodes/check/${pincode}`);
+            const data = await response.json();
+            if (response.ok && data.serviceable) {
+                return true;
+            } else {
+                return false;
+            }
+        } catch (error) {
+            console.error('Error validating pincode:', error);
+            return false; // Fail safe
+        }
+    };
+
     const handlePlaceOrder = async (e) => {
         e.preventDefault();
 
         // Basic validation
         if (!shippingAddress.address || !shippingAddress.city || !shippingAddress.postalCode || !shippingAddress.country) {
             alert('Please fill in all shipping address fields');
+            return;
+        }
+
+        // Pincode Validation
+        const isServiceable = await validatePincode(shippingAddress.postalCode);
+        if (!isServiceable) {
+            alert('Sorry, we do not deliver to this pincode yet. Please try another address.');
             return;
         }
 

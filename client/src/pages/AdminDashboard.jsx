@@ -209,6 +209,18 @@ const AdminDashboard = () => {
                         Delivery Agents
                     </button>
                     <button
+                        className="tab-btn"
+                        onClick={() => window.location.href = '/admin/pincodes'}
+                    >
+                        Manage Pincodes
+                    </button>
+                    <button
+                        className="tab-btn"
+                        onClick={() => window.location.href = '/admin/warehouses'}
+                    >
+                        Manage Warehouses
+                    </button>
+                    <button
                         className={`tab-btn ${activeTab === 'contacts' ? 'active' : ''}`}
                         onClick={() => setActiveTab('contacts')}
                     >
