@@ -3,8 +3,12 @@ const bcrypt = require('bcryptjs');
 
 const userSchema = new mongoose.Schema({
     name: { type: String, required: true },
-    email: { type: String, required: true, unique: true },
-    password: { type: String, required: true },
+    email: { type: String, unique: true, sparse: true }, // Made optional for OTP users
+    password: { type: String }, // Made optional for OTP users
+    phone: { type: String, unique: true, sparse: true }, // NEW - for OTP login
+    phoneVerified: { type: Boolean, default: false }, // NEW
+    otp: { type: String }, // NEW - temporary OTP storage
+    otpExpiry: { type: Date }, // NEW - OTP expiration time
     role: { type: String, enum: ['user', 'admin', 'delivery'], default: 'user' },
     addresses: [{
         name: String,
@@ -69,12 +73,23 @@ const userSchema = new mongoose.Schema({
 }, { timestamps: true });
 
 userSchema.pre('save', async function () {
-    if (!this.isModified('password')) return;
+    // Only hash password if it exists and is modified
+    if (!this.password || !this.isModified('password')) return;
     // Increased from default 10 to 12 rounds for better security
     this.password = await bcrypt.hash(this.password, 12);
 });
 
 userSchema.methods.generateReferralCode = function () {
+    // Ensure loyalty object exists
+    if (!this.loyalty) {
+        this.loyalty = {
+            points: 0,
+            tier: 'Silver',
+            totalSpent: 0,
+            pointsHistory: []
+        };
+    }
+
     if (!this.loyalty.referralCode) {
         const code = `${this.name.substring(0, 3).toUpperCase()}${this._id.toString().slice(-6)}`;
         this.loyalty.referralCode = code;

@@ -2,9 +2,11 @@ import React, { useState, useContext } from 'react';
 import { AuthContext } from '../context/AuthContext';
 import { useNavigate, Link } from 'react-router-dom';
 import FormInput, { validators } from '../components/FormInput';
+import OTPLogin from './OTPLogin';
 import './Login.css';
 
 const Login = () => {
+    const [loginMethod, setLoginMethod] = useState('email'); // 'email' or 'otp'
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const { login } = useContext(AuthContext);
@@ -35,42 +37,62 @@ const Login = () => {
 
     return (
         <div className="login-container">
-            <form className="login-form" onSubmit={handleSubmit}>
-                <h2>Welcome Back</h2>
-                <p className="subtitle">Login to your account</p>
-
-                {error && <div className="error-alert">{error}</div>}
-
-                <FormInput
-                    label="Email Address"
-                    type="email"
-                    name="email"
-                    value={email}
-                    onChange={(e) => setEmail(e.target.value)}
-                    validation={validators.email}
-                    placeholder="your@email.com"
-                    required
-                />
-
-                <FormInput
-                    label="Password"
-                    type="password"
-                    name="password"
-                    value={password}
-                    onChange={(e) => setPassword(e.target.value)}
-                    validation={validators.required}
-                    placeholder="Enter your password"
-                    required
-                />
-
-                <button type="submit" disabled={loading} className="btn-submit">
-                    {loading ? 'Logging in...' : 'Login'}
+            {/* Login Method Toggle */}
+            <div className="login-method-toggle">
+                <button
+                    className={`toggle-btn ${loginMethod === 'email' ? 'active' : ''}`}
+                    onClick={() => setLoginMethod('email')}
+                >
+                    Email Login
                 </button>
+                <button
+                    className={`toggle-btn ${loginMethod === 'otp' ? 'active' : ''}`}
+                    onClick={() => setLoginMethod('otp')}
+                >
+                    Mobile OTP
+                </button>
+            </div>
 
-                <p className="form-footer">
-                    Don't have an account? <Link to="/register">Register</Link>
-                </p>
-            </form>
+            {loginMethod === 'otp' ? (
+                <OTPLogin />
+            ) : (
+                <form className="login-form" onSubmit={handleSubmit}>
+                    <h2>Welcome Back</h2>
+                    <p className="subtitle">Login to your account</p>
+
+                    {error && <div className="error-alert">{error}</div>}
+
+                    <FormInput
+                        label="Email Address"
+                        type="email"
+                        name="email"
+                        value={email}
+                        onChange={(e) => setEmail(e.target.value)}
+                        validation={validators.email}
+                        placeholder="your@email.com"
+                        required
+                    />
+
+                    <FormInput
+                        label="Password"
+                        type="password"
+                        name="password"
+                        value={password}
+                        onChange={(e) => setPassword(e.target.value)}
+                        validation={validators.required}
+                        placeholder="Enter your password"
+                        required
+                    />
+
+                    <button type="submit" disabled={loading} className="btn-submit">
+                        {loading ? 'Logging in...' : 'Login'}
+                    </button>
+
+                    <p className="form-footer">
+                        Don't have an account? <Link to="/register">Register</Link>
+                    </p>
+                </form>
+            )}
         </div>
     );
 };

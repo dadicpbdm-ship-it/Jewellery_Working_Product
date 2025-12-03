@@ -11,10 +11,27 @@ const getLoyaltyDashboard = async (req, res) => {
         const user = await User.findById(req.user._id).select('loyalty name email');
 
         if (!user) {
+            console.log('❌ Loyalty Dashboard: User not found');
             return res.status(404).json({ message: 'User not found' });
         }
 
-        // Generate referral code if not exists
+        console.log(`🔍 Loyalty Dashboard for user: ${user._id}`);
+        console.log('Loyalty Object:', user.loyalty);
+
+        // Initialize loyalty object if it doesn't exist (Self-healing for old/OTP users)
+        if (!user.loyalty) {
+            user.loyalty = {
+                points: 0,
+                tier: 'Silver',
+                totalSpent: 0,
+                pointsHistory: []
+            };
+            // Generate referral code immediately
+            user.generateReferralCode();
+            await user.save();
+        }
+
+        // Generate referral code if not exists (for users with loyalty object but no code)
         if (!user.loyalty.referralCode) {
             user.generateReferralCode();
             await user.save();
