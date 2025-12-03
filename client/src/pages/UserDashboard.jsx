@@ -379,6 +379,54 @@ const UserDashboard = () => {
                         </div>
                     )}
 
+                    {activeTab === 'tryathome' && (
+                        <div className="try-at-home-section">
+                            <h2>My Try at Home Requests</h2>
+                            {tryAtHomeRequests.length === 0 ? (
+                                <div className="empty-state">
+                                    <p>No requests found.</p>
+                                    <Link to="/shop" className="btn-primary" style={{ marginTop: '10px' }}>Browse Products</Link>
+                                </div>
+                            ) : (
+                                <div className="requests-list">
+                                    {tryAtHomeRequests.map(req => (
+                                        <div key={req._id} className="order-card">
+                                            <div className="order-header">
+                                                <div>
+                                                    <span className="order-id">#{req._id.substring(0, 8).toUpperCase()}</span>
+                                                    <span className="order-date">
+                                                        {new Date(req.scheduledDate).toLocaleDateString()} ({req.scheduledTimeSlot})
+                                                    </span>
+                                                </div>
+                                                <span className={`order-status ${req.status.toLowerCase()}`}>
+                                                    {req.status}
+                                                </span>
+                                            </div>
+                                            <div className="order-items" style={{ padding: '15px' }}>
+                                                {req.products.map(prod => (
+                                                    <div key={prod._id} style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '10px' }}>
+                                                        <img src={prod.image} alt={prod.name} style={{ width: '50px', height: '50px', borderRadius: '4px', objectFit: 'cover' }} />
+                                                        <div>
+                                                            <p style={{ margin: 0, fontWeight: '600' }}>{prod.name}</p>
+                                                            <p style={{ margin: 0, fontSize: '0.9rem', color: '#666' }}>₹{prod.price.toLocaleString('en-IN')}</p>
+                                                        </div>
+                                                    </div>
+                                                ))}
+                                            </div>
+                                            {req.assignedAgent && (
+                                                <div className="agent-info" style={{ padding: '10px 15px', background: '#f8f9fa', borderTop: '1px solid #eee' }}>
+                                                    <p style={{ margin: 0, fontSize: '0.9rem' }}>
+                                                        <strong>Agent:</strong> {req.assignedAgent.name} ({req.assignedAgent.phone})
+                                                    </p>
+                                                </div>
+                                            )}
+                                        </div>
+                                    ))}
+                                </div>
+                            )}
+                        </div>
+                    )}
+
                     {activeTab === 'profile' && (
                         <div className="profile-section">
                             <h2>Profile Settings</h2>
