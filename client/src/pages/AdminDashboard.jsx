@@ -618,6 +618,99 @@ const AdminDashboard = () => {
                     </div>
                 )}
 
+                {/* Try At Home Tab */}
+                {activeTab === 'tryathome' && (
+                    <div className="orders-section">
+                        <div className="orders-table">
+                            <h2>Try At Home Requests</h2>
+                            <table>
+                                <thead>
+                                    <tr>
+                                        <th>Date</th>
+                                        <th>User</th>
+                                        <th>Items</th>
+                                        <th>Slot</th>
+                                        <th>Location</th>
+                                        <th>Status</th>
+                                        <th>Assign Agent</th>
+                                        <th>Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {tryAtHomeRequests.map(req => (
+                                        <tr key={req._id}>
+                                            <td>{new Date(req.createdAt).toLocaleDateString()}</td>
+                                            <td>
+                                                {req.user.name}<br />
+                                                <small>{req.user.phone}</small>
+                                            </td>
+                                            <td>
+                                                <div className="product-thumbnails">
+                                                    {req.products.map(p => (
+                                                        <img key={p._id} src={p.image} alt={p.name} title={p.name} className="product-thumb-sm" style={{ width: '30px', height: '30px', borderRadius: '4px', marginRight: '5px' }} />
+                                                    ))}
+                                                </div>
+                                            </td>
+                                            <td>
+                                                {new Date(req.scheduledDate).toLocaleDateString()}<br />
+                                                <small>{req.scheduledTimeSlot}</small>
+                                            </td>
+                                            <td>{req.address.city}, {req.address.postalCode}</td>
+                                            <td>
+                                                <span className={`status-badge status-${req.status.toLowerCase()}`}>
+                                                    {req.status}
+                                                </span>
+                                            </td>
+                                            <td>
+                                                {req.status === 'Requested' || req.status === 'Approved' ? (
+                                                    <select
+                                                        value={req.assignedAgent?._id || ''}
+                                                        onChange={(e) => updateTryAtHomeStatus(req._id, 'Approved', e.target.value)}
+                                                        className="agent-select"
+                                                        style={{ padding: '5px', borderRadius: '4px', border: '1px solid #ddd' }}
+                                                    >
+                                                        <option value="">Select Agent</option>
+                                                        {deliveryAgents.map(agent => (
+                                                            <option key={agent._id} value={agent._id}>{agent.name}</option>
+                                                        ))}
+                                                    </select>
+                                                ) : (
+                                                    req.assignedAgent?.name || '-'
+                                                )}
+                                            </td>
+                                            <td>
+                                                {req.status === 'Requested' && (
+                                                    <button
+                                                        className="btn-delete"
+                                                        onClick={() => updateTryAtHomeStatus(req._id, 'Rejected')}
+                                                        style={{ backgroundColor: '#dc3545', padding: '5px 10px', fontSize: '0.8rem' }}
+                                                    >
+                                                        Reject
+                                                    </button>
+                                                )}
+                                                {req.status === 'Approved' && (
+                                                    <button
+                                                        className="btn-secondary"
+                                                        onClick={() => updateTryAtHomeStatus(req._id, 'Completed')}
+                                                        style={{ padding: '5px 10px', fontSize: '0.8rem' }}
+                                                    >
+                                                        Mark Done
+                                                    </button>
+                                                )}
+                                            </td>
+                                        </tr>
+                                    ))}
+                                    {tryAtHomeRequests.length === 0 && (
+                                        <tr>
+                                            <td colSpan="8" style={{ textAlign: 'center', padding: '20px' }}>No requests found</td>
+                                        </tr>
+                                    )}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                )}
+
                 {/* Contacts Tab */}
                 {activeTab === 'contacts' && (
                     <div className="contacts-table">
