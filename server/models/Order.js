@@ -98,6 +98,28 @@ const orderSchema = mongoose.Schema({
             enum: ['pending', 'approved', 'active', 'completed', 'failed'],
             default: 'pending'
         }
+    },
+    // Return/Exchange Request
+    returnExchangeRequest: {
+        type: {
+            type: String,
+            enum: ['Return', 'Exchange', 'None'],
+            default: 'None'
+        },
+        status: {
+            type: String,
+            enum: ['Pending', 'Approved', 'Rejected', 'Completed'],
+            default: 'Pending'
+        },
+        reason: {
+            type: String
+        },
+        requestDate: {
+            type: Date
+        },
+        adminComment: {
+            type: String
+        }
     }
 }, {
     timestamps: true

@@ -102,10 +102,39 @@ const DeliveryDashboard = () => {
         }
     };
 
+    const completeReturn = async (orderId) => {
+        if (!window.confirm('Confirm that you have picked up the return item?')) {
+            return;
+        }
+
+        try {
+            const response = await fetch(`${API_URL}/api/orders/${orderId}/return-exchange-status`, {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${user.token}`
+                },
+                body: JSON.stringify({ status: 'Completed' })
+            });
+
+            if (response.ok) {
+                fetchOrders();
+                success('Return marked as completed!');
+            } else {
+                const errData = await response.json();
+                error(errData.message || 'Error updating return status');
+            }
+        } catch (err) {
+            console.error('Error:', err);
+            error('Error updating return status');
+        }
+    };
+
     // Calculate Stats
     const filteredOrders = orders.filter(order => {
         if (filterStatus === 'pending') return !order.isDelivered;
-        if (filterStatus === 'delivered') return order.isDelivered;
+        if (filterStatus === 'delivered') return order.isDelivered && (!order.returnExchangeRequest || order.returnExchangeRequest.status !== 'Approved');
+        if (filterStatus === 'returns') return order.returnExchangeRequest && order.returnExchangeRequest.status === 'Approved';
         return true;
     });
 
@@ -114,6 +143,7 @@ const DeliveryDashboard = () => {
     const pendingDelivery = totalAssigned - deliveredOrders;
     const codOrders = orders.filter(o => o.paymentMethod === 'Cash on Delivery').length;
     const codReceived = orders.filter(o => o.codPaymentReceived).length;
+    const pendingReturns = orders.filter(o => o.returnExchangeRequest && o.returnExchangeRequest.status === 'Approved').length;
 
     return (
         <div className="delivery-dashboard">
@@ -150,6 +180,11 @@ const DeliveryDashboard = () => {
                         <p className="stat-value">{codReceived}</p>
                         <p className="stat-label">Payments</p>
                     </div>
+                    <div className="stat-card">
+                        <h3>Returns</h3>
+                        <p className="stat-value">{pendingReturns}</p>
+                        <p className="stat-label">Pending Pickup</p>
+                    </div>
                 </div>
 
                 {/* Filter Section */}
@@ -173,6 +208,12 @@ const DeliveryDashboard = () => {
                             onClick={() => setFilterStatus('delivered')}
                         >
                             Delivered ({deliveredOrders})
+                        </button>
+                        <button
+                            className={`filter-btn ${filterStatus === 'returns' ? 'active' : ''}`}
+                            onClick={() => setFilterStatus('returns')}
+                        >
+                            Returns ({pendingReturns})
                         </button>
                     </div>
                 </div>
@@ -201,8 +242,8 @@ const DeliveryDashboard = () => {
                                             <span className="order-id">#{order._id.substring(0, 8).toUpperCase()}</span>
                                             <span className="order-customer">{order.user && order.user.name}</span>
                                         </div>
-                                        <span className={`order-status ${order.isDelivered ? 'delivered' : 'pending'}`}>
-                                            {order.isDelivered ? '✓ Delivered' : '⏳ Pending'}
+                                        <span className={`order-status ${order.returnExchangeRequest?.status === 'Approved' ? 'pending' : (order.isDelivered ? 'delivered' : 'pending')}`}>
+                                            {order.returnExchangeRequest?.status === 'Approved' ? '🔄 Pickup Pending' : (order.isDelivered ? '✓ Delivered' : '⏳ Pending')}
                                         </span>
                                     </div>
 
@@ -250,7 +291,7 @@ const DeliveryDashboard = () => {
                                         </div>
                                     </div>
 
-                                    {(!order.isDelivered || (order.paymentMethod === 'Cash on Delivery' && !order.codPaymentReceived)) && (
+                                    {(!order.isDelivered || (order.paymentMethod === 'Cash on Delivery' && !order.codPaymentReceived) || (order.returnExchangeRequest && order.returnExchangeRequest.status === 'Approved')) && (
                                         <div className="order-actions">
                                             {!order.isDelivered && (
                                                 <button
@@ -268,6 +309,19 @@ const DeliveryDashboard = () => {
                                                     💰 Confirm COD Received
                                                 </button>
                                             )}
+                                            {order.returnExchangeRequest &&
+                                                order.returnExchangeRequest.type &&
+                                                order.returnExchangeRequest.type !== 'None' &&
+                                                order.returnExchangeRequest.status &&
+                                                order.returnExchangeRequest.status.trim() === 'Approved' && (
+                                                    <button
+                                                        className="btn-action btn-primary"
+                                                        style={{ backgroundColor: '#e74c3c' }}
+                                                        onClick={() => completeReturn(order._id)}
+                                                    >
+                                                        📦 Mark Picked Up
+                                                    </button>
+                                                )}
                                         </div>
                                     )}
                                 </div>

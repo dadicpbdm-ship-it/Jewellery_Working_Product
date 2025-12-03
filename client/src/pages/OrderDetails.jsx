@@ -10,6 +10,10 @@ const OrderDetails = () => {
     const [order, setOrder] = useState(null);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState('');
+    const [showReturnModal, setShowReturnModal] = useState(false);
+    const [returnType, setReturnType] = useState('Return');
+    const [returnReason, setReturnReason] = useState('');
+    const [submittingReturn, setSubmittingReturn] = useState(false);
 
     useEffect(() => {
         const fetchOrder = async () => {
@@ -155,6 +159,43 @@ const OrderDetails = () => {
         window.print();
     };
 
+    const handleReturnSubmit = async (e) => {
+        e.preventDefault();
+        if (!returnReason.trim()) {
+            alert('Please provide a reason');
+            return;
+        }
+
+        setSubmittingReturn(true);
+        try {
+            const response = await fetch(`${API_URL}/api/orders/${id}/return-exchange`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${user.token}`
+                },
+                body: JSON.stringify({
+                    type: returnType,
+                    reason: returnReason
+                })
+            });
+
+            if (!response.ok) {
+                const data = await response.json();
+                throw new Error(data.message || 'Failed to submit request');
+            }
+
+            const updatedOrder = await response.json();
+            setOrder(updatedOrder);
+            setShowReturnModal(false);
+            alert('Request submitted successfully!');
+        } catch (error) {
+            alert(error.message);
+        } finally {
+            setSubmittingReturn(false);
+        }
+    };
+
     if (loading) {
         return <div className="container">Loading order details...</div>;
     }
@@ -201,6 +242,11 @@ const OrderDetails = () => {
                     <button onClick={printInvoice} className="btn-print-invoice">
                         🖨️ Print Invoice
                     </button>
+                    {order.isDelivered && (!order.returnExchangeRequest || order.returnExchangeRequest.type === 'None') && (
+                        <button onClick={() => setShowReturnModal(true)} className="btn-return-exchange">
+                            🔄 Return / Exchange
+                        </button>
+                    )}
                 </div>
             </div>
 
@@ -210,6 +256,11 @@ const OrderDetails = () => {
                     <span className={`status-badge ${order.isDelivered ? 'delivered' : 'processing'}`}>
                         {order.isDelivered ? '✓ Delivered' : '⏳ Processing'}
                     </span>
+                    {order.returnExchangeRequest && order.returnExchangeRequest.type !== 'None' && (
+                        <div className={`return-status-badge status-${order.returnExchangeRequest.status.toLowerCase()}`}>
+                            {order.returnExchangeRequest.type}: {order.returnExchangeRequest.status}
+                        </div>
+                    )}
                 </div>
 
                 <div className="order-info-grid">
@@ -275,6 +326,38 @@ const OrderDetails = () => {
                     </div>
                 </div>
             </div>
+            {showReturnModal && (
+                <div className="modal-overlay">
+                    <div className="modal-content">
+                        <h3>Request Return or Exchange</h3>
+                        <form onSubmit={handleReturnSubmit}>
+                            <div className="form-group">
+                                <label>Type:</label>
+                                <select value={returnType} onChange={(e) => setReturnType(e.target.value)}>
+                                    <option value="Return">Return</option>
+                                    <option value="Exchange">Exchange</option>
+                                </select>
+                            </div>
+                            <div className="form-group">
+                                <label>Reason:</label>
+                                <textarea
+                                    value={returnReason}
+                                    onChange={(e) => setReturnReason(e.target.value)}
+                                    required
+                                    placeholder="Please describe why you want to return/exchange..."
+                                    rows="4"
+                                />
+                            </div>
+                            <div className="modal-actions">
+                                <button type="button" onClick={() => setShowReturnModal(false)} className="btn-secondary">Cancel</button>
+                                <button type="submit" className="btn-primary" disabled={submittingReturn}>
+                                    {submittingReturn ? 'Submitting...' : 'Submit Request'}
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            )}
         </div>
     );
 };

@@ -223,4 +223,80 @@ router.put('/:id/cod-payment', protect, delivery, async (req, res) => {
     }
 });
 
+// Submit Return/Exchange Request (User)
+router.post('/:id/return-exchange', protect, async (req, res) => {
+    try {
+        const { type, reason } = req.body;
+        const order = await Order.findById(req.params.id);
+
+        if (order) {
+            // Check if user owns the order
+            if (order.user.toString() !== req.user._id.toString()) {
+                return res.status(401).json({ message: 'Not authorized to request return/exchange for this order' });
+            }
+
+            if (!order.isDelivered) {
+                return res.status(400).json({ message: 'Cannot request return/exchange for undelivered orders' });
+            }
+
+            if (order.returnExchangeRequest && order.returnExchangeRequest.type !== 'None') {
+                return res.status(400).json({ message: 'Return/Exchange request already exists' });
+            }
+
+            order.returnExchangeRequest = {
+                type,
+                reason,
+                status: 'Pending',
+                requestDate: Date.now()
+            };
+
+            const updatedOrder = await order.save();
+            res.json(updatedOrder);
+        } else {
+            res.status(404).json({ message: 'Order not found' });
+        }
+    } catch (error) {
+        res.status(500).json({ message: `Error submitting request: ${error.message}` });
+    }
+});
+
+// Update Return/Exchange Status (Admin or Delivery Agent for Completion)
+router.put('/:id/return-exchange-status', protect, async (req, res) => {
+    try {
+        const { status, adminComment } = req.body;
+        const order = await Order.findById(req.params.id);
+
+        if (order) {
+            // Permission Check
+            const isAdmin = req.user.role === 'admin';
+            const isDelivery = req.user.role === 'delivery';
+
+            if (!isAdmin && !isDelivery) {
+                return res.status(403).json({ message: 'Not authorized' });
+            }
+
+            // Delivery agents can only mark as Completed
+            if (isDelivery && status !== 'Completed') {
+                return res.status(403).json({ message: 'Delivery agents can only mark returns as Completed' });
+            }
+
+            if (order.returnExchangeRequest.type === 'None') {
+                return res.status(400).json({ message: 'No return/exchange request found for this order' });
+            }
+
+            order.returnExchangeRequest.status = status;
+            if (adminComment && isAdmin) {
+                order.returnExchangeRequest.adminComment = adminComment;
+            }
+
+            const updatedOrder = await order.save();
+            res.json(updatedOrder);
+        } else {
+            res.status(404).json({ message: 'Order not found' });
+        }
+    } catch (error) {
+        res.status(500).json({ message: `Error updating status: ${error.message}` });
+    }
+});
+
 module.exports = router;

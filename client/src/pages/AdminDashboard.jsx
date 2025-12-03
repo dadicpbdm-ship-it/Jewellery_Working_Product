@@ -105,6 +105,32 @@ const AdminDashboard = () => {
         }
     };
 
+    const updateReturnStatus = async (orderId, status) => {
+        if (!window.confirm(`Are you sure you want to mark this request as ${status}?`)) return;
+
+        try {
+            const response = await fetch(`${API_URL}/api/orders/${orderId}/return-exchange-status`, {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${user.token}`
+                },
+                body: JSON.stringify({ status })
+            });
+
+            if (response.ok) {
+                fetchOrders();
+                alert(`Request marked as ${status}`);
+            } else {
+                const data = await response.json();
+                alert(data.message || 'Failed to update status');
+            }
+        } catch (error) {
+            console.error('Error:', error);
+            alert('Error updating status');
+        }
+    };
+
     const handleInputChange = (e) => {
         setFormData({ ...formData, [e.target.name]: e.target.value });
     };
@@ -201,6 +227,12 @@ const AdminDashboard = () => {
                         onClick={() => setActiveTab('orders')}
                     >
                         Orders ({orders.length})
+                    </button>
+                    <button
+                        className={`tab-btn ${activeTab === 'returns' ? 'active' : ''}`}
+                        onClick={() => setActiveTab('returns')}
+                    >
+                        Returns ({orders.filter(o => o.returnExchangeRequest && o.returnExchangeRequest.type !== 'None').length})
                     </button>
                     <button
                         className={`tab-btn ${activeTab === 'delivery' ? 'active' : ''}`}
@@ -443,6 +475,84 @@ const AdminDashboard = () => {
                                             </td>
                                         </tr>
                                     ))}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                )}
+
+                {/* Returns/Exchanges Tab */}
+                {activeTab === 'returns' && (
+                    <div className="orders-section">
+                        <div className="orders-table">
+                            <h2>Return & Exchange Requests</h2>
+                            <table>
+                                <thead>
+                                    <tr>
+                                        <th>Order ID</th>
+                                        <th>User</th>
+                                        <th>Type</th>
+                                        <th>Reason</th>
+                                        <th>Status</th>
+                                        <th>Date</th>
+                                        <th>Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {orders
+                                        .filter(order => order.returnExchangeRequest && order.returnExchangeRequest.type !== 'None')
+                                        .sort((a, b) => new Date(b.returnExchangeRequest.requestDate) - new Date(a.returnExchangeRequest.requestDate))
+                                        .map(order => (
+                                            <tr key={order._id}>
+                                                <td>{order._id}</td>
+                                                <td>{order.user?.name || order.guestInfo?.name || 'Guest'}</td>
+                                                <td>
+                                                    <span className={`status-badge ${order.returnExchangeRequest.type === 'Return' ? 'status-new' : 'status-in-progress'}`}>
+                                                        {order.returnExchangeRequest.type}
+                                                    </span>
+                                                </td>
+                                                <td className="message-cell"><div className="message-preview">{order.returnExchangeRequest.reason}</div></td>
+                                                <td>
+                                                    <span className={`status-badge status-${order.returnExchangeRequest.status.toLowerCase()}`}>
+                                                        {order.returnExchangeRequest.status}
+                                                    </span>
+                                                </td>
+                                                <td>{new Date(order.returnExchangeRequest.requestDate).toLocaleDateString()}</td>
+                                                <td>
+                                                    {order.returnExchangeRequest.status === 'Pending' && (
+                                                        <div className="action-buttons">
+                                                            <button
+                                                                className="btn-edit"
+                                                                onClick={() => updateReturnStatus(order._id, 'Approved')}
+                                                                style={{ backgroundColor: '#28a745', marginRight: '5px' }}
+                                                            >
+                                                                Approve
+                                                            </button>
+                                                            <button
+                                                                className="btn-delete"
+                                                                onClick={() => updateReturnStatus(order._id, 'Rejected')}
+                                                                style={{ backgroundColor: '#dc3545' }}
+                                                            >
+                                                                Reject
+                                                            </button>
+                                                        </div>
+                                                    )}
+                                                    {order.returnExchangeRequest.status === 'Approved' && (
+                                                        <button
+                                                            className="btn-secondary btn-sm"
+                                                            onClick={() => updateReturnStatus(order._id, 'Completed')}
+                                                        >
+                                                            Mark Completed
+                                                        </button>
+                                                    )}
+                                                </td>
+                                            </tr>
+                                        ))}
+                                    {orders.filter(order => order.returnExchangeRequest && order.returnExchangeRequest.type !== 'None').length === 0 && (
+                                        <tr>
+                                            <td colSpan="7" style={{ textAlign: 'center', padding: '2rem' }}>No return or exchange requests found.</td>
+                                        </tr>
+                                    )}
                                 </tbody>
                             </table>
                         </div>
