@@ -13,6 +13,7 @@ const UserDashboard = () => {
     const [stats, setStats] = useState(null);
     const [orders, setOrders] = useState([]);
     const [addresses, setAddresses] = useState([]);
+    const [tryAtHomeRequests, setTryAtHomeRequests] = useState([]);
     const [loading, setLoading] = useState(true);
     const [activeTab, setActiveTab] = useState('overview');
     const [showPasswordModal, setShowPasswordModal] = useState(false);
@@ -71,6 +72,19 @@ const UserDashboard = () => {
                 }
             } catch (err) {
                 console.error('Error fetching orders:', err);
+            }
+
+            // Fetch Try At Home Requests
+            try {
+                const tryRes = await fetch(`${API_URL}/api/try-at-home`, {
+                    headers: { 'Authorization': `Bearer ${user.token}` }
+                });
+                if (tryRes.ok) {
+                    const tryData = await tryRes.json();
+                    setTryAtHomeRequests(tryData);
+                }
+            } catch (err) {
+                console.error('Error fetching try at home requests:', err);
             }
 
             // Fetch addresses
@@ -283,6 +297,12 @@ const UserDashboard = () => {
                         onClick={() => setActiveTab('addresses')}
                     >
                         Saved Addresses
+                    </button>
+                    <button
+                        className={`tab-btn ${activeTab === 'tryathome' ? 'active' : ''}`}
+                        onClick={() => setActiveTab('tryathome')}
+                    >
+                        Try At Home
                     </button>
                     <button
                         className={`tab-btn ${activeTab === 'profile' ? 'active' : ''}`}

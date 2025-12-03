@@ -8,6 +8,7 @@ import ProductReviews from '../components/ProductReviews';
 import Breadcrumbs from '../components/Breadcrumbs';
 import EMICalculator from '../components/EMICalculator';
 import ARTryOn from '../components/ARTryOn';
+import TryAtHomeModal from '../components/TryAtHomeModal';
 import { API_URL } from '../config';
 import './ProductDetails.css';
 
@@ -22,7 +23,10 @@ const ProductDetails = () => {
     const [error, setError] = useState(null);
     const [pincode, setPincode] = useState('');
     const [checkResult, setCheckResult] = useState(null);
+    const [pincode, setPincode] = useState('');
+    const [checkResult, setCheckResult] = useState(null);
     const [checkLoading, setCheckLoading] = useState(false);
+    const [showTryAtHomeModal, setShowTryAtHomeModal] = useState(false);
 
     useEffect(() => {
         const fetchProduct = async () => {
@@ -322,6 +326,25 @@ const ProductDetails = () => {
                     <div className="details-actions">
                         <button className="btn-primary" onClick={handleAddToCart}>Add to Cart</button>
                         <button className="btn-secondary" onClick={handleBuyNow}>Buy Now</button>
+                        <button
+                            className="btn-try-at-home"
+                            onClick={() => setShowTryAtHomeModal(true)}
+                            style={{
+                                background: 'linear-gradient(135deg, #6a11cb 0%, #2575fc 100%)',
+                                color: 'white',
+                                border: 'none',
+                                padding: '12px 24px',
+                                borderRadius: '8px',
+                                cursor: 'pointer',
+                                fontWeight: '600',
+                                display: 'flex',
+                                alignItems: 'center',
+                                gap: '8px',
+                                boxShadow: '0 4px 15px rgba(37, 117, 252, 0.2)'
+                            }}
+                        >
+                            🏠 Try at Home
+                        </button>
                         <ARTryOn productName={product.name} productImage={product.imageUrl} />
                         <button
                             className={`btn-wishlist ${isWishlisted ? 'active' : ''}`}
@@ -364,6 +387,14 @@ const ProductDetails = () => {
                         ))}
                     </div>
                 </div>
+            )}
+
+            {/* Try At Home Modal */}
+            {showTryAtHomeModal && (
+                <TryAtHomeModal
+                    product={product}
+                    onClose={() => setShowTryAtHomeModal(false)}
+                />
             )}
         </div>
     );
