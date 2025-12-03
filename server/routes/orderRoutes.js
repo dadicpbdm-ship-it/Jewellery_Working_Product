@@ -3,6 +3,7 @@ const router = express.Router();
 const Order = require('../models/Order');
 const { protect, admin, delivery } = require('../middleware/authMiddleware');
 const { assignDeliveryAgent, decrementActiveOrders } = require('../services/assignmentService');
+const whatsappService = require('../services/whatsappService');
 
 const { optionalProtect } = require('../middleware/optionalAuthMiddleware');
 
@@ -92,6 +93,14 @@ router.post('/', optionalProtect, async (req, res) => {
                 console.error('[Order] Error awarding loyalty points:', error);
                 // Don't fail the order if loyalty points fail
             }
+        }
+
+        // Send WhatsApp Confirmation
+        try {
+            const userForNotify = req.user || { name: guestInfo.name, phone: guestInfo.phone };
+            await whatsappService.sendOrderConfirmation(createdOrder, userForNotify);
+        } catch (error) {
+            console.error('[Order] Error sending WhatsApp confirmation:', error);
         }
 
         res.status(201).json(createdOrder);
@@ -189,6 +198,16 @@ router.put('/:id/deliver', protect, delivery, async (req, res) => {
             }
 
             const updatedOrder = await order.save();
+
+            // Send WhatsApp Delivery Notification
+            try {
+                const User = require('../models/User');
+                const userForNotify = updatedOrder.user ? await User.findById(updatedOrder.user) : { name: updatedOrder.guestInfo.name, phone: updatedOrder.guestInfo.phone };
+                await whatsappService.sendOrderDelivered(updatedOrder, userForNotify);
+            } catch (error) {
+                console.error('[Order] Error sending WhatsApp delivery notification:', error);
+            }
+
             res.json(updatedOrder);
         } else {
             res.status(404).json({ message: 'Order not found' });
@@ -297,6 +316,16 @@ router.put('/:id/return-exchange-status', protect, async (req, res) => {
             }
 
             const updatedOrder = await order.save();
+
+            // Send WhatsApp Return/Exchange Update
+            try {
+                const User = require('../models/User');
+                const userForNotify = updatedOrder.user ? await User.findById(updatedOrder.user) : { name: updatedOrder.guestInfo.name, phone: updatedOrder.guestInfo.phone };
+                await whatsappService.sendReturnRequestUpdate(updatedOrder, userForNotify);
+            } catch (error) {
+                console.error('[Order] Error sending WhatsApp return update:', error);
+            }
+
             res.json(updatedOrder);
         } else {
             res.status(404).json({ message: 'Order not found' });
