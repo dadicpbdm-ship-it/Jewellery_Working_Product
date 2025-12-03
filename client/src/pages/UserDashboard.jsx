@@ -14,6 +14,7 @@ const UserDashboard = () => {
     const [orders, setOrders] = useState([]);
     const [addresses, setAddresses] = useState([]);
     const [tryAtHomeRequests, setTryAtHomeRequests] = useState([]);
+    const [alerts, setAlerts] = useState([]);
     const [loading, setLoading] = useState(true);
     const [activeTab, setActiveTab] = useState('overview');
     const [showPasswordModal, setShowPasswordModal] = useState(false);
@@ -85,6 +86,19 @@ const UserDashboard = () => {
                 }
             } catch (err) {
                 console.error('Error fetching try at home requests:', err);
+            }
+
+            // Fetch Alerts
+            try {
+                const alertsRes = await fetch(`${API_URL}/api/alerts/my-alerts`, {
+                    headers: { 'Authorization': `Bearer ${user.token}` }
+                });
+                if (alertsRes.ok) {
+                    const alertsData = await alertsRes.json();
+                    setAlerts(alertsData);
+                }
+            } catch (err) {
+                console.error('Error fetching alerts:', err);
             }
 
             // Fetch addresses
@@ -187,6 +201,23 @@ const UserDashboard = () => {
         } catch (err) {
             console.error('Error deleting address:', err);
             error('Error deleting address');
+        }
+    };
+
+    const deleteAlert = async (alertId) => {
+        if (!window.confirm('Remove this alert?')) return;
+        try {
+            const response = await fetch(`${API_URL}/api/alerts/${alertId}`, {
+                method: 'DELETE',
+                headers: { 'Authorization': `Bearer ${user.token}` }
+            });
+            if (response.ok) {
+                setAlerts(alerts.filter(a => a._id !== alertId));
+                success('Alert removed');
+            }
+        } catch (err) {
+            console.error('Error removing alert:', err);
+            error('Error removing alert');
         }
     };
 
@@ -303,6 +334,12 @@ const UserDashboard = () => {
                         onClick={() => setActiveTab('tryathome')}
                     >
                         Try At Home
+                    </button>
+                    <button
+                        className={`tab-btn ${activeTab === 'alerts' ? 'active' : ''}`}
+                        onClick={() => setActiveTab('alerts')}
+                    >
+                        My Alerts
                     </button>
                     <button
                         className={`tab-btn ${activeTab === 'profile' ? 'active' : ''}`}

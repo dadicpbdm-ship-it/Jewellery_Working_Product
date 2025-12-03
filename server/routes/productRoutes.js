@@ -148,18 +148,68 @@ router.post('/', protect, admin, async (req, res) => {
 // Update product (Admin only)
 router.put('/:id', protect, admin, async (req, res) => {
     try {
-        const { name, price, category, description, image } = req.body;
+        const { name, price, category, description, imageUrl, countInStock } = req.body;
 
         const product = await Product.findById(req.params.id);
 
         if (product) {
+            const oldPrice = product.price;
+            const oldStock = product.countInStock;
+
             product.name = name || product.name;
-            product.price = price || product.price;
+            product.price = price !== undefined ? price : product.price;
             product.category = category || product.category;
             product.description = description || product.description;
-            product.image = image || product.image;
+            product.imageUrl = imageUrl || product.imageUrl;
+            product.countInStock = countInStock !== undefined ? countInStock : product.countInStock;
 
             const updatedProduct = await product.save();
+
+            // Check for Price Drop Alerts
+            if (product.price < oldPrice) {
+                const Alert = require('../models/Alert');
+                const whatsappService = require('../services/whatsappService');
+                const User = require('../models/User');
+
+                const alerts = await Alert.find({
+                    product: product._id,
+                    type: 'price',
+                    status: 'active',
+                    targetPrice: { $gte: product.price }
+                });
+
+                for (const alert of alerts) {
+                    const user = await User.findById(alert.user);
+                    if (user) {
+                        await whatsappService.sendPriceDropAlert(user, product, product.price);
+                        alert.status = 'triggered';
+                        await alert.save();
+                    }
+                }
+            }
+
+            // Check for Back in Stock Alerts
+            if (oldStock === 0 && product.countInStock > 0) {
+                const Alert = require('../models/Alert');
+                const whatsappService = require('../services/whatsappService');
+                const User = require('../models/User');
+
+                const alerts = await Alert.find({
+                    product: product._id,
+                    type: 'stock',
+                    status: 'active'
+                });
+
+                for (const alert of alerts) {
+                    const user = await User.findById(alert.user);
+                    if (user) {
+                        await whatsappService.sendBackInStockAlert(user, product);
+                        alert.status = 'triggered';
+                        await alert.save();
+                    }
+                }
+            }
+
             res.json(updatedProduct);
         } else {
             res.status(404).json({ message: 'Product not found' });

@@ -9,12 +9,16 @@ import Breadcrumbs from '../components/Breadcrumbs';
 import EMICalculator from '../components/EMICalculator';
 import ARTryOn from '../components/ARTryOn';
 import TryAtHomeModal from '../components/TryAtHomeModal';
+import AlertModal from '../components/AlertModal';
 import { API_URL } from '../config';
 import './ProductDetails.css';
+
+import { AuthContext } from '../context/AuthContext';
 
 const ProductDetails = () => {
     const { id } = useParams();
     const navigate = useNavigate();
+    const { user } = useContext(AuthContext);
     const { addToCart } = useCart();
     const { addToWishlist, removeFromWishlist, isInWishlist } = useContext(WishlistContext);
     const [product, setProduct] = useState(null);
@@ -27,6 +31,7 @@ const ProductDetails = () => {
     const [checkResult, setCheckResult] = useState(null);
     const [checkLoading, setCheckLoading] = useState(false);
     const [showTryAtHomeModal, setShowTryAtHomeModal] = useState(false);
+    const [alertModal, setAlertModal] = useState({ show: false, type: null });
 
     useEffect(() => {
         const fetchProduct = async () => {
@@ -345,6 +350,25 @@ const ProductDetails = () => {
                         >
                             🏠 Try at Home
                         </button>
+
+                        {product.countInStock > 0 ? (
+                            <button
+                                className="btn-secondary"
+                                onClick={() => setAlertModal({ show: true, type: 'price' })}
+                                style={{ display: 'flex', alignItems: 'center', gap: '5px' }}
+                            >
+                                🔔 Price Alert
+                            </button>
+                        ) : (
+                            <button
+                                className="btn-primary"
+                                onClick={() => setAlertModal({ show: true, type: 'stock' })}
+                                style={{ display: 'flex', alignItems: 'center', gap: '5px', background: '#ff9800' }}
+                            >
+                                🔔 Notify Me
+                            </button>
+                        )}
+
                         <ARTryOn productName={product.name} productImage={product.imageUrl} />
                         <button
                             className={`btn-wishlist ${isWishlisted ? 'active' : ''}`}
@@ -394,6 +418,16 @@ const ProductDetails = () => {
                 <TryAtHomeModal
                     product={product}
                     onClose={() => setShowTryAtHomeModal(false)}
+                />
+            )}
+
+            {/* Alert Modal */}
+            {alertModal.show && (
+                <AlertModal
+                    product={product}
+                    type={alertModal.type}
+                    user={user}
+                    onClose={() => setAlertModal({ show: false, type: null })}
                 />
             )}
         </div>
