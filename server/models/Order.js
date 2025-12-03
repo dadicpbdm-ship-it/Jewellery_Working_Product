@@ -120,6 +120,14 @@ const orderSchema = mongoose.Schema({
         adminComment: {
             type: String
         }
+    },
+    // Refund Details
+    isRefunded: {
+        type: Boolean,
+        default: false
+    },
+    refundedAt: {
+        type: Date
     }
 }, {
     timestamps: true

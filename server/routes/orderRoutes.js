@@ -289,6 +289,13 @@ router.put('/:id/return-exchange-status', protect, async (req, res) => {
                 order.returnExchangeRequest.adminComment = adminComment;
             }
 
+            // Auto-process refund if Return is Completed
+            if (status === 'Completed' && order.returnExchangeRequest.type === 'Return') {
+                order.isRefunded = true;
+                order.refundedAt = Date.now();
+                console.log(`[Refund] Processed refund for Order ${order._id}`);
+            }
+
             const updatedOrder = await order.save();
             res.json(updatedOrder);
         } else {
