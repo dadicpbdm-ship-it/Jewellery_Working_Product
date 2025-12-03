@@ -378,6 +378,76 @@ const DeliveryDashboard = () => {
                     )}
                 </div>
 
+                {/* Try At Home Section */}
+                {filterStatus === 'tryathome' && (
+                    <div className="orders-section">
+                        <h2>Try At Home Tasks</h2>
+                        {tryAtHomeTasks.length === 0 ? (
+                            <div className="empty-state">
+                                <p>No Try at Home tasks assigned.</p>
+                            </div>
+                        ) : (
+                            <div className="orders-grid">
+                                {tryAtHomeTasks.map(task => (
+                                    <div key={task._id} className="order-card">
+                                        <div className="order-header">
+                                            <div className="order-id-section">
+                                                <span className="order-id">#{task._id.substring(0, 8).toUpperCase()}</span>
+                                                <span className="order-customer">{task.user.name}</span>
+                                            </div>
+                                            <span className={`order-status ${task.status.toLowerCase()}`}>
+                                                {task.status}
+                                            </span>
+                                        </div>
+                                        <div className="order-body">
+                                            <div className="order-row">
+                                                <div className="order-info-group">
+                                                    <span className="info-icon">📍</span>
+                                                    <div className="info-content">
+                                                        <span className="info-label">Address</span>
+                                                        <span className="info-text">
+                                                            {task.address.address}, {task.address.city}, {task.address.postalCode}
+                                                        </span>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div className="order-row">
+                                                <div className="order-info-group">
+                                                    <span className="info-icon">📅</span>
+                                                    <div className="info-content">
+                                                        <span className="info-label">Scheduled For</span>
+                                                        <span className="info-text">
+                                                            {new Date(task.scheduledDate).toLocaleDateString()} ({task.scheduledTimeSlot})
+                                                        </span>
+                                                    </div>
+                                                </div>
+                                                <div className="order-info-group">
+                                                    <span className="info-icon">📞</span>
+                                                    <div className="info-content">
+                                                        <span className="info-label">Contact</span>
+                                                        <span className="info-text">{task.user.phone}</span>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        {task.status === 'Approved' && (
+                                            <div className="order-actions">
+                                                <button
+                                                    className="btn-action btn-primary"
+                                                    onClick={() => completeTryAtHome(task._id)}
+                                                >
+                                                    ✓ Mark Completed
+                                                </button>
+                                            </div>
+                                        )}
+                                    </div>
+                                ))}
+                            </div>
+                        )}
+                    </div>
+                )}
+
+                {/* Settings Section */}
                 {/* Settings Section */}
                 <div className="settings-section">
                     <h2>⚙️ Settings</h2>
