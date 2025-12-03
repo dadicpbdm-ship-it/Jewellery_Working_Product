@@ -513,16 +513,24 @@ const CustomDesigner = () => {
                             <small style={{ color: '#666' }}>{design.engravingText.length}/20 characters</small>
                             {design.engravingText && (
                                 <div style={{
-                                    marginTop: '10px',
-                                    padding: '10px',
-                                    background: '#f8f9fa',
-                                    borderRadius: '6px',
+                                    marginTop: '15px',
+                                    padding: '15px 20px',
+                                    background: 'linear-gradient(135deg, #FAF8F3 0%, #F5F2ED 100%)',
+                                    borderRadius: '8px',
                                     textAlign: 'center',
                                     fontStyle: 'italic',
-                                    color: '#333',
-                                    border: '1px dashed #ddd'
+                                    color: '#0F1419',
+                                    border: '2px solid #C9A961',
+                                    fontSize: '1.1rem',
+                                    fontWeight: '500',
+                                    boxShadow: '0 2px 8px rgba(201, 169, 97, 0.2)'
                                 }}>
-                                    Preview: "{design.engravingText}"
+                                    <div style={{ fontSize: '0.85rem', color: '#6B6B6B', marginBottom: '5px' }}>
+                                        ✨ Engraving Preview
+                                    </div>
+                                    <div style={{ fontFamily: 'serif', fontSize: '1.2rem', color: '#C9A961' }}>
+                                        "{design.engravingText}"
+                                    </div>
                                 </div>
                             )}
                         </div>
