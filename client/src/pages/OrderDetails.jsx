@@ -243,6 +243,10 @@ const OrderDetails = () => {
                     <button onClick={printInvoice} className="btn-print-invoice">
                         🖨️ Print Invoice
                     </button>
+                    {order.isDelivered && (!order.returnExchangeRequest || order.returnExchangeRequest.type === 'None') && (
+                        <button onClick={() => setShowReturnModal(true)} className="btn-return-exchange">
+                            🔄 Return / Exchange
+                        </button>
                     )}
                 </div>
             </div>
