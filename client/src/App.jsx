@@ -122,7 +122,7 @@ function App() {
                       }
                     />
                     <Route path="/verify-certificate/:certificateNumber?" element={<CertificateVerify />} />
-                    <Route path="/designer" element={<CustomDesigner />} />
+                    <Route path="/custom-designer" element={<CustomDesigner />} />
                     <Route
                       path="/admin/pincodes"
                       element={
