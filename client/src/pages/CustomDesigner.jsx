@@ -195,10 +195,10 @@ const CustomDesigner = () => {
         hero: {
             textAlign: 'center',
             marginBottom: '40px',
-            background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+            background: 'linear-gradient(135deg, #C9A961 0%, #E5D4A6 100%)',
             padding: '40px 20px',
             borderRadius: '16px',
-            color: 'white'
+            color: '#0F1419'
         },
         promoBar: {
             background: '#28a745',
@@ -372,9 +372,9 @@ const CustomDesigner = () => {
                             key={occasion}
                             style={{
                                 ...styles.occasionBtn,
-                                background: selectedOccasion === occasion ? '#667eea' : 'white',
-                                color: selectedOccasion === occasion ? 'white' : '#333',
-                                borderColor: selectedOccasion === occasion ? '#667eea' : '#ddd'
+                                background: selectedOccasion === occasion ? '#C9A961' : 'white',
+                                color: selectedOccasion === occasion ? '#0F1419' : '#333',
+                                borderColor: selectedOccasion === occasion ? '#C9A961' : '#ddd'
                             }}
                             onClick={() => setSelectedOccasion(occasion)}
                         >
@@ -394,7 +394,7 @@ const CustomDesigner = () => {
                                 onClick={() => applyTemplate(template)}
                                 onMouseEnter={(e) => {
                                     e.currentTarget.style.transform = 'translateY(-5px)';
-                                    e.currentTarget.style.borderColor = '#667eea';
+                                    e.currentTarget.style.borderColor = '#C9A961';
                                 }}
                                 onMouseLeave={(e) => {
                                     e.currentTarget.style.transform = 'translateY(0)';

@@ -155,7 +155,7 @@ const DesignGallery = ({ onSelectDesign }) => {
             fontSize: '0.85rem'
         },
         remixBtn: {
-            background: '#667eea',
+            background: '#C9A961',
             color: 'white',
             border: 'none',
             padding: '6px 16px',
@@ -181,7 +181,7 @@ const DesignGallery = ({ onSelectDesign }) => {
                         style={styles.card}
                         onMouseEnter={(e) => {
                             e.currentTarget.style.transform = 'translateY(-8px)';
-                            e.currentTarget.style.boxShadow = '0 8px 24px rgba(102, 126, 234, 0.3)';
+                            e.currentTarget.style.boxShadow = '0 8px 24px rgba(201, 169, 97, 0.3)';
                         }}
                         onMouseLeave={(e) => {
                             e.currentTarget.style.transform = 'translateY(0)';
@@ -206,11 +206,11 @@ const DesignGallery = ({ onSelectDesign }) => {
                                 style={styles.remixBtn}
                                 onClick={() => onSelectDesign(design)}
                                 onMouseEnter={(e) => {
-                                    e.currentTarget.style.background = '#5568d3';
-                                    e.currentTarget.style.transform = 'scale(1.05)';
+                                    e.currentTarget.style.background = '#A68B4D';
+                                    e.currentTarget.style.transform = 'scale(1.05)';;
                                 }}
                                 onMouseLeave={(e) => {
-                                    e.currentTarget.style.background = '#667eea';
+                                    e.currentTarget.style.background = '#C9A961';
                                     e.currentTarget.style.transform = 'scale(1)';
                                 }}
                             >

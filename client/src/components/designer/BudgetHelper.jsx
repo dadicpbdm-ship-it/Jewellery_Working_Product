@@ -48,10 +48,10 @@ const BudgetHelper = ({ onBudgetChange }) => {
 
     const styles = {
         container: {
-            background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+            background: 'linear-gradient(135deg, #C9A961 0%, #E5D4A6 100%)',
             padding: '25px',
             borderRadius: '12px',
-            color: 'white',
+            color: '#0F1419',
             marginBottom: '30px'
         },
         header: {
