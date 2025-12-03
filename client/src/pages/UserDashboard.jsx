@@ -464,6 +464,57 @@ const UserDashboard = () => {
                         </div>
                     )}
 
+                    {activeTab === 'alerts' && (
+                        <div className="alerts-section">
+                            <h2>My Alerts</h2>
+                            {alerts.length === 0 ? (
+                                <div className="empty-state">
+                                    <p>No active alerts.</p>
+                                    <Link to="/shop" className="btn-primary" style={{ marginTop: '10px' }}>Browse Products</Link>
+                                </div>
+                            ) : (
+                                <div className="orders-list">
+                                    {alerts.map(alert => (
+                                        <div key={alert._id} className="order-card">
+                                            <div className="order-header">
+                                                <div>
+                                                    <span className="order-id">{alert.type === 'price' ? '🔔 Price Alert' : '📦 Stock Alert'}</span>
+                                                    <span className="order-date">{new Date(alert.createdAt).toLocaleDateString()}</span>
+                                                </div>
+                                                <span className={`order-status ${alert.status === 'triggered' ? 'delivered' : 'pending'}`}>
+                                                    {alert.status}
+                                                </span>
+                                            </div>
+                                            <div className="order-items" style={{ padding: '15px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                                                <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                                                    <img src={alert.product.imageUrl} alt={alert.product.name} style={{ width: '50px', height: '50px', borderRadius: '4px', objectFit: 'cover' }} />
+                                                    <div>
+                                                        <Link to={`/product/${alert.product._id}`} style={{ fontWeight: '600', color: '#333', textDecoration: 'none' }}>
+                                                            {alert.product.name}
+                                                        </Link>
+                                                        {alert.type === 'price' && (
+                                                            <p style={{ margin: 0, fontSize: '0.9rem', color: '#666' }}>
+                                                                Target: ₹{alert.targetPrice.toLocaleString('en-IN')} (Current: ₹{alert.product.price.toLocaleString('en-IN')})
+                                                            </p>
+                                                        )}
+                                                    </div>
+                                                </div>
+                                                <button
+                                                    className="btn-delete"
+                                                    onClick={() => deleteAlert(alert._id)}
+                                                    title="Remove Alert"
+                                                    style={{ background: 'none', border: 'none', cursor: 'pointer', fontSize: '1.2rem' }}
+                                                >
+                                                    🗑️
+                                                </button>
+                                            </div>
+                                        </div>
+                                    ))}
+                                </div>
+                            )}
+                        </div>
+                    )}
+
                     {activeTab === 'profile' && (
                         <div className="profile-section">
                             <h2>Profile Settings</h2>
