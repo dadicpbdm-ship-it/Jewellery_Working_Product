@@ -9,11 +9,13 @@ const DeliveryDashboard = () => {
     const { user } = useContext(AuthContext);
     const { success, error } = useToast();
     const [orders, setOrders] = useState([]);
+    const [tryAtHomeTasks, setTryAtHomeTasks] = useState([]);
     const [filterStatus, setFilterStatus] = useState('all');
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {
         fetchOrders();
+        fetchTryAtHomeTasks();
     }, []);
 
     const fetchOrders = async () => {
@@ -40,6 +42,20 @@ const DeliveryDashboard = () => {
             error('Failed to fetch orders');
         } finally {
             setLoading(false);
+        }
+    };
+
+    const fetchTryAtHomeTasks = async () => {
+        try {
+            const response = await fetch(`${API_URL}/api/try-at-home`, {
+                headers: { 'Authorization': `Bearer ${user.token}` }
+            });
+            if (response.ok) {
+                const data = await response.json();
+                setTryAtHomeTasks(data);
+            }
+        } catch (err) {
+            console.error('Error fetching try at home tasks:', err);
         }
     };
 
@@ -130,6 +146,32 @@ const DeliveryDashboard = () => {
         }
     };
 
+    const completeTryAtHome = async (requestId) => {
+        if (!window.confirm('Confirm that the Try at Home session is completed?')) return;
+
+        try {
+            const response = await fetch(`${API_URL}/api/try-at-home/${requestId}/status`, {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${user.token}`
+                },
+                body: JSON.stringify({ status: 'Completed' })
+            });
+
+            if (response.ok) {
+                fetchTryAtHomeTasks();
+                success('Task marked as completed!');
+            } else {
+                const data = await response.json();
+                error(data.message || 'Failed to update task');
+            }
+        } catch (err) {
+            console.error('Error:', err);
+            error('Error updating task');
+        }
+    };
+
     // Calculate Stats
     const filteredOrders = orders.filter(order => {
         if (filterStatus === 'pending') return !order.isDelivered;
@@ -214,6 +256,12 @@ const DeliveryDashboard = () => {
                             onClick={() => setFilterStatus('returns')}
                         >
                             Returns ({pendingReturns})
+                        </button>
+                        <button
+                            className={`filter-btn ${filterStatus === 'tryathome' ? 'active' : ''}`}
+                            onClick={() => setFilterStatus('tryathome')}
+                        >
+                            Try At Home ({tryAtHomeTasks.filter(t => t.status === 'Approved').length})
                         </button>
                     </div>
                 </div>
