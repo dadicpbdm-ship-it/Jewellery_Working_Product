@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 import ProductCard from '../components/ProductCard';
 import { API_URL } from '../config';
 import './Home.css';
+import './BannerEnhancement.css';
 
 const Home = () => {
     const [products, setProducts] = useState([]);
@@ -103,7 +104,10 @@ const Home = () => {
                     <div className="banner-content">
                         <h2>Custom Designs Available</h2>
                         <p>Bring your dream jewellery to life with our bespoke services.</p>
-                        <button className="btn-primary">Contact Us</button>
+                        <div style={{ display: 'flex', gap: '1rem', justifyContent: 'center', flexWrap: 'wrap' }}>
+                            <Link to="/custom-designer" className="btn-primary">Design Your Own</Link>
+                            <Link to="/contact" className="btn-primary" style={{ background: '#2c3e50' }}>Contact Us</Link>
+                        </div>
                     </div>
                 </div>
             </section>
