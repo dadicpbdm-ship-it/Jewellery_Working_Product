@@ -2,6 +2,7 @@ import React, { useState, useEffect, useContext } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { AuthContext } from '../context/AuthContext';
 import { API_URL } from '../config';
+import OrderTracking from '../components/OrderTracking';
 import './OrderDetails.css';
 
 const OrderDetails = () => {
@@ -242,12 +243,14 @@ const OrderDetails = () => {
                     <button onClick={printInvoice} className="btn-print-invoice">
                         🖨️ Print Invoice
                     </button>
-                    {order.isDelivered && (!order.returnExchangeRequest || order.returnExchangeRequest.type === 'None') && (
-                        <button onClick={() => setShowReturnModal(true)} className="btn-return-exchange">
-                            🔄 Return / Exchange
-                        </button>
                     )}
                 </div>
+            </div>
+
+            {/* Order Tracking Section */}
+            <div className="order-tracking-section" style={{ background: 'white', padding: '20px', borderRadius: '12px', marginBottom: '20px', boxShadow: '0 2px 10px rgba(0,0,0,0.05)' }}>
+                <h3 style={{ marginBottom: '15px', color: '#2c3e50', borderBottom: '1px solid #eee', paddingBottom: '10px' }}>Order Status</h3>
+                <OrderTracking order={order} />
             </div>
 
             <div className="order-details-card">

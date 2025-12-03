@@ -4,6 +4,7 @@ import { AuthContext } from '../context/AuthContext';
 import { useToast } from '../context/ToastContext';
 import ChangePassword from '../components/ChangePassword';
 import { API_URL } from '../config';
+import OrderTracking from '../components/OrderTracking';
 import './UserDashboard.css';
 
 const UserDashboard = () => {
@@ -175,15 +176,7 @@ const UserDashboard = () => {
         }
     };
 
-    const getStatusTimeline = (order) => {
-        const steps = [
-            { label: 'Placed', completed: true, date: order.createdAt },
-            { label: 'Processing', completed: true, date: order.createdAt },
-            { label: 'Shipped', completed: order.isDelivered, date: order.deliveredAt },
-            { label: 'Delivered', completed: order.isDelivered, date: order.deliveredAt }
-        ];
-        return steps;
-    };
+
 
     if (loading) {
         return (
@@ -321,13 +314,8 @@ const UserDashboard = () => {
                                                     {order.isDelivered ? 'Delivered' : 'Processing'}
                                                 </span>
                                             </div>
-                                            <div className="order-timeline">
-                                                {getStatusTimeline(order).map((step, idx) => (
-                                                    <div key={idx} className={`timeline-step ${step.completed ? 'completed' : ''}`}>
-                                                        <div className="step-marker"></div>
-                                                        <div className="step-label">{step.label}</div>
-                                                    </div>
-                                                ))}
+                                            <div className="order-timeline-wrapper">
+                                                <OrderTracking order={order} />
                                             </div>
                                             <div className="order-footer">
                                                 <span className="order-total">₹{order.totalPrice.toLocaleString('en-IN')}</span>
