@@ -70,7 +70,14 @@ router.post('/', optionalProtect, async (req, res) => {
             // Add reward points info
             rewardPointsUsed: rewardPointsUsed || { points: 0, discountAmount: 0 },
             amountPaidByPoints: rewardPointsUsed ? rewardPointsUsed.discountAmount : 0,
-            amountPaidByPaymentMethod: rewardPointsUsed ? (totalPrice - rewardPointsUsed.discountAmount) : totalPrice
+            amountPaidByPaymentMethod: rewardPointsUsed ? (totalPrice - rewardPointsUsed.discountAmount) : totalPrice,
+            // Initialize tracking info
+            estimatedDeliveryDate: new Date(Date.now() + 5 * 24 * 60 * 60 * 1000), // Default 5 days
+            statusHistory: [{
+                status: 'pending',
+                timestamp: Date.now(),
+                note: 'Order placed successfully'
+            }]
         });
 
         // Assign delivery agent logic
@@ -156,7 +163,9 @@ router.get('/', protect, admin, async (req, res) => {
 
 // Get order by ID - MUST be after specific routes
 router.get('/:id', optionalProtect, async (req, res) => {
-    const order = await Order.findById(req.params.id).populate('user', 'name email');
+    const order = await Order.findById(req.params.id)
+        .populate('user', 'name email')
+        .populate('deliveryAgent', 'name email phone');
 
     if (order) {
         // Allow access if admin, delivery agent, the user who owns the order, OR if it's a guest order (no user)
@@ -180,6 +189,13 @@ router.put('/:id/deliver', protect, delivery, async (req, res) => {
 
             order.isDelivered = true;
             order.deliveredAt = Date.now();
+
+            // Add to status history
+            order.statusHistory.push({
+                status: 'delivered',
+                timestamp: Date.now(),
+                note: 'Package delivered to customer'
+            });
 
             if (req.body.codPaymentReceived !== undefined) {
                 order.codPaymentReceived = req.body.codPaymentReceived;
@@ -235,6 +251,46 @@ router.put('/:id/deliver', protect, delivery, async (req, res) => {
                 await whatsappService.sendOrderDelivered(updatedOrder, userForNotify);
             } catch (error) {
                 console.error('[Order] Error sending WhatsApp delivery notification:', error);
+            }
+
+            res.json(updatedOrder);
+        } else {
+            res.status(404).json({ message: 'Order not found' });
+        }
+    } catch (error) {
+        res.status(500).json({ message: `Error updating order status: ${error.message}` });
+    }
+});
+
+// Update order status (Admin only)
+router.put('/:id/status', protect, admin, async (req, res) => {
+    try {
+        const { status, note } = req.body;
+        const order = await Order.findById(req.params.id);
+
+        if (order) {
+            order.statusHistory.push({
+                status,
+                timestamp: Date.now(),
+                note: note || `Order status updated to ${status}`
+            });
+
+            // Update flags based on status
+            if (status === 'delivered') {
+                order.isDelivered = true;
+                order.deliveredAt = Date.now();
+            }
+
+            const updatedOrder = await order.save();
+
+            // Send WhatsApp notification for status change
+            try {
+                const whatsappService = require('../services/whatsappService');
+                const User = require('../models/User');
+                const userForNotify = updatedOrder.user ? await User.findById(updatedOrder.user) : { name: updatedOrder.guestInfo.name, phone: updatedOrder.guestInfo.phone };
+                // We might need a generic status notification method in whatsappService
+            } catch (error) {
+                console.error('[Order] Error sending WhatsApp status notification:', error);
             }
 
             res.json(updatedOrder);

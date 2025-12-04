@@ -2,7 +2,8 @@ import React, { useState, useEffect, useContext } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { AuthContext } from '../context/AuthContext';
 import { API_URL } from '../config';
-import OrderTracking from '../components/OrderTracking';
+import OrderTimeline from '../components/OrderTimeline';
+import DeliveryCountdown from '../components/DeliveryCountdown';
 import './OrderDetails.css';
 
 const OrderDetails = () => {
@@ -252,9 +253,62 @@ const OrderDetails = () => {
             </div>
 
             {/* Order Tracking Section */}
-            <div className="order-tracking-section" style={{ background: 'white', padding: '20px', borderRadius: '12px', marginBottom: '20px', boxShadow: '0 2px 10px rgba(0,0,0,0.05)' }}>
-                <h3 style={{ marginBottom: '15px', color: '#2c3e50', borderBottom: '1px solid #eee', paddingBottom: '10px' }}>Order Status</h3>
-                <OrderTracking order={order} />
+            {/* Enhanced Order Tracking Section */}
+            <div className="enhanced-tracking-section">
+                {!order.isDelivered && order.estimatedDeliveryDate && (
+                    <DeliveryCountdown estimatedDate={order.estimatedDeliveryDate} />
+                )}
+
+                <OrderTimeline
+                    status={order.isDelivered ? 'delivered' : (order.statusHistory?.slice(-1)[0]?.status || 'pending')}
+                    statusHistory={order.statusHistory}
+                    createdAt={order.createdAt}
+                    deliveredAt={order.deliveredAt}
+                />
+
+                {/* Delivery Agent Information */}
+                {order.deliveryAgent && !order.isDelivered && (
+                    <div className="delivery-agent-card" style={{
+                        background: 'white',
+                        padding: '1.5rem',
+                        borderRadius: '12px',
+                        marginTop: '2rem',
+                        display: 'flex',
+                        alignItems: 'center',
+                        gap: '1.5rem',
+                        boxShadow: '0 4px 6px rgba(0,0,0,0.05)',
+                        border: '1px solid #e5e7eb'
+                    }}>
+                        <div className="agent-avatar" style={{
+                            width: '60px',
+                            height: '60px',
+                            borderRadius: '50%',
+                            background: '#f3f4f6',
+                            display: 'flex',
+                            alignItems: 'center',
+                            justifyContent: 'center',
+                            fontSize: '1.5rem'
+                        }}>
+                            👤
+                        </div>
+                        <div className="agent-info">
+                            <h4 style={{ margin: '0 0 0.25rem 0', color: '#1f2937' }}>{order.deliveryAgent.name}</h4>
+                            <p style={{ margin: 0, color: '#6b7280', fontSize: '0.9rem' }}>Your Delivery Partner</p>
+                            <div style={{ marginTop: '0.5rem' }}>
+                                <a href={`tel:${order.deliveryAgent.phone}`} style={{
+                                    display: 'inline-flex',
+                                    alignItems: 'center',
+                                    gap: '0.5rem',
+                                    color: '#3b82f6',
+                                    textDecoration: 'none',
+                                    fontWeight: '500'
+                                }}>
+                                    📞 Call Partner
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                )}
             </div>
 
             <div className="order-details-card">

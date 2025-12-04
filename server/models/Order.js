@@ -160,6 +160,24 @@ const orderSchema = mongoose.Schema({
     amountPaidByPaymentMethod: {
         type: Number,
         default: 0
+    },
+    // Enhanced Order Tracking
+    estimatedDeliveryDate: {
+        type: Date
+    },
+    statusHistory: [{
+        status: {
+            type: String,
+            enum: ['pending', 'confirmed', 'processing', 'shipped', 'delivered', 'cancelled']
+        },
+        timestamp: {
+            type: Date,
+            default: Date.now
+        },
+        note: String
+    }],
+    trackingNumber: {
+        type: String
     }
 }, {
     timestamps: true
