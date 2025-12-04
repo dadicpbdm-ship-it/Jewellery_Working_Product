@@ -107,6 +107,33 @@ const productSchema = new mongoose.Schema({
         type: mongoose.Schema.Types.ObjectId,
         ref: 'Product'
     }],
+    // Customization options
+    customizationOptions: {
+        allowEngraving: {
+            type: Boolean,
+            default: false
+        },
+        maxEngravingChars: {
+            type: Number,
+            default: 20
+        },
+        engravingPrice: {
+            type: Number,
+            default: 500
+        },
+        availableSizes: {
+            type: [String],
+            default: []
+        },
+        materialVariants: [{
+            material: String,
+            priceAdjustment: Number, // Can be positive or negative
+            available: {
+                type: Boolean,
+                default: true
+            }
+        }]
+    },
     // Blockchain Certification
     certification: {
         certificateNumber: {

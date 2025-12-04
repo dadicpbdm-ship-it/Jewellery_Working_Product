@@ -11,6 +11,7 @@ import ARTryOn from '../components/ARTryOn';
 import TryAtHomeModal from '../components/TryAtHomeModal';
 import AlertModal from '../components/AlertModal';
 import ProductRecommendations from '../components/ProductRecommendations';
+import CustomizationModal from '../components/CustomizationModal';
 import { API_URL } from '../config';
 import './ProductDetails.css';
 
@@ -31,6 +32,8 @@ const ProductDetails = () => {
     const [checkLoading, setCheckLoading] = useState(false);
     const [showTryAtHomeModal, setShowTryAtHomeModal] = useState(false);
     const [alertModal, setAlertModal] = useState({ show: false, type: null });
+    const [showCustomizationModal, setShowCustomizationModal] = useState(false);
+    const [customizationData, setCustomizationData] = useState(null);
 
     useEffect(() => {
         const fetchProduct = async () => {
@@ -327,8 +330,59 @@ const ProductDetails = () => {
                         </button>
                     </div>
 
+                    {/* Customization Summary */}
+                    {customizationData && (
+                        <div className="customization-summary" style={{
+                            background: '#f0f8ff',
+                            padding: '15px',
+                            borderRadius: '8px',
+                            marginBottom: '15px',
+                            border: '1px solid #b3d9ff'
+                        }}>
+                            <h4 style={{ margin: '0 0 10px 0', fontSize: '1rem' }}>✨ Your Customization</h4>
+                            {customizationData.engraving?.text && (
+                                <p style={{ margin: '5px 0' }}>
+                                    <strong>Engraving:</strong> "{customizationData.engraving.text}" ({customizationData.engraving.font})
+                                </p>
+                            )}
+                            {customizationData.selectedSize && (
+                                <p style={{ margin: '5px 0' }}>
+                                    <strong>Size:</strong> {customizationData.selectedSize}
+                                </p>
+                            )}
+                            {customizationData.selectedMaterial !== product.material && (
+                                <p style={{ margin: '5px 0' }}>
+                                    <strong>Material:</strong> {customizationData.selectedMaterial}
+                                </p>
+                            )}
+                            <p style={{ margin: '10px 0 0 0', fontWeight: 'bold', color: '#0066cc' }}>
+                                Total: ₹{customizationData.totalPrice.toLocaleString('en-IN')}
+                            </p>
+                        </div>
+                    )}
+
                     <div className="details-actions">
-                        <button className="btn-primary" onClick={handleAddToCart}>Add to Cart</button>
+                        {/* Customize Button */}
+                        {product.customizationOptions && (
+                            product.customizationOptions.allowEngraving ||
+                            product.customizationOptions.availableSizes?.length > 0 ||
+                            product.customizationOptions.materialVariants?.length > 0
+                        ) && (
+                                <button
+                                    className="btn-secondary"
+                                    onClick={() => setShowCustomizationModal(true)}
+                                    style={{ display: 'flex', alignItems: 'center', gap: '5px' }}
+                                >
+                                    ✨ Customize
+                                </button>
+                            )}
+                        <button className="btn-primary" onClick={() => {
+                            if (customizationData) {
+                                addToCart({ ...product, customization: customizationData });
+                            } else {
+                                addToCart(product);
+                            }
+                        }}>Add to Cart</button>
                         <button className="btn-secondary" onClick={handleBuyNow}>Buy Now</button>
                         <button
                             className="btn-try-at-home"
@@ -441,6 +495,15 @@ const ProductDetails = () => {
                     type={alertModal.type}
                     user={user}
                     onClose={() => setAlertModal({ show: false, type: null })}
+                />
+            )}
+
+            {/* Customization Modal */}
+            {showCustomizationModal && (
+                <CustomizationModal
+                    product={product}
+                    onClose={() => setShowCustomizationModal(false)}
+                    onCustomize={(data) => setCustomizationData(data)}
                 />
             )}
         </div>

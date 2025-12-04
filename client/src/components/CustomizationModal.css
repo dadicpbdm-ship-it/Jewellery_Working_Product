@@ -1,0 +1,137 @@
+.customization-modal {
+    max-width: 600px;
+    max-height: 90vh;
+    overflow-y: auto;
+}
+
+.product-preview {
+    display: flex;
+    gap: 15px;
+    align-items: center;
+    padding: 15px;
+    background: #f8f9fa;
+    border-radius: 8px;
+    margin-bottom: 20px;
+}
+
+.product-preview img {
+    width: 80px;
+    height: 80px;
+    object-fit: cover;
+    border-radius: 8px;
+}
+
+.product-preview h4 {
+    margin: 0 0 5px 0;
+    font-size: 1.1rem;
+}
+
+.base-price {
+    margin: 0;
+    color: #666;
+    font-size: 0.9rem;
+}
+
+.customization-section {
+    margin-bottom: 25px;
+    padding-bottom: 20px;
+    border-bottom: 1px solid #eee;
+}
+
+.customization-section h3 {
+    margin: 0 0 15px 0;
+    font-size: 1.1rem;
+    color: #333;
+}
+
+.engraving-preview {
+    padding: 20px;
+    background: #f0f0f0;
+    border-radius: 8px;
+    text-align: center;
+    font-size: 1.5rem;
+    margin: 15px 0;
+    min-height: 60px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.customization-cost {
+    color: #28a745;
+    font-weight: 600;
+    margin: 5px 0 0 0;
+}
+
+.size-options,
+.material-options {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+
+.size-btn,
+.material-btn {
+    padding: 10px 20px;
+    border: 2px solid #ddd;
+    background: white;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.3s;
+}
+
+.size-btn:hover,
+.material-btn:hover {
+    border-color: #333;
+}
+
+.size-btn.active,
+.material-btn.active {
+    border-color: #333;
+    background: #333;
+    color: white;
+}
+
+.material-btn {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 5px;
+}
+
+.price-diff {
+    font-size: 0.85rem;
+    color: #666;
+}
+
+.material-btn.active .price-diff {
+    color: #ddd;
+}
+
+.price-summary {
+    background: #f8f9fa;
+    padding: 15px;
+    border-radius: 8px;
+    margin: 20px 0;
+}
+
+.summary-row {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 10px;
+    font-size: 0.95rem;
+}
+
+.summary-row.total {
+    font-size: 1.2rem;
+    font-weight: 700;
+    padding-top: 10px;
+    border-top: 2px solid #ddd;
+    margin-top: 10px;
+}
+
+.btn-full {
+    width: 100%;
+    padding: 12px;
+    font-size: 1.1rem;
+}

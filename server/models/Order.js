@@ -21,6 +21,19 @@ const orderSchema = mongoose.Schema({
                 type: mongoose.Schema.Types.ObjectId,
                 required: true,
                 ref: 'Product'
+            },
+            // Customization details
+            customization: {
+                engraving: {
+                    text: String,
+                    font: String
+                },
+                selectedSize: String,
+                selectedMaterial: String,
+                customizationCost: {
+                    type: Number,
+                    default: 0
+                }
             }
         }
     ],
