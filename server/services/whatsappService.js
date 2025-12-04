@@ -130,9 +130,39 @@ Check details: ${process.env.CLIENT_URL || 'http://localhost:5173'}/order/${orde
     return await sendWhatsAppMessage(phone, message);
 };
 
+/**
+ * Send Price Drop Alert
+ */
+const sendPriceDropAlert = async (user, product, newPrice) => {
+    const message = `🔔 *Price Drop Alert!*
+    
+Hi ${user.name},
+Good news! The price for *${product.name}* has dropped to ₹${newPrice.toLocaleString('en-IN')}.
+
+Grab it now: ${process.env.CLIENT_URL || 'http://localhost:5173'}/product/${product._id}`;
+
+    return await sendWhatsAppMessage(user.phone, message);
+};
+
+/**
+ * Send Back in Stock Alert
+ */
+const sendBackInStockAlert = async (user, product) => {
+    const message = `📦 *Back in Stock!*
+    
+Hi ${user.name},
+The item you were waiting for, *${product.name}*, is back in stock!
+
+Buy now: ${process.env.CLIENT_URL || 'http://localhost:5173'}/product/${product._id}`;
+
+    return await sendWhatsAppMessage(user.phone, message);
+};
+
 module.exports = {
     sendOrderConfirmation,
     sendOrderShipped,
     sendOrderDelivered,
-    sendReturnRequestUpdate
+    sendReturnRequestUpdate,
+    sendPriceDropAlert,
+    sendBackInStockAlert
 };
