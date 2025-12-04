@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useContext } from 'react';
 import { AuthContext } from '../context/AuthContext';
 import ChangePassword from '../components/ChangePassword';
+import AnalyticsChart from '../components/AnalyticsChart';
 import { API_URL } from '../config';
 import './AdminDashboard.css';
 
@@ -14,6 +15,8 @@ const AdminDashboard = () => {
     const [analytics, setAnalytics] = useState(null);
     const [topProducts, setTopProducts] = useState([]);
     const [stats, setStats] = useState(null);
+    const [userGrowth, setUserGrowth] = useState(null);
+    const [inventoryHealth, setInventoryHealth] = useState(null);
 
     const [activeTab, setActiveTab] = useState('overview'); // Default to overview
     const [filterStatus, setFilterStatus] = useState('all');
@@ -41,15 +44,19 @@ const AdminDashboard = () => {
         try {
             const headers = { 'Authorization': `Bearer ${user.token}` };
 
-            const [statsRes, analyticsRes, topRes] = await Promise.all([
+            const [statsRes, analyticsRes, topRes, userGrowthRes, inventoryRes] = await Promise.all([
                 fetch(`${API_URL}/api/admin/stats`, { headers }),
                 fetch(`${API_URL}/api/admin/analytics?period=30`, { headers }),
-                fetch(`${API_URL}/api/admin/top-products?limit=5`, { headers })
+                fetch(`${API_URL}/api/admin/top-products?limit=5`, { headers }),
+                fetch(`${API_URL}/api/admin/user-growth?period=30`, { headers }),
+                fetch(`${API_URL}/api/admin/inventory-health`, { headers })
             ]);
 
             if (statsRes.ok) setStats(await statsRes.json());
             if (analyticsRes.ok) setAnalytics(await analyticsRes.json());
             if (topRes.ok) setTopProducts(await topRes.json());
+            if (userGrowthRes.ok) setUserGrowth(await userGrowthRes.json());
+            if (inventoryRes.ok) setInventoryHealth(await inventoryRes.json());
 
         } catch (error) {
             console.error('Error fetching analytics:', error);
@@ -270,6 +277,12 @@ const AdminDashboard = () => {
                         Overview
                     </button>
                     <button
+                        className={`tab-btn ${activeTab === 'analytics' ? 'active' : ''}`}
+                        onClick={() => setActiveTab('analytics')}
+                    >
+                        Analytics
+                    </button>
+                    <button
                         className={`tab-btn ${activeTab === 'products' ? 'active' : ''}`}
                         onClick={() => setActiveTab('products')}
                     >
@@ -429,6 +442,132 @@ const AdminDashboard = () => {
                                     <p className="empty-message">No recent orders</p>
                                 )}
                             </div>
+                        </div>
+                    </div>
+                )}
+
+                {/* Analytics Tab */}
+                {activeTab === 'analytics' && analytics && userGrowth && inventoryHealth && (
+                    <div className="analytics-tab">
+                        <h2>📊 Business Analytics</h2>
+
+                        {/* Sales Revenue Chart */}
+                        {analytics.revenueByDay && (
+                            <AnalyticsChart
+                                type="line"
+                                data={Object.entries(analytics.revenueByDay).map(([date, revenue]) => ({
+                                    name: new Date(date).toLocaleDateString('en-US', { month: 'short', day: 'numeric' }),
+                                    revenue: revenue
+                                }))}
+                                title="Revenue Trend (Last 30 Days)"
+                                dataKey="revenue"
+                                xKey="name"
+                            />
+                        )}
+
+                        {/* User Growth Chart */}
+                        {userGrowth.usersByDay && (
+                            <AnalyticsChart
+                                type="bar"
+                                data={Object.entries(userGrowth.usersByDay).map(([date, count]) => ({
+                                    name: new Date(date).toLocaleDateString('en-US', { month: 'short', day: 'numeric' }),
+                                    users: count
+                                }))}
+                                title="New User Registrations (Last 30 Days)"
+                                dataKey="users"
+                                xKey="name"
+                            />
+                        )}
+
+                        {/* Top Products Chart */}
+                        {topProducts && topProducts.length > 0 && (
+                            <AnalyticsChart
+                                type="bar"
+                                data={topProducts.map(item => ({
+                                    name: item.product.name.substring(0, 20) + '...',
+                                    quantity: item.quantity
+                                }))}
+                                title="Top 5 Selling Products"
+                                dataKey="quantity"
+                                xKey="name"
+                            />
+                        )}
+
+                        {/* Inventory Health Section */}
+                        <div className="inventory-health-section" style={{ marginTop: '30px' }}>
+                            <h3>📦 Inventory Health</h3>
+                            <div className="stats-grid" style={{ marginBottom: '20px' }}>
+                                <div className="stat-card">
+                                    <div className="stat-content">
+                                        <h4>Total Products</h4>
+                                        <p className="stat-value">{inventoryHealth.summary.total}</p>
+                                    </div>
+                                </div>
+                                <div className="stat-card" style={{ background: '#d4edda' }}>
+                                    <div className="stat-content">
+                                        <h4>Healthy Stock</h4>
+                                        <p className="stat-value">{inventoryHealth.summary.healthy}</p>
+                                    </div>
+                                </div>
+                                <div className="stat-card" style={{ background: '#fff3cd' }}>
+                                    <div className="stat-content">
+                                        <h4>Low Stock</h4>
+                                        <p className="stat-value">{inventoryHealth.summary.lowStock}</p>
+                                    </div>
+                                </div>
+                                <div className="stat-card" style={{ background: '#f8d7da' }}>
+                                    <div className="stat-content">
+                                        <h4>Out of Stock</h4>
+                                        <p className="stat-value">{inventoryHealth.summary.outOfStock}</p>
+                                    </div>
+                                </div>
+                            </div>
+
+                            {/* Low Stock Alerts */}
+                            {inventoryHealth.lowStockProducts.length > 0 && (
+                                <div className="alert-section">
+                                    <h4 style={{ color: '#856404' }}>⚠️ Low Stock Alerts</h4>
+                                    <div className="products-list">
+                                        {inventoryHealth.lowStockProducts.map(product => (
+                                            <div key={product._id} className="product-alert-item" style={{
+                                                padding: '10px',
+                                                background: '#fff3cd',
+                                                borderRadius: '8px',
+                                                marginBottom: '10px',
+                                                display: 'flex',
+                                                justifyContent: 'space-between',
+                                                alignItems: 'center'
+                                            }}>
+                                                <span>{product.name}</span>
+                                                <span style={{ fontWeight: 'bold' }}>Stock: {product.countInStock}</span>
+                                            </div>
+                                        ))}
+                                    </div>
+                                </div>
+                            )}
+
+                            {/* Out of Stock Alerts */}
+                            {inventoryHealth.outOfStockProducts.length > 0 && (
+                                <div className="alert-section" style={{ marginTop: '20px' }}>
+                                    <h4 style={{ color: '#721c24' }}>🚫 Out of Stock</h4>
+                                    <div className="products-list">
+                                        {inventoryHealth.outOfStockProducts.map(product => (
+                                            <div key={product._id} className="product-alert-item" style={{
+                                                padding: '10px',
+                                                background: '#f8d7da',
+                                                borderRadius: '8px',
+                                                marginBottom: '10px',
+                                                display: 'flex',
+                                                justifyContent: 'space-between',
+                                                alignItems: 'center'
+                                            }}>
+                                                <span>{product.name}</span>
+                                                <span style={{ fontWeight: 'bold', color: '#721c24' }}>OUT OF STOCK</span>
+                                            </div>
+                                        ))}
+                                    </div>
+                                </div>
+                            )}
                         </div>
                     </div>
                 )}

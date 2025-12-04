@@ -125,4 +125,69 @@ router.get('/stats', protect, admin, async (req, res) => {
     }
 });
 
+// @route   GET /api/admin/user-growth
+// @desc    Get user registration growth data
+// @access  Private/Admin
+router.get('/user-growth', protect, admin, async (req, res) => {
+    try {
+        const { period = '30' } = req.query;
+        const daysAgo = new Date();
+        daysAgo.setDate(daysAgo.getDate() - parseInt(period));
+
+        const users = await User.find({
+            createdAt: { $gte: daysAgo }
+        });
+
+        // Group by day
+        const usersByDay = {};
+        users.forEach(user => {
+            const date = user.createdAt.toISOString().split('T')[0];
+            usersByDay[date] = (usersByDay[date] || 0) + 1;
+        });
+
+        res.json({
+            totalNewUsers: users.length,
+            usersByDay
+        });
+    } catch (error) {
+        console.error('User growth error:', error);
+        res.status(500).json({ message: 'Server error fetching user growth' });
+    }
+});
+
+// @route   GET /api/admin/inventory-health
+// @desc    Get inventory health data
+// @access  Private/Admin
+router.get('/inventory-health', protect, admin, async (req, res) => {
+    try {
+        const lowStockThreshold = 5;
+        const outOfStockThreshold = 0;
+
+        const lowStockProducts = await Product.find({
+            countInStock: { $gt: outOfStockThreshold, $lte: lowStockThreshold }
+        }).select('name countInStock price');
+
+        const outOfStockProducts = await Product.find({
+            countInStock: outOfStockThreshold
+        }).select('name price');
+
+        const totalProducts = await Product.countDocuments();
+        const healthyStock = totalProducts - lowStockProducts.length - outOfStockProducts.length;
+
+        res.json({
+            lowStockProducts,
+            outOfStockProducts,
+            summary: {
+                total: totalProducts,
+                healthy: healthyStock,
+                lowStock: lowStockProducts.length,
+                outOfStock: outOfStockProducts.length
+            }
+        });
+    } catch (error) {
+        console.error('Inventory health error:', error);
+        res.status(500).json({ message: 'Server error fetching inventory health' });
+    }
+});
+
 module.exports = router;
