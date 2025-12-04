@@ -139,7 +139,7 @@ const Navbar = () => {
                     <ul className="nav-links">
                         <li><Link to="/" onClick={closeMenu}>Home</Link></li>
                         <li><Link to="/shop" onClick={closeMenu}>Shop</Link></li>
-                        <li><Link to="/designer" onClick={closeMenu} style={{ color: '#d4af37', fontWeight: 'bold' }}>Design Your Own</Link></li>
+                        <li><Link to="/custom-designer" onClick={closeMenu} style={{ color: '#d4af37', fontWeight: 'bold' }}>Design Your Own</Link></li>
                         <li><Link to="/contact" onClick={closeMenu}>Contact</Link></li>
                         <li>
                             <Link to="/wishlist" className="nav-link" onClick={closeMenu}>
