@@ -148,20 +148,20 @@ router.post('/', protect, admin, async (req, res) => {
 // Update product (Admin only)
 router.put('/:id', protect, admin, async (req, res) => {
     try {
-        const { name, price, category, description, imageUrl, countInStock } = req.body;
+        const { name, price, category, description, imageUrl, stock } = req.body;
 
         const product = await Product.findById(req.params.id);
 
         if (product) {
             const oldPrice = product.price;
-            const oldStock = product.countInStock;
+            const oldStock = product.stock;
 
             product.name = name || product.name;
             product.price = price !== undefined ? price : product.price;
             product.category = category || product.category;
             product.description = description || product.description;
             product.imageUrl = imageUrl || product.imageUrl;
-            product.countInStock = countInStock !== undefined ? countInStock : product.countInStock;
+            product.stock = stock !== undefined ? stock : product.stock;
 
             const updatedProduct = await product.save();
 
@@ -189,7 +189,7 @@ router.put('/:id', protect, admin, async (req, res) => {
             }
 
             // Check for Back in Stock Alerts
-            if (oldStock === 0 && product.countInStock > 0) {
+            if (oldStock === 0 && product.stock > 0) {
                 const Alert = require('../models/Alert');
                 const whatsappService = require('../services/whatsappService');
                 const User = require('../models/User');

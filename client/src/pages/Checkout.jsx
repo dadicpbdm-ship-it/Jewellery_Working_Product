@@ -31,6 +31,12 @@ const Checkout = () => {
     const [paymentMethod, setPaymentMethod] = useState('Cash on Delivery');
     const [bnplProvider, setBnplProvider] = useState(null);
 
+    // Reward Points State
+    const [loyaltyPoints, setLoyaltyPoints] = useState(0);
+    const [pointsToUse, setPointsToUse] = useState(0);
+    const [pointsDiscount, setPointsDiscount] = useState(0);
+    const [loadingPoints, setLoadingPoints] = useState(false);
+
     const bnplProviders = [
         { name: 'Simpl', logo: 'simpl-logo', installments: 3 },
         { name: 'LazyPay', logo: 'lazypay-logo', installments: 3 },
@@ -40,6 +46,7 @@ const Checkout = () => {
     useEffect(() => {
         if (user) {
             fetchSavedAddresses();
+            fetchLoyaltyPoints();
         } else {
             setLoadingAddresses(false);
         }
@@ -64,6 +71,22 @@ const Checkout = () => {
             console.error('Error fetching addresses:', error);
         } finally {
             setLoadingAddresses(false);
+        }
+    };
+
+    const fetchLoyaltyPoints = async () => {
+        try {
+            const response = await fetch(`${API_URL}/api/loyalty/dashboard`, {
+                headers: {
+                    'Authorization': `Bearer ${user.token}`
+                }
+            });
+            if (response.ok) {
+                const data = await response.json();
+                setLoyaltyPoints(data.points || 0);
+            }
+        } catch (error) {
+            console.error('Error fetching loyalty points:', error);
         }
     };
 
@@ -118,6 +141,23 @@ const Checkout = () => {
             console.error('Error validating pincode:', error);
             return false; // Fail safe
         }
+    };
+
+    const handlePointsChange = (points) => {
+        const numPoints = parseInt(points) || 0;
+
+        // Ensure points don't exceed available balance
+        const validPoints = Math.min(numPoints, loyaltyPoints);
+
+        // Calculate discount (100 points = ₹10)
+        const discount = Math.floor(validPoints / 100) * 10;
+
+        setPointsToUse(validPoints);
+        setPointsDiscount(discount);
+    };
+
+    const getFinalAmount = () => {
+        return Math.max(0, getCartTotal() - pointsDiscount);
     };
 
     const handlePlaceOrder = async (e) => {
@@ -212,7 +252,10 @@ const Checkout = () => {
             const orderResponse = await fetch(`${API_URL}/api/payment/create-order`, {
                 method: 'POST',
                 headers: headers,
-                body: JSON.stringify({ amount: totalAmount })
+                body: JSON.stringify({
+                    amount: totalAmount,
+                    pointsDiscount: pointsDiscount
+                })
             });
 
             console.log('Create order response status:', orderResponse.status);
@@ -226,6 +269,17 @@ const Checkout = () => {
                     return;
                 }
                 throw new Error(orderData.message || 'Error creating order');
+            }
+
+            // If fully paid by points, skip Razorpay and place order directly
+            if (orderData.fullyPaidByPoints) {
+                console.log('Order fully paid by reward points');
+                await placeOrder(true, {
+                    id: 'points_payment',
+                    status: 'completed',
+                    method: 'reward_points'
+                });
+                return;
             }
 
             // 2. Open Razorpay Modal
@@ -316,6 +370,10 @@ const Checkout = () => {
                 shippingPrice: 0,
                 totalPrice: getCartTotal(),
                 guestInfo: user ? undefined : guestInfo,
+                rewardPointsUsed: pointsToUse > 0 ? {
+                    points: pointsToUse,
+                    discountAmount: pointsDiscount
+                } : undefined,
                 isPaid,
                 paidAt: isPaid ? new Date() : null,
                 paymentResult: isPaid ? {
@@ -492,6 +550,62 @@ const Checkout = () => {
                             />
                         </div>
 
+                        {/* Reward Points Section */}
+                        {user && loyaltyPoints >= 100 && (
+                            <div className="reward-points-section">
+                                <h3>💎 Use Reward Points</h3>
+                                <div className="points-info">
+                                    <p>Available Points: <strong>{loyaltyPoints.toLocaleString()}</strong></p>
+                                    <p className="points-value">= ₹{Math.floor(loyaltyPoints / 100) * 10} discount value</p>
+                                </div>
+
+                                <div className="points-selector">
+                                    <label>Points to Use (min 100):</label>
+                                    <div className="points-input-group">
+                                        <input
+                                            type="range"
+                                            min="0"
+                                            max={loyaltyPoints}
+                                            step="100"
+                                            value={pointsToUse}
+                                            onChange={(e) => handlePointsChange(e.target.value)}
+                                            className="points-slider"
+                                        />
+                                        <input
+                                            type="number"
+                                            min="0"
+                                            max={loyaltyPoints}
+                                            step="100"
+                                            value={pointsToUse}
+                                            onChange={(e) => handlePointsChange(e.target.value)}
+                                            className="points-number-input"
+                                        />
+                                    </div>
+                                </div>
+
+                                {pointsToUse >= 100 && (
+                                    <div className="points-discount-preview">
+                                        <div className="discount-row">
+                                            <span>Points Applied:</span>
+                                            <span className="highlight">{pointsToUse} points</span>
+                                        </div>
+                                        <div className="discount-row">
+                                            <span>Discount:</span>
+                                            <span className="highlight">-₹{pointsDiscount}</span>
+                                        </div>
+                                        <div className="discount-row total">
+                                            <span>Amount to Pay:</span>
+                                            <span className="highlight">₹{getFinalAmount().toLocaleString('en-IN')}</span>
+                                        </div>
+                                    </div>
+                                )}
+
+                                {pointsToUse > 0 && pointsToUse < 100 && (
+                                    <p className="points-warning">⚠️ Minimum 100 points required for redemption</p>
+                                )}
+                            </div>
+                        )}
+
                         <h3>Payment Method</h3>
                         <div className="payment-options">
                             <label className={`payment-option ${paymentMethod === 'Cash on Delivery' ? 'selected' : ''}`}>
@@ -590,9 +704,15 @@ const Checkout = () => {
                                 <span>Shipping</span>
                                 <span>Free</span>
                             </div>
+                            {pointsDiscount > 0 && (
+                                <div className="summary-row discount">
+                                    <span>Reward Points Discount</span>
+                                    <span className="discount-amount">-₹{pointsDiscount.toLocaleString('en-IN')}</span>
+                                </div>
+                            )}
                             <div className="summary-row total">
                                 <span>Total</span>
-                                <span>₹{getCartTotal().toLocaleString('en-IN')}</span>
+                                <span>₹{getFinalAmount().toLocaleString('en-IN')}</span>
                             </div>
                         </div>
                     </div>

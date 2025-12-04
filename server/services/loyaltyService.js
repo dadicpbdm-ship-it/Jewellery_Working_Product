@@ -244,6 +244,68 @@ const awardBirthdayBonus = async (userId) => {
     }
 };
 
+/**
+ * Calculate discount amount for given points (without deducting)
+ * Used during checkout to show potential discount
+ */
+const calculatePointsDiscount = (points) => {
+    if (points < 100) {
+        throw new Error('Minimum 100 points required for redemption');
+    }
+
+    // 100 points = ₹10 discount
+    const discount = (points / 100) * RUPEES_PER_100_POINTS;
+    return Math.floor(discount); // Round down to avoid fractional currency
+};
+
+/**
+ * Deduct points for order payment
+ * This is called after successful payment/order placement
+ */
+const deductPointsForOrder = async (userId, pointsToUse, orderId) => {
+    try {
+        const user = await User.findById(userId);
+
+        if (!user) {
+            throw new Error('User not found');
+        }
+
+        if (!user.loyalty || user.loyalty.points < pointsToUse) {
+            throw new Error('Insufficient points');
+        }
+
+        if (pointsToUse < 100) {
+            throw new Error('Minimum 100 points required for redemption');
+        }
+
+        // Calculate discount amount
+        const discountAmount = calculatePointsDiscount(pointsToUse);
+
+        // Deduct points
+        user.loyalty.points -= pointsToUse;
+        user.loyalty.pointsHistory.push({
+            points: -pointsToUse,
+            type: 'redeemed',
+            description: `Redeemed ${pointsToUse} points for ₹${discountAmount} discount on order`,
+            orderId: orderId,
+            date: new Date()
+        });
+
+        await user.save();
+
+        console.log(`[Loyalty] User ${userId} used ${pointsToUse} points (₹${discountAmount}) for order ${orderId}`);
+        return {
+            success: true,
+            pointsDeducted: pointsToUse,
+            discountAmount,
+            remainingPoints: user.loyalty.points
+        };
+    } catch (error) {
+        console.error('[Loyalty] Error deducting points for order:', error);
+        throw error;
+    }
+};
+
 module.exports = {
     awardPoints,
     redeemPoints,
@@ -252,6 +314,8 @@ module.exports = {
     getTierBenefits,
     calculateTierDiscount,
     awardBirthdayBonus,
+    calculatePointsDiscount,
+    deductPointsForOrder,
     TIER_THRESHOLDS,
     TIER_BENEFITS
 };

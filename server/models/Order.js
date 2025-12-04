@@ -141,6 +141,25 @@ const orderSchema = mongoose.Schema({
     },
     refundedAt: {
         type: Date
+    },
+    // Reward Points Usage
+    rewardPointsUsed: {
+        points: {
+            type: Number,
+            default: 0
+        },
+        discountAmount: {
+            type: Number,
+            default: 0
+        }
+    },
+    amountPaidByPoints: {
+        type: Number,
+        default: 0
+    },
+    amountPaidByPaymentMethod: {
+        type: Number,
+        default: 0
     }
 }, {
     timestamps: true

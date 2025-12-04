@@ -28,7 +28,8 @@ const AdminDashboard = () => {
         price: '',
         category: '',
         description: '',
-        imageUrl: ''
+        imageUrl: '',
+        stock: ''
     });
 
     useEffect(() => {
@@ -233,7 +234,8 @@ const AdminDashboard = () => {
             price: product.price,
             category: product.category,
             description: product.description,
-            imageUrl: product.imageUrl
+            imageUrl: product.imageUrl,
+            stock: product.stock || 0
         });
         setShowForm(true);
     };
@@ -255,7 +257,7 @@ const AdminDashboard = () => {
     };
 
     const resetForm = () => {
-        setFormData({ name: '', price: '', category: '', description: '', imageUrl: '' });
+        setFormData({ name: '', price: '', category: '', description: '', imageUrl: '', stock: '' });
         setEditingProduct(null);
         setShowForm(false);
     };
@@ -583,7 +585,10 @@ const AdminDashboard = () => {
                             <form className="product-form" onSubmit={handleSubmit}>
                                 <h2>{editingProduct ? 'Edit Product' : 'Add New Product'}</h2>
                                 <input type="text" name="name" placeholder="Product Name" value={formData.name} onChange={handleInputChange} required />
-                                <input type="number" name="price" placeholder="Price" value={formData.price} onChange={handleInputChange} required />
+                                <div className="form-row" style={{ display: 'flex', gap: '10px' }}>
+                                    <input type="number" name="price" placeholder="Price" value={formData.price} onChange={handleInputChange} required style={{ flex: 1 }} />
+                                    <input type="number" name="stock" placeholder="Stock Quantity" value={formData.stock} onChange={handleInputChange} required style={{ flex: 1 }} />
+                                </div>
                                 <select name="category" value={formData.category} onChange={handleInputChange} required>
                                     <option value="">Select Category</option>
                                     <option value="Necklaces">Necklaces</option>
@@ -609,6 +614,7 @@ const AdminDashboard = () => {
                                         <th>Image</th>
                                         <th>Name</th>
                                         <th>Price</th>
+                                        <th>Stock</th>
                                         <th>Category</th>
                                         <th>Actions</th>
                                     </tr>
@@ -619,6 +625,7 @@ const AdminDashboard = () => {
                                             <td><img src={product.imageUrl} alt={product.name} className="product-thumb" /></td>
                                             <td>{product.name}</td>
                                             <td>₹{product.price.toLocaleString()}</td>
+                                            <td>{product.stock}</td>
                                             <td>{product.category}</td>
                                             <td>
                                                 <button className="btn-edit" onClick={() => handleEdit(product)}>Edit</button>

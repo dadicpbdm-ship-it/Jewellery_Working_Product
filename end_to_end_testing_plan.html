@@ -1,0 +1,1041 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>End-to-End Functional Testing Plan - Jewellery Application</title>
+    <style>
+        @page {
+            margin: 2cm;
+            size: A4;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+            background: white;
+        }
+        
+        h1 {
+            color: #2c3e50;
+            border-bottom: 3px solid #3498db;
+            padding-bottom: 10px;
+            margin-top: 30px;
+            page-break-before: always;
+        }
+        
+        h1:first-of-type {
+            page-break-before: avoid;
+        }
+        
+        h2 {
+            color: #34495e;
+            border-bottom: 2px solid #95a5a6;
+            padding-bottom: 8px;
+            margin-top: 25px;
+        }
+        
+        h3 {
+            color: #16a085;
+            margin-top: 20px;
+        }
+        
+        ul, ol {
+            margin-left: 20px;
+        }
+        
+        li {
+            margin-bottom: 8px;
+        }
+        
+        code {
+            background-color: #f4f4f4;
+            padding: 2px 6px;
+            border-radius: 3px;
+            font-family: 'Courier New', monospace;
+            font-size: 0.9em;
+        }
+        
+        table {
+            border-collapse: collapse;
+            width: 100%;
+            margin: 20px 0;
+            page-break-inside: avoid;
+        }
+        
+        th, td {
+            border: 1px solid #ddd;
+            padding: 12px;
+            text-align: left;
+        }
+        
+        th {
+            background-color: #3498db;
+            color: white;
+            font-weight: bold;
+        }
+        
+        tr:nth-child(even) {
+            background-color: #f2f2f2;
+        }
+        
+        .test-case {
+            background-color: #ecf0f1;
+            border-left: 4px solid #3498db;
+            padding: 15px;
+            margin: 15px 0;
+            page-break-inside: avoid;
+        }
+        
+        .test-case strong {
+            color: #2980b9;
+        }
+        
+        .checkbox {
+            display: inline-block;
+            width: 16px;
+            height: 16px;
+            border: 2px solid #3498db;
+            margin-right: 8px;
+            vertical-align: middle;
+        }
+        
+        .section-divider {
+            border-top: 2px dashed #bdc3c7;
+            margin: 30px 0;
+        }
+        
+        @media print {
+            body {
+                padding: 0;
+            }
+            
+            h1, h2, h3 {
+                page-break-after: avoid;
+            }
+            
+            .test-case {
+                page-break-inside: avoid;
+            }
+        }
+    </style>
+</head>
+<body>
+    <h1>End-to-End Functional Testing Plan</h1>
+    <h2>Jewellery Application - Complete Testing Guide</h2>
+    
+    <p>This document provides a comprehensive end-to-end functional testing plan covering all features of the jewellery application, including both frontend and backend components.</p>
+    
+    <div class="section-divider"></div>
+    
+    <h2>Test Coverage Summary</h2>
+    
+    <table>
+        <thead>
+            <tr>
+                <th>Module</th>
+                <th>Total Test Cases</th>
+                <th>Priority</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr><td>Authentication</td><td>19</td><td>High</td></tr>
+            <tr><td>User Management</td><td>7</td><td>Medium</td></tr>
+            <tr><td>Product Browsing</td><td>21</td><td>High</td></tr>
+            <tr><td>Shopping Cart</td><td>9</td><td>High</td></tr>
+            <tr><td>Wishlist</td><td>6</td><td>Medium</td></tr>
+            <tr><td>Customization</td><td>9</td><td>Medium</td></tr>
+            <tr><td>Checkout & Payment</td><td>11</td><td>Critical</td></tr>
+            <tr><td>Order Management</td><td>9</td><td>High</td></tr>
+            <tr><td>Loyalty Program</td><td>10</td><td>Medium</td></tr>
+            <tr><td>Admin Dashboard</td><td>22</td><td>High</td></tr>
+            <tr><td>Delivery Dashboard</td><td>7</td><td>High</td></tr>
+            <tr><td>Advanced Features</td><td>18</td><td>Medium</td></tr>
+            <tr><td>Contact</td><td>5</td><td>Low</td></tr>
+            <tr><td><strong>TOTAL</strong></td><td><strong>153</strong></td><td>-</td></tr>
+        </tbody>
+    </table>
+    
+    <div class="section-divider"></div>
+    
+    <h1>1. Authentication & Authorization (19 Tests)</h1>
+    
+    <h3>1.1 User Registration</h3>
+    <p><strong>Frontend:</strong> <code>/register</code> | <strong>Backend:</strong> <code>POST /api/auth/register</code></p>
+    
+    <div class="test-case">
+        <span class="checkbox"></span><strong>TC-AUTH-001</strong>: Register with valid email, name, and password<br>
+        <strong>Steps:</strong> Navigate to register page → Fill form → Submit<br>
+        <strong>Expected:</strong> User created, redirected to dashboard, JWT token stored<br>
+        <strong>Backend:</strong> User document created in MongoDB, password hashed with bcrypt
+    </div>
+    
+    <div class="test-case">
+        <span class="checkbox"></span><strong>TC-AUTH-002</strong>: Register with existing email → Error "User already exists"
+    </div>
+    
+    <div class="test-case">
+        <span class="checkbox"></span><strong>TC-AUTH-003</strong>: Register with weak password (< 6 chars) → Validation error
+    </div>
+    
+    <div class="test-case">
+        <span class="checkbox"></span><strong>TC-AUTH-004</strong>: Register with invalid email format → Email validation error
+    </div>
+    
+    <h3>1.2 User Login</h3>
+    <p><strong>Frontend:</strong> <code>/login</code> | <strong>Backend:</strong> <code>POST /api/auth/login</code></p>
+    
+    <div class="test-case">
+        <span class="checkbox"></span><strong>TC-AUTH-005</strong>: Login with valid credentials → Successful login, JWT stored
+    </div>
+    
+    <div class="test-case">
+        <span class="checkbox"></span><strong>TC-AUTH-006</strong>: Login with incorrect password → "Invalid credentials" error
+    </div>
+    
+    <div class="test-case">
+        <span class="checkbox"></span><strong>TC-AUTH-007</strong>: Login with non-existent email → "Invalid credentials" error
+    </div>
+    
+    <div class="test-case">
+        <span class="checkbox"></span><strong>TC-AUTH-008</strong>: Case-insensitive email login → Success regardless of case
+    </div>
+    
+    <h3>1.3 OTP-Based Login</h3>
+    <p><strong>Backend:</strong> <code>POST /api/auth/send-otp</code>, <code>POST /api/auth/verify-otp</code></p>
+    
+    <div class="test-case">
+        <span class="checkbox"></span><strong>TC-AUTH-009</strong>: Send OTP to valid phone → OTP sent, stored with expiry
+    </div>
+    
+    <div class="test-case">
+        <span class="checkbox"></span><strong>TC-AUTH-010</strong>: Verify correct OTP → Login successful, JWT issued
+    </div>
+    
+    <div class="test-case">
+        <span class="checkbox"></span><strong>TC-AUTH-011</strong>: Verify incorrect OTP → "Invalid OTP" error
+    </div>
+    
+    <div class="test-case">
+        <span class="checkbox"></span><strong>TC-AUTH-012</strong>: OTP expiry (5 minutes) → "OTP expired" error
+    </div>
+    
+    <div class="test-case">
+        <span class="checkbox"></span><strong>TC-AUTH-013</strong>: Resend OTP → New OTP generated, old invalidated
+    </div>
+    
+    <h3>1.4 Role-Based Access</h3>
+    
+    <div class="test-case">
+        <span class="checkbox"></span><strong>TC-AUTH-014</strong>: Admin login → Redirected to <code>/admin/dashboard</code>
+    </div>
+    
+    <div class="test-case">
+        <span class="checkbox"></span><strong>TC-AUTH-015</strong>: Regular user attempts admin login → Access denied
+    </div>
+    
+    <div class="test-case">
+        <span class="checkbox"></span><strong>TC-AUTH-016</strong>: Delivery agent login → Redirected to <code>/delivery/dashboard</code>
+    </div>
+    
+    <h3>1.5 Protected Routes</h3>
+    
+    <div class="test-case">
+        <span class="checkbox"></span><strong>TC-AUTH-017</strong>: Access protected route without login → Redirected to <code>/login</code>
+    </div>
+    
+    <div class="test-case">
+        <span class="checkbox"></span><strong>TC-AUTH-018</strong>: Access admin route as regular user → Access denied
+    </div>
+    
+    <div class="test-case">
+        <span class="checkbox"></span><strong>TC-AUTH-019</strong>: Token expiration handling → 401 error, user logged out
+    </div>
+    
+    <div class="section-divider"></div>
+    
+    <h1>2. User Management (7 Tests)</h1>
+    
+    <p><strong>Frontend:</strong> <code>/dashboard</code> | <strong>Backend:</strong> <code>GET /api/users/profile</code></p>
+    
+    <div class="test-case">
+        <span class="checkbox"></span><strong>TC-USER-001</strong>: View user profile → Display name, email, phone, loyalty points, tier
+    </div>
+    
+    <div class="test-case">
+        <span class="checkbox"></span><strong>TC-USER-002</strong>: View order history → List all user orders with status
+    </div>
+    
+    <div class="test-case">
+        <span class="checkbox"></span><strong>TC-USER-003</strong>: View saved addresses → Display all saved addresses
+    </div>
+    
+    <div class="test-case">
+        <span class="checkbox"></span><strong>TC-USER-004</strong>: Update profile information → Profile updated successfully
+    </div>
+    
+    <div class="test-case">
+        <span class="checkbox"></span><strong>TC-USER-005</strong>: Change password → Password updated, re-hashed in DB
+    </div>
+    
+    <div class="test-case">
+        <span class="checkbox"></span><strong>TC-USER-006</strong>: Add new address → Address added to user.addresses array
+    </div>
+    
+    <div class="test-case">
+        <span class="checkbox"></span><strong>TC-USER-007</strong>: Delete saved address → Address removed from list
+    </div>
+    
+    <div class="section-divider"></div>
+    
+    <h1>3. Product Browsing & Search (21 Tests)</h1>
+    
+    <p><strong>Frontend:</strong> <code>/shop</code> | <strong>Backend:</strong> <code>GET /api/products</code></p>
+    
+    <div class="test-case">
+        <span class="checkbox"></span><strong>TC-PROD-001</strong>: Load featured products on home page
+    </div>
+    
+    <div class="test-case">
+        <span class="checkbox"></span><strong>TC-PROD-002</strong>: Navigate to shop page
+    </div>
+    
+    <div class="test-case">
+        <span class="checkbox"></span><strong>TC-PROD-003</strong>: View all products with pagination (12 per page)
+    </div>
+    
+    <div class="test-case">
+        <span class="checkbox"></span><strong>TC-PROD-004</strong>: Search by keyword → Filter by name/description match
+    </div>
+    
+    <div class="test-case">
+        <span class="checkbox"></span><strong>TC-PROD-005</strong>: Filter by category → Show only products in that category
+    </div>
+    
+    <div class="test-case">
+        <span class="checkbox"></span><strong>TC-PROD-006</strong>: Filter by material (Gold/Silver/Diamond/Platinum)
+    </div>
+    
+    <div class="test-case">
+        <span class="checkbox"></span><strong>TC-PROD-007</strong>: Filter by occasion (Wedding/Party/Daily/Festival)
+    </div>
+    
+    <div class="test-case">
+        <span class="checkbox"></span><strong>TC-PROD-008</strong>: Filter by style (Traditional/Western/Contemporary)
+    </div>
+    
+    <div class="test-case">
+        <span class="checkbox"></span><strong>TC-PROD-009</strong>: Filter by price range → Show products within range
+    </div>
+    
+    <div class="test-case">
+        <span class="checkbox"></span><strong>TC-PROD-010</strong>: Sort by price (low to high) → Ascending order
+    </div>
+    
+    <div class="test-case">
+        <span class="checkbox"></span><strong>TC-PROD-011</strong>: Sort by price (high to low) → Descending order
+    </div>
+    
+    <div class="test-case">
+        <span class="checkbox"></span><strong>TC-PROD-012</strong>: Sort by newest → Sorted by createdAt
+    </div>
+    
+    <div class="test-case">
+        <span class="checkbox"></span><strong>TC-PROD-013</strong>: Sort by popularity → Sorted by rating
+    </div>
+    
+    <div class="test-case">
+        <span class="checkbox"></span><strong>TC-PROD-014</strong>: Combine multiple filters → Products match all criteria
+    </div>
+    
+    <div class="test-case">
+        <span class="checkbox"></span><strong>TC-PROD-015</strong>: Pagination navigation → Load next/previous pages
+    </div>
+    
+    <div class="test-case">
+        <span class="checkbox"></span><strong>TC-PROD-016</strong>: Get search suggestions → Show top 5 matching products
+    </div>
+    
+    <h3>Product Details</h3>
+    <p><strong>Frontend:</strong> <code>/product/:id</code></p>
+    
+    <div class="test-case">
+        <span class="checkbox"></span><strong>TC-PROD-017</strong>: View product details → Display full info (name, price, description, images, stock, rating)
+    </div>
+    
+    <div class="test-case">
+        <span class="checkbox"></span><strong>TC-PROD-018</strong>: View image gallery → Multiple images, zoom functionality
+    </div>
+    
+    <div class="test-case">
+        <span class="checkbox"></span><strong>TC-PROD-019</strong>: View product reviews → Display reviews with ratings, verified purchase badge
+    </div>
+    
+    <div class="test-case">
+        <span class="checkbox"></span><strong>TC-PROD-020</strong>: View related products → Display recommendations
+    </div>
+    
+    <div class="test-case">
+        <span class="checkbox"></span><strong>TC-PROD-021</strong>: Check stock availability → "Out of Stock" message if stock = 0
+    </div>
+    
+    <div class="section-divider"></div>
+    
+    <h1>4. Shopping Cart (9 Tests)</h1>
+    
+    <p><strong>Frontend:</strong> <code>/cart</code> | <strong>Context:</strong> CartContext</p>
+    
+    <div class="test-case">
+        <span class="checkbox"></span><strong>TC-CART-001</strong>: Add product to cart → Product added, cart count updated, toast notification
+    </div>
+    
+    <div class="test-case">
+        <span class="checkbox"></span><strong>TC-CART-002</strong>: Add same product multiple times → Quantity incremented, not duplicated
+    </div>
+    
+    <div class="test-case">
+        <span class="checkbox"></span><strong>TC-CART-003</strong>: View cart → Display all items with images, prices, quantities
+    </div>
+    
+    <div class="test-case">
+        <span class="checkbox"></span><strong>TC-CART-004</strong>: Update quantity → Total price recalculated
+    </div>
+    
+    <div class="test-case">
+        <span class="checkbox"></span><strong>TC-CART-005</strong>: Remove item from cart → Item removed, totals updated
+    </div>
+    
+    <div class="test-case">
+        <span class="checkbox"></span><strong>TC-CART-006</strong>: Clear entire cart → All items removed
+    </div>
+    
+    <div class="test-case">
+        <span class="checkbox"></span><strong>TC-CART-007</strong>: Cart persistence (logged in) → Cart restored after logout/login
+    </div>
+    
+    <div class="test-case">
+        <span class="checkbox"></span><strong>TC-CART-008</strong>: Cart persistence (guest) → Cart restored from localStorage
+    </div>
+    
+    <div class="test-case">
+        <span class="checkbox"></span><strong>TC-CART-009</strong>: Empty cart display → "Your cart is empty" message
+    </div>
+    
+    <div class="section-divider"></div>
+    
+    <h1>5. Wishlist (6 Tests)</h1>
+    
+    <p><strong>Frontend:</strong> <code>/wishlist</code> | <strong>Backend:</strong> <code>GET/POST /api/wishlist</code></p>
+    
+    <div class="test-case">
+        <span class="checkbox"></span><strong>TC-WISH-001</strong>: Add product to wishlist → Product added, heart icon filled
+    </div>
+    
+    <div class="test-case">
+        <span class="checkbox"></span><strong>TC-WISH-002</strong>: View wishlist → Display all wishlist items
+    </div>
+    
+    <div class="test-case">
+        <span class="checkbox"></span><strong>TC-WISH-003</strong>: Remove from wishlist → Item removed
+    </div>
+    
+    <div class="test-case">
+        <span class="checkbox"></span><strong>TC-WISH-004</strong>: Add wishlist item to cart → Item added to cart
+    </div>
+    
+    <div class="test-case">
+        <span class="checkbox"></span><strong>TC-WISH-005</strong>: Clear wishlist → All items removed
+    </div>
+    
+    <div class="test-case">
+        <span class="checkbox"></span><strong>TC-WISH-006</strong>: Wishlist requires login → Redirect to login or show prompt
+    </div>
+    
+    <div class="section-divider"></div>
+    
+    <h1>6. Product Customization (9 Tests)</h1>
+    
+    <p><strong>Backend:</strong> <code>GET /api/customizations/fonts</code>, <code>POST /api/customizations/validate</code>, <code>POST /api/customizations/calculate-price</code></p>
+    
+    <div class="test-case">
+        <span class="checkbox"></span><strong>TC-CUSTOM-001</strong>: View customization options → Modal with engraving, size, material options
+    </div>
+    
+    <div class="test-case">
+        <span class="checkbox"></span><strong>TC-CUSTOM-002</strong>: Add engraving text → Character count displayed, max 20 chars enforced
+    </div>
+    
+    <div class="test-case">
+        <span class="checkbox"></span><strong>TC-CUSTOM-003</strong>: Select engraving font → Font preview displayed
+    </div>
+    
+    <div class="test-case">
+        <span class="checkbox"></span><strong>TC-CUSTOM-004</strong>: Select size → Size selected from available options
+    </div>
+    
+    <div class="test-case">
+        <span class="checkbox"></span><strong>TC-CUSTOM-005</strong>: Select material variant → Price adjustment shown
+    </div>
+    
+    <div class="test-case">
+        <span class="checkbox"></span><strong>TC-CUSTOM-006</strong>: Price calculation → Total = base + engraving + material adjustment
+    </div>
+    
+    <div class="test-case">
+        <span class="checkbox"></span><strong>TC-CUSTOM-007</strong>: Validate customization → Backend validates, returns errors if invalid
+    </div>
+    
+    <div class="test-case">
+        <span class="checkbox"></span><strong>TC-CUSTOM-008</strong>: Add customized product to cart → Product added with customization details
+    </div>
+    
+    <div class="test-case">
+        <span class="checkbox"></span><strong>TC-CUSTOM-009</strong>: View customization in cart → Display engraving, size, material, extra cost
+    </div>
+    
+    <div class="section-divider"></div>
+    
+    <h1>7. Checkout & Payment (11 Tests)</h1>
+    
+    <p><strong>Frontend:</strong> <code>/checkout</code> | <strong>Backend:</strong> <code>POST /api/orders</code>, <code>POST /api/payment/*</code></p>
+    
+    <div class="test-case">
+        <span class="checkbox"></span><strong>TC-CHECK-001</strong>: Checkout as logged-in user → Pre-filled info, saved addresses available
+    </div>
+    
+    <div class="test-case">
+        <span class="checkbox"></span><strong>TC-CHECK-002</strong>: Checkout as guest → Form for name, email, phone, address
+    </div>
+    
+    <div class="test-case">
+        <span class="checkbox"></span><strong>TC-CHECK-003</strong>: Select saved address → Address fields auto-filled
+    </div>
+    
+    <div class="test-case">
+        <span class="checkbox"></span><strong>TC-CHECK-004</strong>: Enter new address → Address validated, auto-saved for logged-in users
+    </div>
+    
+    <div class="test-case">
+        <span class="checkbox"></span><strong>TC-CHECK-005</strong>: Select Razorpay payment → Razorpay modal opens
+    </div>
+    
+    <div class="test-case">
+        <span class="checkbox"></span><strong>TC-CHECK-006</strong>: Select COD payment → Order created with COD method
+    </div>
+    
+    <div class="test-case">
+        <span class="checkbox"></span><strong>TC-CHECK-007</strong>: Apply loyalty points discount → Total price reduced
+    </div>
+    
+    <div class="test-case">
+        <span class="checkbox"></span><strong>TC-PAY-001</strong>: Razorpay order creation → Order created, order ID returned
+    </div>
+    
+    <div class="test-case">
+        <span class="checkbox"></span><strong>TC-PAY-002</strong>: Successful payment → Payment verified, order marked as paid
+    </div>
+    
+    <div class="test-case">
+        <span class="checkbox"></span><strong>TC-PAY-003</strong>: Payment signature verification → Backend verifies with HMAC SHA-256
+    </div>
+    
+    <div class="test-case">
+        <span class="checkbox"></span><strong>TC-PAY-004</strong>: Failed payment → Order created but not marked as paid
+    </div>
+    
+    <h3>Order Confirmation</h3>
+    
+    <div class="test-case">
+        <span class="checkbox"></span><strong>TC-CHECK-008</strong>: Order success page → Display order ID, summary, tracking link
+    </div>
+    
+    <div class="test-case">
+        <span class="checkbox"></span><strong>TC-CHECK-009</strong>: WhatsApp confirmation → Message sent to user
+    </div>
+    
+    <div class="test-case">
+        <span class="checkbox"></span><strong>TC-CHECK-010</strong>: Loyalty points awarded → Points added based on order total
+    </div>
+    
+    <div class="test-case">
+        <span class="checkbox"></span><strong>TC-CHECK-011</strong>: Delivery agent assignment → Agent assigned based on city/pincode
+    </div>
+    
+    <div class="section-divider"></div>
+    
+    <h1>8. Order Management (9 Tests)</h1>
+    
+    <p><strong>Frontend:</strong> <code>/order/:id</code> | <strong>Backend:</strong> <code>GET /api/orders/:id</code></p>
+    
+    <div class="test-case">
+        <span class="checkbox"></span><strong>TC-ORDER-001</strong>: View order details → Display items, address, payment status, delivery status
+    </div>
+    
+    <div class="test-case">
+        <span class="checkbox"></span><strong>TC-ORDER-002</strong>: Track order status → Display current status (Pending/Delivered)
+    </div>
+    
+    <div class="test-case">
+        <span class="checkbox"></span><strong>TC-ORDER-003</strong>: View delivery agent info → Display agent name if assigned
+    </div>
+    
+    <h3>Return/Exchange Requests</h3>
+    
+    <div class="test-case">
+        <span class="checkbox"></span><strong>TC-ORDER-004</strong>: Submit return request → Request created with status "Pending"
+    </div>
+    
+    <div class="test-case">
+        <span class="checkbox"></span><strong>TC-ORDER-005</strong>: Submit exchange request → Request created with status "Pending"
+    </div>
+    
+    <div class="test-case">
+        <span class="checkbox"></span><strong>TC-ORDER-006</strong>: Return request validation → Error for undelivered orders
+    </div>
+    
+    <div class="test-case">
+        <span class="checkbox"></span><strong>TC-ORDER-007</strong>: Duplicate request prevention → Error "Request already exists"
+    </div>
+    
+    <h3>Order History</h3>
+    
+    <div class="test-case">
+        <span class="checkbox"></span><strong>TC-ORDER-008</strong>: View all orders → List sorted by date (newest first)
+    </div>
+    
+    <div class="test-case">
+        <span class="checkbox"></span><strong>TC-ORDER-009</strong>: Filter orders by status → Show matching orders
+    </div>
+    
+    <div class="section-divider"></div>
+    
+    <h1>9. Loyalty & Rewards Program (10 Tests)</h1>
+    
+    <p><strong>Frontend:</strong> <code>/rewards</code> | <strong>Backend:</strong> <code>GET /api/loyalty/dashboard</code></p>
+    
+    <div class="test-case">
+        <span class="checkbox"></span><strong>TC-LOYAL-001</strong>: View loyalty dashboard → Display points, tier, total spent, referral code
+    </div>
+    
+    <div class="test-case">
+        <span class="checkbox"></span><strong>TC-LOYAL-002</strong>: View tier badge → Show Silver/Gold/Platinum badge
+    </div>
+    
+    <div class="test-case">
+        <span class="checkbox"></span><strong>TC-LOYAL-003</strong>: View points history → Display all transactions (earned/redeemed/bonus/referral)
+    </div>
+    
+    <div class="test-case">
+        <span class="checkbox"></span><strong>TC-LOYAL-004</strong>: Earn points on purchase → Points added (e.g., 1% of order total)
+    </div>
+    
+    <div class="test-case">
+        <span class="checkbox"></span><strong>TC-LOYAL-005</strong>: Tier upgrade → Tier upgraded when threshold reached
+    </div>
+    
+    <div class="test-case">
+        <span class="checkbox"></span><strong>TC-LOYAL-006</strong>: Generate referral code → Unique code generated
+    </div>
+    
+    <div class="test-case">
+        <span class="checkbox"></span><strong>TC-LOYAL-007</strong>: Apply referral code → Referrer gets bonus points, new user linked
+    </div>
+    
+    <div class="test-case">
+        <span class="checkbox"></span><strong>TC-LOYAL-008</strong>: Invalid referral code → Error "Invalid referral code"
+    </div>
+    
+    <div class="test-case">
+        <span class="checkbox"></span><strong>TC-LOYAL-009</strong>: Redeem points for discount → Discount applied, points deducted
+    </div>
+    
+    <div class="test-case">
+        <span class="checkbox"></span><strong>TC-LOYAL-010</strong>: Insufficient points → Error "Insufficient points"
+    </div>
+    
+    <div class="section-divider"></div>
+    
+    <h1>10. Admin Dashboard (22 Tests)</h1>
+    
+    <p><strong>Frontend:</strong> <code>/admin/dashboard</code></p>
+    
+    <h3>Admin Overview</h3>
+    
+    <div class="test-case">
+        <span class="checkbox"></span><strong>TC-ADMIN-001</strong>: View dashboard statistics → Display total revenue, orders, users, products
+    </div>
+    
+    <div class="test-case">
+        <span class="checkbox"></span><strong>TC-ADMIN-002</strong>: View recent orders → List recent orders with status
+    </div>
+    
+    <h3>Product Management</h3>
+    
+    <div class="test-case">
+        <span class="checkbox"></span><strong>TC-ADMIN-003</strong>: Create new product → Product created in database
+    </div>
+    
+    <div class="test-case">
+        <span class="checkbox"></span><strong>TC-ADMIN-004</strong>: Update product → Product updated
+    </div>
+    
+    <div class="test-case">
+        <span class="checkbox"></span><strong>TC-ADMIN-005</strong>: Delete product → Product removed from database
+    </div>
+    
+    <div class="test-case">
+        <span class="checkbox"></span><strong>TC-ADMIN-006</strong>: Update product stock → Stock updated, back-in-stock alerts triggered
+    </div>
+    
+    <div class="test-case">
+        <span class="checkbox"></span><strong>TC-ADMIN-007</strong>: Update product price → Price updated, price drop alerts triggered
+    </div>
+    
+    <h3>Order Management</h3>
+    
+    <div class="test-case">
+        <span class="checkbox"></span><strong>TC-ADMIN-008</strong>: View all orders → Display with user info, delivery agent
+    </div>
+    
+    <div class="test-case">
+        <span class="checkbox"></span><strong>TC-ADMIN-009</strong>: Approve return request → Status changed to "Approved"
+    </div>
+    
+    <div class="test-case">
+        <span class="checkbox"></span><strong>TC-ADMIN-010</strong>: Reject return request → Status "Rejected", comment saved
+    </div>
+    
+    <div class="test-case">
+        <span class="checkbox"></span><strong>TC-ADMIN-011</strong>: Process refund → isRefunded: true, refundedAt timestamp set
+    </div>
+    
+    <h3>User Management</h3>
+    
+    <div class="test-case">
+        <span class="checkbox"></span><strong>TC-ADMIN-012</strong>: View all users → List with roles, registration dates
+    </div>
+    
+    <div class="test-case">
+        <span class="checkbox"></span><strong>TC-ADMIN-013</strong>: View user details → Display profile, order history, loyalty info
+    </div>
+    
+    <h3>Delivery Agent Management</h3>
+    <p><strong>Frontend:</strong> <code>/admin/delivery-agents</code></p>
+    
+    <div class="test-case">
+        <span class="checkbox"></span><strong>TC-ADMIN-014</strong>: Register delivery agent → Agent created with role "delivery"
+    </div>
+    
+    <div class="test-case">
+        <span class="checkbox"></span><strong>TC-ADMIN-015</strong>: Assign pincodes to agent → Pincodes added to assignedPincodes array
+    </div>
+    
+    <div class="test-case">
+        <span class="checkbox"></span><strong>TC-ADMIN-016</strong>: View agent workload → Display number of active deliveries
+    </div>
+    
+    <h3>Pincode Management</h3>
+    <p><strong>Frontend:</strong> <code>/admin/pincodes</code></p>
+    
+    <div class="test-case">
+        <span class="checkbox"></span><strong>TC-ADMIN-017</strong>: Add serviceable pincode → Pincode added to database
+    </div>
+    
+    <div class="test-case">
+        <span class="checkbox"></span><strong>TC-ADMIN-018</strong>: Remove pincode → Pincode removed
+    </div>
+    
+    <div class="test-case">
+        <span class="checkbox"></span><strong>TC-ADMIN-019</strong>: Check pincode serviceability → Display if serviceable
+    </div>
+    
+    <h3>Warehouse Management</h3>
+    <p><strong>Frontend:</strong> <code>/admin/warehouses</code></p>
+    
+    <div class="test-case">
+        <span class="checkbox"></span><strong>TC-ADMIN-020</strong>: Add warehouse → Warehouse created
+    </div>
+    
+    <div class="test-case">
+        <span class="checkbox"></span><strong>TC-ADMIN-021</strong>: Update warehouse → Warehouse updated
+    </div>
+    
+    <div class="test-case">
+        <span class="checkbox"></span><strong>TC-ADMIN-022</strong>: Delete warehouse → Warehouse removed
+    </div>
+    
+    <div class="section-divider"></div>
+    
+    <h1>11. Delivery Agent Dashboard (7 Tests)</h1>
+    
+    <p><strong>Frontend:</strong> <code>/delivery/dashboard</code> | <strong>Backend:</strong> <code>GET /api/orders/delivery</code></p>
+    
+    <div class="test-case">
+        <span class="checkbox"></span><strong>TC-DELIV-001</strong>: View assigned orders → Display all orders
+    </div>
+    
+    <div class="test-case">
+        <span class="checkbox"></span><strong>TC-DELIV-002</strong>: View order details → Display delivery address, items, payment method
+    </div>
+    
+    <div class="test-case">
+        <span class="checkbox"></span><strong>TC-DELIV-003</strong>: Mark order as delivered → isDelivered: true, deliveredAt timestamp, activeOrders decremented
+    </div>
+    
+    <div class="test-case">
+        <span class="checkbox"></span><strong>TC-DELIV-004</strong>: Collect COD payment → codPaymentReceived: true, isPaid: true
+    </div>
+    
+    <div class="test-case">
+        <span class="checkbox"></span><strong>TC-DELIV-005</strong>: Certificate generation on delivery → Blockchain certificates generated for products
+    </div>
+    
+    <div class="test-case">
+        <span class="checkbox"></span><strong>TC-DELIV-006</strong>: WhatsApp delivery notification → Message sent to customer
+    </div>
+    
+    <div class="test-case">
+        <span class="checkbox"></span><strong>TC-DELIV-007</strong>: Complete return pickup → Status updated, refund processed if return
+    </div>
+    
+    <div class="section-divider"></div>
+    
+    <h1>12. Advanced Features (18 Tests)</h1>
+    
+    <h3>Product Reviews</h3>
+    
+    <div class="test-case">
+        <span class="checkbox"></span><strong>TC-REVIEW-001</strong>: Submit product review → Review added, product rating recalculated
+    </div>
+    
+    <div class="test-case">
+        <span class="checkbox"></span><strong>TC-REVIEW-002</strong>: Verified purchase badge → "Verified Purchase" badge displayed
+    </div>
+    
+    <div class="test-case">
+        <span class="checkbox"></span><strong>TC-REVIEW-003</strong>: Duplicate review prevention → Error "Already reviewed"
+    </div>
+    
+    <div class="test-case">
+        <span class="checkbox"></span><strong>TC-REVIEW-004</strong>: Mark review as helpful → Helpful count incremented
+    </div>
+    
+    <div class="test-case">
+        <span class="checkbox"></span><strong>TC-REVIEW-005</strong>: Duplicate helpful vote prevention → Error "Already voted"
+    </div>
+    
+    <h3>Product Recommendations</h3>
+    
+    <div class="test-case">
+        <span class="checkbox"></span><strong>TC-RECOM-001</strong>: View personalized recommendations → Based on browsing/purchase history
+    </div>
+    
+    <div class="test-case">
+        <span class="checkbox"></span><strong>TC-RECOM-002</strong>: View similar products → Display related products
+    </div>
+    
+    <h3>Price Drop & Stock Alerts</h3>
+    
+    <div class="test-case">
+        <span class="checkbox"></span><strong>TC-ALERT-001</strong>: Set price drop alert → Alert created with status "active"
+    </div>
+    
+    <div class="test-case">
+        <span class="checkbox"></span><strong>TC-ALERT-002</strong>: Receive price drop notification → WhatsApp alert sent, status "triggered"
+    </div>
+    
+    <div class="test-case">
+        <span class="checkbox"></span><strong>TC-ALERT-003</strong>: Set stock alert → Alert created for out-of-stock product
+    </div>
+    
+    <div class="test-case">
+        <span class="checkbox"></span><strong>TC-ALERT-004</strong>: Receive stock notification → WhatsApp alert when back in stock
+    </div>
+    
+    <h3>Try at Home</h3>
+    
+    <div class="test-case">
+        <span class="checkbox"></span><strong>TC-TRY-001</strong>: Request try at home → Request created with status "Pending"
+    </div>
+    
+    <div class="test-case">
+        <span class="checkbox"></span><strong>TC-TRY-002</strong>: Admin view requests → Display all requests
+    </div>
+    
+    <div class="test-case">
+        <span class="checkbox"></span><strong>TC-TRY-003</strong>: Approve/reject request → Status changed, user notified
+    </div>
+    
+    <h3>Custom Designer</h3>
+    <p><strong>Frontend:</strong> <code>/custom-designer</code></p>
+    
+    <div class="test-case">
+        <span class="checkbox"></span><strong>TC-DESIGN-001</strong>: Create custom design → Design saved with specifications
+    </div>
+    
+    <div class="test-case">
+        <span class="checkbox"></span><strong>TC-DESIGN-002</strong>: Submit design for quote → Request sent to admin
+    </div>
+    
+    <div class="test-case">
+        <span class="checkbox"></span><strong>TC-DESIGN-003</strong>: View saved designs → Display all user's custom designs
+    </div>
+    
+    <h3>Certificate Verification</h3>
+    <p><strong>Frontend:</strong> <code>/verify-certificate/:certificateNumber</code></p>
+    
+    <div class="test-case">
+        <span class="checkbox"></span><strong>TC-CERT-001</strong>: Verify valid certificate → Display details, QR code, blockchain hash
+    </div>
+    
+    <div class="test-case">
+        <span class="checkbox"></span><strong>TC-CERT-002</strong>: Verify invalid certificate → Error "Certificate not found"
+    </div>
+    
+    <div class="test-case">
+        <span class="checkbox"></span><strong>TC-CERT-003</strong>: Download certificate PDF → PDF downloaded
+    </div>
+    
+    <h3>EMI Calculator</h3>
+    
+    <div class="test-case">
+        <span class="checkbox"></span><strong>TC-EMI-001</strong>: Calculate EMI → Display monthly EMI, total interest
+    </div>
+    
+    <div class="section-divider"></div>
+    
+    <h1>13. Contact & Communication (5 Tests)</h1>
+    
+    <h3>Contact Form</h3>
+    <p><strong>Frontend:</strong> <code>/contact</code> | <strong>Backend:</strong> <code>POST /api/contact</code></p>
+    
+    <div class="test-case">
+        <span class="checkbox"></span><strong>TC-CONTACT-001</strong>: Submit contact form → Message saved, confirmation displayed
+    </div>
+    
+    <div class="test-case">
+        <span class="checkbox"></span><strong>TC-CONTACT-002</strong>: Admin view contact messages → Display all messages
+    </div>
+    
+    <h3>WhatsApp Notifications</h3>
+    
+    <div class="test-case">
+        <span class="checkbox"></span><strong>TC-WHATSAPP-001</strong>: Order confirmation message → Message sent with order details
+    </div>
+    
+    <div class="test-case">
+        <span class="checkbox"></span><strong>TC-WHATSAPP-002</strong>: Delivery notification → Message sent when delivered
+    </div>
+    
+    <div class="test-case">
+        <span class="checkbox"></span><strong>TC-WHATSAPP-003</strong>: Return/exchange update → Message sent on status change
+    </div>
+    
+    <div class="test-case">
+        <span class="checkbox"></span><strong>TC-WHATSAPP-004</strong>: Price drop alert → Message sent when price drops
+    </div>
+    
+    <div class="test-case">
+        <span class="checkbox"></span><strong>TC-WHATSAPP-005</strong>: Back in stock alert → Message sent when restocked
+    </div>
+    
+    <div class="section-divider"></div>
+    
+    <h1>Testing Execution Guidelines</h1>
+    
+    <h3>Backend Testing</h3>
+    <ol>
+        <li><strong>API Testing Tools:</strong> Use Postman or Thunder Client</li>
+        <li><strong>Database Verification:</strong> Check MongoDB documents after operations</li>
+        <li><strong>Authentication:</strong> Include JWT token in Authorization header</li>
+        <li><strong>Error Handling:</strong> Test both success and error scenarios</li>
+    </ol>
+    
+    <h3>Frontend Testing</h3>
+    <ol>
+        <li><strong>Browser Testing:</strong> Test on Chrome, Firefox, Safari</li>
+        <li><strong>Responsive Design:</strong> Test on mobile, tablet, desktop</li>
+        <li><strong>Network Conditions:</strong> Test with slow 3G, offline</li>
+        <li><strong>Console Errors:</strong> Check browser console for errors</li>
+    </ol>
+    
+    <h3>Integration Testing</h3>
+    <ol>
+        <li><strong>End-to-End Flows:</strong> Complete user journeys</li>
+        <li><strong>Role-Based Access:</strong> Test as user, admin, delivery agent, guest</li>
+        <li><strong>Data Consistency:</strong> Verify frontend-backend sync</li>
+    </ol>
+    
+    <h3>Performance Testing</h3>
+    <ol>
+        <li><strong>Page Load Times:</strong> Measure initial load and navigation</li>
+        <li><strong>API Response Times:</strong> Check endpoint response times</li>
+        <li><strong>Database Queries:</strong> Monitor query performance</li>
+    </ol>
+    
+    <h3>Security Testing</h3>
+    <ol>
+        <li><strong>Authentication:</strong> Test token expiration, invalid tokens</li>
+        <li><strong>Authorization:</strong> Test role-based access control</li>
+        <li><strong>Input Validation:</strong> Test SQL injection, XSS attempts</li>
+        <li><strong>Password Security:</strong> Verify bcrypt hashing</li>
+    </ol>
+    
+    <div class="section-divider"></div>
+    
+    <h1>Test Data Requirements</h1>
+    
+    <h3>Users</h3>
+    <ul>
+        <li>Admin: <code>admin@test.com</code> / <code>admin123</code></li>
+        <li>Delivery Agent: <code>agent@test.com</code> / <code>agent123</code></li>
+        <li>Regular User: <code>user@test.com</code> / <code>user123</code></li>
+        <li>Guest: No login required</li>
+    </ul>
+    
+    <h3>Products</h3>
+    <ul>
+        <li>Minimum 20 products across different categories</li>
+        <li>Mix of in-stock and out-of-stock items</li>
+        <li>Products with and without customization options</li>
+        <li>Featured and non-featured products</li>
+    </ul>
+    
+    <h3>Orders</h3>
+    <ul>
+        <li>Orders in different states (pending, delivered)</li>
+        <li>COD and online payment orders</li>
+        <li>Orders with and without delivery agents</li>
+    </ul>
+    
+    <h3>Pincodes</h3>
+    <ul>
+        <li>At least 10 serviceable pincodes</li>
+        <li>Pincodes assigned to delivery agents</li>
+    </ul>
+    
+    <div class="section-divider"></div>
+    
+    <h1>Recommended Testing Sequence</h1>
+    
+    <ol>
+        <li>Authentication & Authorization</li>
+        <li>Product Browsing & Cart</li>
+        <li>Checkout & Payment</li>
+        <li>Order Management</li>
+        <li>Admin Dashboard</li>
+        <li>Delivery Dashboard</li>
+        <li>Advanced Features</li>
+        <li>Loyalty Program</li>
+        <li>Contact & Communication</li>
+    </ol>
+    
+    <p style="text-align: center; margin-top: 50px; color: #7f8c8d; font-style: italic;">
+        End of Testing Plan Document - 153 Total Test Cases
+    </p>
+</body>
+</html>

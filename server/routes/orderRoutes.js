@@ -17,7 +17,8 @@ router.post('/', optionalProtect, async (req, res) => {
         taxPrice,
         shippingPrice,
         totalPrice,
-        guestInfo
+        guestInfo,
+        rewardPointsUsed // New field for hybrid payment
     } = req.body;
 
 
@@ -65,7 +66,11 @@ router.post('/', optionalProtect, async (req, res) => {
             itemsPrice,
             taxPrice,
             shippingPrice,
-            totalPrice
+            totalPrice,
+            // Add reward points info
+            rewardPointsUsed: rewardPointsUsed || { points: 0, discountAmount: 0 },
+            amountPaidByPoints: rewardPointsUsed ? rewardPointsUsed.discountAmount : 0,
+            amountPaidByPaymentMethod: rewardPointsUsed ? (totalPrice - rewardPointsUsed.discountAmount) : totalPrice
         });
 
         // Assign delivery agent logic
@@ -84,11 +89,35 @@ router.post('/', optionalProtect, async (req, res) => {
 
         const createdOrder = await order.save();
 
-        // Award loyalty points for logged-in users
+        // Deduct reward points if used (only for logged-in users)
+        if (req.user && rewardPointsUsed && rewardPointsUsed.points > 0) {
+            try {
+                const loyaltyService = require('../services/loyaltyService');
+                await loyaltyService.deductPointsForOrder(
+                    req.user._id,
+                    rewardPointsUsed.points,
+                    createdOrder._id
+                );
+                console.log(`[Order] Deducted ${rewardPointsUsed.points} reward points for order ${createdOrder._id}`);
+            } catch (error) {
+                console.error('[Order] Error deducting reward points:', error);
+                // Rollback order if points deduction fails
+                await Order.findByIdAndDelete(createdOrder._id);
+                return res.status(400).json({
+                    message: 'Failed to process reward points. Please try again.',
+                    error: error.message
+                });
+            }
+        }
+
+        // Award loyalty points for logged-in users (based on amount paid, not points used)
         if (req.user) {
             try {
                 const loyaltyService = require('../services/loyaltyService');
-                await loyaltyService.awardPoints(req.user._id, totalPrice, createdOrder._id);
+                const amountForPoints = order.amountPaidByPaymentMethod;
+                if (amountForPoints > 0) {
+                    await loyaltyService.awardPoints(req.user._id, amountForPoints, createdOrder._id);
+                }
             } catch (error) {
                 console.error('[Order] Error awarding loyalty points:', error);
                 // Don't fail the order if loyalty points fail

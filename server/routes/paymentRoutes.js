@@ -27,16 +27,36 @@ router.post('/create-order', optionalProtect, async (req, res) => {
             });
         }
 
-        const { amount } = req.body;
+        const { amount, pointsDiscount = 0 } = req.body;
+
+        // Calculate actual payment amount after points discount
+        const paymentAmount = Math.max(0, amount - pointsDiscount);
+
+        // If fully paid by points, no need to create Razorpay order
+        if (paymentAmount === 0) {
+            console.log('[Payment] Order fully paid by reward points');
+            return res.json({
+                fullyPaidByPoints: true,
+                amount: 0,
+                pointsDiscount
+            });
+        }
 
         const options = {
-            amount: amount * 100, // Amount in paise
+            amount: paymentAmount * 100, // Amount in paise
             currency: 'INR',
             receipt: `receipt_${Date.now()}`
         };
 
         const order = await razorpay.orders.create(options);
-        res.json(order);
+        console.log(`[Payment] Razorpay order created: ₹${paymentAmount} (Original: ₹${amount}, Points Discount: ₹${pointsDiscount})`);
+
+        res.json({
+            ...order,
+            pointsDiscount,
+            originalAmount: amount,
+            paymentAmount
+        });
     } catch (error) {
         console.error('Razorpay Error:', error);
         res.status(500).json({ message: 'Error creating Razorpay order' });
