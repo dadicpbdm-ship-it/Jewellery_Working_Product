@@ -1,0 +1,41 @@
+.recommendations-section {
+    margin: 40px 0;
+    padding: 20px 0;
+}
+
+.recommendations-section h2 {
+    font-size: 1.8rem;
+    margin-bottom: 25px;
+    color: #333;
+    font-weight: 600;
+}
+
+.recommendations-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+    gap: 25px;
+    margin-top: 20px;
+}
+
+.loading-spinner {
+    text-align: center;
+    padding: 40px;
+    color: #666;
+}
+
+@media (max-width: 768px) {
+    .recommendations-grid {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 15px;
+    }
+
+    .recommendations-section h2 {
+        font-size: 1.4rem;
+    }
+}
+
+@media (max-width: 480px) {
+    .recommendations-grid {
+        grid-template-columns: 1fr;
+    }
+}

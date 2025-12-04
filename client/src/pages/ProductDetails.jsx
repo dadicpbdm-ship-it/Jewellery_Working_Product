@@ -10,6 +10,7 @@ import EMICalculator from '../components/EMICalculator';
 import ARTryOn from '../components/ARTryOn';
 import TryAtHomeModal from '../components/TryAtHomeModal';
 import AlertModal from '../components/AlertModal';
+import ProductRecommendations from '../components/ProductRecommendations';
 import { API_URL } from '../config';
 import './ProductDetails.css';
 
@@ -25,8 +26,6 @@ const ProductDetails = () => {
     const [relatedProducts, setRelatedProducts] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
-    const [pincode, setPincode] = useState('');
-    const [checkResult, setCheckResult] = useState(null);
     const [pincode, setPincode] = useState('');
     const [checkResult, setCheckResult] = useState(null);
     const [checkLoading, setCheckLoading] = useState(false);
@@ -400,6 +399,20 @@ const ProductDetails = () => {
 
             {/* Reviews Section */}
             <ProductReviews productId={product._id} />
+
+            {/* Similar Products Section */}
+            <ProductRecommendations
+                productId={product._id}
+                type="similar"
+                title="Similar Products You May Like"
+            />
+
+            {/* Complete the Look Section */}
+            <ProductRecommendations
+                productId={product._id}
+                type="complete-the-look"
+                title="Complete the Look"
+            />
 
             {/* Related Products Section */}
             {relatedProducts.length > 0 && (

@@ -19,6 +19,8 @@ const customDesignRoutes = require('./routes/customDesignRoutes');
 const pincodeRoutes = require('./routes/pincodeRoutes');
 const warehouseRoutes = require('./routes/warehouseRoutes');
 const tryAtHomeRoutes = require('./routes/tryAtHomeRoutes');
+const alertRoutes = require('./routes/alertRoutes');
+const recommendationRoutes = require('./routes/recommendationRoutes');
 const { errorHandler, notFound } = require('./middleware/errorMiddleware');
 
 const app = express();
@@ -86,6 +88,8 @@ app.use('/api/custom-designs', customDesignRoutes);
 app.use('/api/pincodes', pincodeRoutes);
 app.use('/api/warehouses', warehouseRoutes);
 app.use('/api/try-at-home', tryAtHomeRoutes);
+app.use('/api/alerts', alertRoutes);
+app.use('/api/recommendations', recommendationRoutes);
 
 app.get('/', (req, res) => {
     res.send('Jewellery App API is running');

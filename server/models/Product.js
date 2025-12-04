@@ -97,6 +97,16 @@ const productSchema = new mongoose.Schema({
         type: Boolean,
         default: false,
     },
+    // Tags for better searchability
+    tags: {
+        type: [String],
+        default: []
+    },
+    // Related products for recommendations
+    relatedProducts: [{
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'Product'
+    }],
     // Blockchain Certification
     certification: {
         certificateNumber: {
