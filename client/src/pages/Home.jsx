@@ -5,6 +5,8 @@ import { API_URL } from '../config';
 import './Home.css';
 import './BannerEnhancement.css';
 
+import diamondJewelleryImg from '../assets/diamond-jewellery.png';
+
 const Home = () => {
     const [products, setProducts] = useState([]);
     const [loading, setLoading] = useState(true);
@@ -53,7 +55,7 @@ const Home = () => {
                     </Link>
                     <Link to="/shop?material=Diamond" className="category-card">
                         <div className="category-image">
-                            <img src="https://images.unsplash.com/photo-1599643478518-17488fbbcd75?auto=format&fit=crop&w=300&q=80" alt="Diamond Jewellery" />
+                            <img src={diamondJewelleryImg} alt="Diamond Jewellery" />
                         </div>
                         <h3>Diamond Jewellery</h3>
                     </Link>

@@ -128,6 +128,8 @@
     align-items: center;
     cursor: pointer;
     transition: transform 0.3s ease;
+    width: 180px;
+    /* Fixed width for consistency */
 }
 
 .category-card:hover {
@@ -164,6 +166,13 @@
     font-size: 1.1rem;
     color: #333;
     font-weight: 600;
+    text-align: center;
+    min-height: 2.4em;
+    /* Ensure consistent height for 2 lines of text */
+    display: flex;
+    align-items: flex-start;
+    justify-content: center;
+    margin: 0;
 }
 
 /* Featured Section */

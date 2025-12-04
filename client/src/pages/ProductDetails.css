@@ -117,6 +117,8 @@
     display: flex;
     align-items: center;
     gap: 0.5rem;
+    margin-top: 0.5rem;
+    font-size: 0.9rem;
     font-weight: 600;
     color: #8b5e3c;
     margin-bottom: 0.5rem;
@@ -142,10 +144,58 @@
 }
 
 .breakup-row.total {
-    border-top: 1px solid #e0d4b4;
-    padding-top: 0.5rem;
-    font-weight: 700;
+    font-weight: 600;
     color: #2c3e50;
+    margin-bottom: 0.5rem;
+}
+
+/* Product Specifications */
+.product-specifications {
+    background: var(--background-dark);
+    border-radius: var(--radius-lg);
+    padding: 1.5rem;
+    margin-bottom: 1.5rem;
+}
+
+.product-specifications h3 {
+    font-size: 1.2rem;
+    font-weight: 700;
+    color: var(--secondary-color);
+    margin: 0 0 1rem 0;
+    border-bottom: 2px solid var(--primary-color);
+    padding-bottom: 0.5rem;
+}
+
+.specs-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1rem;
+}
+
+.spec-item {
+    display: flex;
+    flex-direction: column;
+    gap: 0.3rem;
+}
+
+.spec-label {
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.spec-value {
+    font-size: 1rem;
+    font-weight: 500;
+    color: var(--text-color);
+}
+
+@media (max-width: 480px) {
+    .specs-grid {
+        grid-template-columns: 1fr;
+    }
 }
 
 /* Pincode Checker */
