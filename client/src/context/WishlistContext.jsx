@@ -27,7 +27,8 @@ export const WishlistProvider = ({ children }) => {
             });
             if (response.ok) {
                 const data = await response.json();
-                setWishlist(data);
+                // Backend returns object with products array
+                setWishlist(data.products || []);
             }
         } catch (err) {
             console.error('Error fetching wishlist:', err);
@@ -52,8 +53,15 @@ export const WishlistProvider = ({ children }) => {
 
             if (response.ok) {
                 const data = await response.json();
-                setWishlist(data);
+                setWishlist(data.products || []);
                 success('Added to wishlist');
+            } else {
+                const errData = await response.json();
+                if (errData.message === 'Product already in wishlist') {
+                    info('Product already in wishlist');
+                } else {
+                    error(errData.message || 'Failed to add to wishlist');
+                }
             }
         } catch (err) {
             console.error('Error adding to wishlist:', err);
@@ -65,18 +73,16 @@ export const WishlistProvider = ({ children }) => {
         if (!user) return;
 
         try {
-            const response = await fetch(`${API_URL}/api/wishlist/remove`, {
-                method: 'POST',
+            const response = await fetch(`${API_URL}/api/wishlist/remove/${productId}`, {
+                method: 'DELETE',
                 headers: {
-                    'Content-Type': 'application/json',
                     'Authorization': `Bearer ${user.token}`
-                },
-                body: JSON.stringify({ productId })
+                }
             });
 
             if (response.ok) {
                 const data = await response.json();
-                setWishlist(data);
+                setWishlist(data.products || []);
                 info('Removed from wishlist');
             }
         } catch (err) {
@@ -86,28 +92,12 @@ export const WishlistProvider = ({ children }) => {
     };
 
     const clearWishlist = async () => {
-        if (!user) return;
-
-        try {
-            const response = await fetch(`${API_URL}/api/wishlist/clear`, {
-                method: 'DELETE',
-                headers: {
-                    'Authorization': `Bearer ${user.token}`
-                }
-            });
-
-            if (response.ok) {
-                setWishlist([]);
-                success('Wishlist cleared');
-            }
-        } catch (err) {
-            console.error('Error clearing wishlist:', err);
-            error('Failed to clear wishlist');
-        }
+        // Not implemented in backend yet, just clear local state
+        setWishlist([]);
     };
 
     const isInWishlist = (productId) => {
-        return wishlist.some(item => item._id === productId);
+        return wishlist.some(item => item.product && item.product._id === productId);
     };
 
     return (

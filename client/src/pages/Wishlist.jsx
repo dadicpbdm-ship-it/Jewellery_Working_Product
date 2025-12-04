@@ -1,70 +1,128 @@
-import React, { useContext } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 import { Link } from 'react-router-dom';
-import { WishlistContext } from '../context/WishlistContext';
-import { useCart } from '../context/CartContext';
+import { AuthContext } from '../context/AuthContext';
+import { CartContext } from '../context/CartContext';
+import { API_URL } from '../config';
 import './Wishlist.css';
 
 const Wishlist = () => {
-    const { wishlist, removeFromWishlist, clearWishlist } = useContext(WishlistContext);
-    const { addToCart } = useCart();
+    const { user } = useContext(AuthContext);
+    const { addToCart } = useContext(CartContext);
+    const [wishlistItems, setWishlistItems] = useState([]);
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState('');
 
-    const handleMoveToCart = (product) => {
-        addToCart(product);
-        removeFromWishlist(product._id);
+    useEffect(() => {
+        fetchWishlist();
+    }, [user]);
+
+    const fetchWishlist = async () => {
+        if (!user) {
+            setLoading(false);
+            return;
+        }
+
+        try {
+            const response = await fetch(`${API_URL}/api/wishlist`, {
+                headers: {
+                    'Authorization': `Bearer ${user.token}`
+                }
+            });
+
+            if (response.ok) {
+                const data = await response.json();
+                setWishlistItems(data.products || []);
+            } else {
+                throw new Error('Failed to fetch wishlist');
+            }
+        } catch (err) {
+            console.error('Error fetching wishlist:', err);
+            setError('Failed to load wishlist');
+        } finally {
+            setLoading(false);
+        }
     };
 
-    if (wishlist.length === 0) {
+    const removeFromWishlist = async (productId) => {
+        try {
+            const response = await fetch(`${API_URL}/api/wishlist/remove/${productId}`, {
+                method: 'DELETE',
+                headers: {
+                    'Authorization': `Bearer ${user.token}`
+                }
+            });
+
+            if (response.ok) {
+                setWishlistItems(prev => prev.filter(item => item.product._id !== productId));
+            }
+        } catch (err) {
+            console.error('Error removing from wishlist:', err);
+        }
+    };
+
+    const handleAddToCart = (product) => {
+        addToCart(product);
+        // Optional: Remove from wishlist after adding to cart
+        // removeFromWishlist(product._id);
+        alert('Added to cart!');
+    };
+
+    if (loading) return <div className="wishlist-container loading">Loading...</div>;
+
+    if (!user) {
         return (
-            <div className="container wishlist-empty">
-                <div className="empty-state-content">
-                    <div className="empty-icon">💝</div>
-                    <h2>Your Wishlist is Empty</h2>
-                    <p>Save items you love for later!</p>
-                    <p className="empty-subtitle">Click the heart icon on any product to add it here.</p>
-                    <div className="empty-actions">
-                        <Link to="/shop" className="btn-primary">Explore Products</Link>
-                    </div>
-                </div>
+            <div className="wishlist-container empty">
+                <h2>Please login to view your wishlist</h2>
+                <Link to="/login" className="btn-primary">Login</Link>
+            </div>
+        );
+    }
+
+    if (wishlistItems.length === 0) {
+        return (
+            <div className="wishlist-container empty">
+                <h2>Your Wishlist is Empty</h2>
+                <p>Save items you love to review them later.</p>
+                <Link to="/shop" className="btn-primary">Start Shopping</Link>
             </div>
         );
     }
 
     return (
-        <div className="wishlist-page container">
-            <div className="wishlist-header">
-                <h2>My Wishlist ({wishlist.length})</h2>
-                <button onClick={clearWishlist} className="btn-clear-wishlist">
-                    Clear All
-                </button>
-            </div>
+        <div className="wishlist-container">
+            <h1>My Wishlist ({wishlistItems.length})</h1>
             <div className="wishlist-grid">
-                {wishlist.map(product => (
-                    <div key={product._id} className="wishlist-card">
-                        <Link to={`/product/${product._id}`} className="wishlist-image-link">
-                            <img src={product.imageUrl || product.image} alt={product.name} />
-                        </Link>
-                        <div className="wishlist-details">
-                            <Link to={`/product/${product._id}`}>
-                                <h3>{product.name}</h3>
+                {wishlistItems.map(({ product, addedAt }) => (
+                    product && (
+                        <div key={product._id} className="wishlist-item-card">
+                            <Link to={`/product/${product._id}`} className="wishlist-item-image">
+                                <img src={product.imageUrl || product.image} alt={product.name} />
                             </Link>
-                            <p className="price">₹{product.price.toLocaleString('en-IN')}</p>
-                            <div className="wishlist-actions">
-                                <button
-                                    onClick={() => handleMoveToCart(product)}
-                                    className="btn-move-cart"
-                                >
-                                    Move to Cart
-                                </button>
-                                <button
-                                    onClick={() => removeFromWishlist(product._id)}
-                                    className="btn-remove"
-                                    title="Remove from Wishlist"
-                                >
-                                    🗑️
-                                </button>
+                            <div className="wishlist-item-details">
+                                <Link to={`/product/${product._id}`}>
+                                    <h3>{product.name}</h3>
+                                </Link>
+                                <p className="price">₹{product.price.toLocaleString('en-IN')}</p>
+                                <p className="added-date">Added on {new Date(addedAt).toLocaleDateString()}</p>
+
+                                <div className="wishlist-actions">
+                                    <button
+                                        className="btn-add-cart"
+                                        onClick={() => handleAddToCart(product)}
+                                        disabled={product.countInStock === 0}
+                                    >
+                                        {product.countInStock > 0 ? 'Add to Cart' : 'Out of Stock'}
+                                    </button>
+                                    <button
+                                        className="btn-remove"
+                                        onClick={() => removeFromWishlist(product._id)}
+                                    >
+                                        Remove
+                                    </button>
+                                </div>
                             </div>
                         </div>
-                    </div>
+                    )
                 ))}
             </div>
         </div>

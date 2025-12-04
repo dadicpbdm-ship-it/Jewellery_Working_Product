@@ -1,73 +1,85 @@
 const express = require('express');
 const router = express.Router();
-const User = require('../models/User');
+const Wishlist = require('../models/Wishlist');
 const { protect } = require('../middleware/authMiddleware');
 
-// @desc    Get user wishlist
-// @route   GET /api/wishlist
-// @access  Private
+// Get user's wishlist
 router.get('/', protect, async (req, res) => {
     try {
-        const user = await User.findById(req.user._id).populate('wishlist');
-        res.json(user.wishlist);
+        let wishlist = await Wishlist.findOne({ user: req.user._id })
+            .populate('products.product');
+
+        if (!wishlist) {
+            wishlist = await Wishlist.create({ user: req.user._id, products: [] });
+        }
+
+        res.json(wishlist);
     } catch (error) {
-        res.status(500).json({ message: 'Server Error' });
+        res.status(500).json({ message: 'Error fetching wishlist' });
     }
 });
 
-// @desc    Add item to wishlist
-// @route   POST /api/wishlist/add
-// @access  Private
+// Add to wishlist
 router.post('/add', protect, async (req, res) => {
-    const { productId } = req.body;
-
     try {
-        const user = await User.findById(req.user._id);
+        const { productId } = req.body;
 
-        if (user.wishlist.includes(productId)) {
+        let wishlist = await Wishlist.findOne({ user: req.user._id });
+
+        if (!wishlist) {
+            wishlist = new Wishlist({ user: req.user._id, products: [] });
+        }
+
+        // Check if product already exists
+        const exists = wishlist.products.find(p => p.product.toString() === productId);
+
+        if (exists) {
             return res.status(400).json({ message: 'Product already in wishlist' });
         }
 
-        user.wishlist.push(productId);
-        await user.save();
+        wishlist.products.push({ product: productId });
+        await wishlist.save();
 
-        const updatedUser = await User.findById(req.user._id).populate('wishlist');
-        res.json(updatedUser.wishlist);
+        res.json(wishlist);
     } catch (error) {
-        res.status(500).json({ message: 'Server Error' });
+        res.status(500).json({ message: 'Error adding to wishlist' });
     }
 });
 
-// @desc    Remove item from wishlist
-// @route   POST /api/wishlist/remove
-// @access  Private
-router.post('/remove', protect, async (req, res) => {
-    const { productId } = req.body;
-
+// Remove from wishlist
+router.delete('/remove/:productId', protect, async (req, res) => {
     try {
-        const user = await User.findById(req.user._id);
+        const wishlist = await Wishlist.findOne({ user: req.user._id });
 
-        user.wishlist = user.wishlist.filter(id => id.toString() !== productId);
-        await user.save();
+        if (wishlist) {
+            wishlist.products = wishlist.products.filter(
+                p => p.product.toString() !== req.params.productId
+            );
+            await wishlist.save();
+        }
 
-        const updatedUser = await User.findById(req.user._id).populate('wishlist');
-        res.json(updatedUser.wishlist);
+        res.json(wishlist);
     } catch (error) {
-        res.status(500).json({ message: 'Server Error' });
+        res.status(500).json({ message: 'Error removing from wishlist' });
     }
 });
 
-// @desc    Clear all items from wishlist
-// @route   DELETE /api/wishlist/clear
-// @access  Private
-router.delete('/clear', protect, async (req, res) => {
+// Check if product is in wishlist
+router.get('/check/:productId', protect, async (req, res) => {
     try {
-        const user = await User.findById(req.user._id);
-        user.wishlist = [];
-        await user.save();
-        res.json({ message: 'Wishlist cleared' });
+        const wishlist = await Wishlist.findOne({ user: req.user._id });
+
+        if (!wishlist) {
+            return res.json({ inWishlist: false });
+        }
+
+        const exists = wishlist.products.some(
+            p => p.product.toString() === req.params.productId
+        );
+
+        res.json({ inWishlist: exists });
     } catch (error) {
-        res.status(500).json({ message: 'Server Error' });
+        res.status(500).json({ message: 'Error checking wishlist status' });
     }
 });
 
