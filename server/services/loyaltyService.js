@@ -287,9 +287,31 @@ const deductPointsForOrder = async (userId, pointsToUse, orderId) => {
     }
 };
 
+const TIER_THRESHOLDS = {
+    Silver: 0,
+    Gold: 10000,
+    Platinum: 50000
+};
+
+const TIER_BENEFITS = {
+    Silver: { discount: 0, benefits: ['Earn 1 point per ₹100'] },
+    Gold: { discount: 0.05, benefits: ['5% Discount', 'Earn 2 points per ₹100'] },
+    Platinum: { discount: 0.10, benefits: ['10% Discount', 'Earn 3 points per ₹100', 'Priority Support'] }
+};
+
+const RUPEES_PER_100_POINTS = 10; // 100 points = ₹10
+
 module.exports = {
     awardPoints,
     deductPointsForOrder,
+    processReferral,
+    redeemPoints,
+    getTierBenefits,
+    checkTierUpgrade,
+    awardBirthdayBonus,
+    calculatePointsDiscount,
     POINTS_PERCENTAGE,
-    POINTS_TO_RUPEES
+    POINTS_TO_RUPEES,
+    TIER_THRESHOLDS,
+    TIER_BENEFITS
 };

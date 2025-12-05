@@ -374,6 +374,7 @@ router.put('/:id/return-exchange-status', protect, async (req, res) => {
             // Permission Check
             const isAdmin = req.user.role === 'admin';
             const isDelivery = req.user.role === 'delivery';
+
             // Delivery agents can only mark returns as Picked Up
             if (isDelivery && status !== 'Picked Up') {
                 return res.status(403).json({ message: 'Delivery agents can only mark returns as Picked Up' });
@@ -398,6 +399,27 @@ router.put('/:id/return-exchange-status', protect, async (req, res) => {
                 order.isRefunded = true;
                 order.refundedAt = Date.now();
                 console.log(`[Refund] Processed refund for Order ${order._id}`);
+
+                // Initiate Razorpay Refund if payment was online
+                if (order.paymentResult && order.paymentResult.id) {
+                    try {
+                        const paymentService = require('../services/paymentService');
+                        const refund = await paymentService.processRefund(order.paymentResult.id);
+
+                        order.refundResult = {
+                            id: refund.id,
+                            status: refund.status,
+                            amount: refund.amount,
+                            created_at: refund.created_at
+                        };
+                        console.log(`[Refund] Razorpay refund initiated: ${refund.id}`);
+                    } catch (refundError) {
+                        console.error(`[Refund] Razorpay refund failed for Order ${order._id}:`, refundError);
+                        // We don't stop the status update, but we log the error. 
+                        // In a production system, we might want to flag this for admin review.
+                        order.returnExchangeRequest.adminComment = (order.returnExchangeRequest.adminComment || '') + `\n[System] Refund Failed: ${refundError.message}`;
+                    }
+                }
             }
 
             const updatedOrder = await order.save();
