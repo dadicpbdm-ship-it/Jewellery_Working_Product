@@ -343,8 +343,16 @@ const DeliveryDashboard = () => {
                                         <div className="order-actions">
                                             {!order.isDelivered && (
                                                 <button
-                                                    className="btn-action btn-primary"
-                                                    onClick={() => markAsDelivered(order._id)}
+                                                    className={`btn-action btn-primary ${order.paymentMethod === 'Cash on Delivery' && !order.codPaymentReceived ? 'disabled' : ''}`}
+                                                    onClick={() => {
+                                                        if (order.paymentMethod === 'Cash on Delivery' && !order.codPaymentReceived) {
+                                                            alert('Please confirm COD payment received before marking as delivered.');
+                                                            return;
+                                                        }
+                                                        markAsDelivered(order._id);
+                                                    }}
+                                                    style={order.paymentMethod === 'Cash on Delivery' && !order.codPaymentReceived ? { opacity: 0.5, cursor: 'not-allowed' } : {}}
+                                                    title={order.paymentMethod === 'Cash on Delivery' && !order.codPaymentReceived ? "Collect COD payment first" : ""}
                                                 >
                                                     ✓ Mark as Delivered
                                                 </button>
