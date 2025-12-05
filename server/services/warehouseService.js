@@ -24,7 +24,7 @@ const checkProductAvailability = async (productId, pincode) => {
         if (!warehouse) {
             return {
                 available: false,
-                reason: 'No warehouse services this pincode',
+                reason: 'Out of Stock',
                 warehouse: null,
                 stock: 0
             };

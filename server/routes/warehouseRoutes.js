@@ -48,7 +48,7 @@ router.get('/pincode/:code', async (req, res) => {
                 city: warehouse.location.city
             });
         } else {
-            res.status(404).json({ message: 'No warehouse services this pincode' });
+            res.status(404).json({ message: 'Out of Stock' });
         }
     } catch (error) {
         res.status(500).json({ message: 'Server error' });
