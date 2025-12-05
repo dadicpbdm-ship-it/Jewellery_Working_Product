@@ -535,116 +535,132 @@ const Checkout = () => {
                         </div>
 
                         {/* Reward Points Section */}
-                        {console.log('Checkout - User:', user ? 'Logged in' : 'Not logged in', 'Reward Points:', rewardBalance)}
                         {user && (
-                            <div className="reward-points-section">
-                                <h3>💎 Use Reward Points</h3>
-                                <p style={{ color: 'blue', fontSize: '12px' }}>DEBUG: Points loaded = {rewardBalance}</p>
+                            <div className="reward-points-section" style={{
+                                background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+                                borderRadius: '12px',
+                                padding: '18px',
+                                marginBottom: '25px',
+                                color: 'white',
+                                boxShadow: '0 4px 15px rgba(102, 126, 234, 0.25)'
+                            }}>
+                                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '12px' }}>
+                                    <h3 style={{ margin: 0, fontSize: '1.1rem', fontWeight: '600' }}>💎 Reward Points</h3>
+                                    <span style={{
+                                        background: 'rgba(255,255,255,0.2)',
+                                        padding: '4px 12px',
+                                        borderRadius: '15px',
+                                        fontSize: '0.9rem',
+                                        fontWeight: '600'
+                                    }}>
+                                        {rewardBalance.toLocaleString()} pts
+                                    </span>
+                                </div>
 
                                 {rewardBalance >= 100 ? (
                                     <>
-                                        <div className="points-info">
-                                            <p>Available Points: <strong>{rewardBalance.toLocaleString()}</strong></p>
-                                            <p className="points-value">= ₹{Math.floor(rewardBalance / 100) * 10} discount value</p>
-                                        </div>
-
-                                        <div className="points-selector">
+                                        <div style={{
+                                            background: 'rgba(255,255,255,0.15)',
+                                            borderRadius: '8px',
+                                            padding: '12px',
+                                            marginBottom: '10px'
+                                        }}>
                                             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '10px' }}>
-                                                <label>Points to Use (min 100):</label>
+                                                <span style={{ fontSize: '0.85rem', opacity: 0.9 }}>Select points:</span>
                                                 <button
                                                     type="button"
                                                     onClick={() => handlePointsChange(rewardBalance)}
                                                     style={{
-                                                        padding: '6px 16px',
-                                                        background: '#4CAF50',
-                                                        color: 'white',
+                                                        padding: '5px 12px',
+                                                        background: 'rgba(255,255,255,0.9)',
+                                                        color: '#667eea',
                                                         border: 'none',
-                                                        borderRadius: '5px',
+                                                        borderRadius: '6px',
                                                         cursor: 'pointer',
-                                                        fontSize: '0.9rem',
-                                                        fontWeight: '500'
+                                                        fontSize: '0.8rem',
+                                                        fontWeight: '600'
                                                     }}
                                                 >
-                                                    Use All Points
+                                                    Use All
                                                 </button>
                                             </div>
-                                            <div className="points-input-group">
-                                                <input
-                                                    type="range"
-                                                    min="0"
-                                                    max={rewardBalance}
-                                                    step="100"
-                                                    value={pointsToUse}
-                                                    onChange={(e) => handlePointsChange(e.target.value)}
-                                                    className="points-slider"
-                                                />
-                                                <input
-                                                    type="number"
-                                                    min="0"
-                                                    max={rewardBalance}
-                                                    step="100"
-                                                    value={pointsToUse}
-                                                    onChange={(e) => handlePointsChange(e.target.value)}
-                                                    className="points-number-input"
-                                                />
+
+                                            <input
+                                                type="range"
+                                                min="0"
+                                                max={rewardBalance}
+                                                step="100"
+                                                value={pointsToUse}
+                                                onChange={(e) => handlePointsChange(e.target.value)}
+                                                style={{
+                                                    width: '100%',
+                                                    height: '6px',
+                                                    borderRadius: '3px',
+                                                    outline: 'none',
+                                                    marginBottom: '6px'
+                                                }}
+                                            />
+
+                                            <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.8rem', opacity: 0.8 }}>
+                                                <span>0</span>
+                                                <span>{pointsToUse} pts</span>
+                                                <span>{rewardBalance}</span>
                                             </div>
                                         </div>
 
                                         {pointsToUse >= 100 && (
-                                            <div className="points-discount-preview" style={{
-                                                background: '#f0f8ff',
-                                                padding: '15px',
+                                            <div style={{
+                                                background: 'rgba(255,255,255,0.95)',
                                                 borderRadius: '8px',
-                                                marginTop: '15px',
-                                                border: '2px solid #4CAF50'
+                                                padding: '12px',
+                                                color: '#333'
                                             }}>
-                                                <div className="discount-row" style={{ marginBottom: '8px', display: 'flex', justifyContent: 'space-between' }}>
-                                                    <span>Order Total:</span>
-                                                    <span>₹{getCartTotal().toLocaleString('en-IN')}</span>
+                                                <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '6px', fontSize: '0.85rem' }}>
+                                                    <span style={{ color: '#666' }}>Discount:</span>
+                                                    <span style={{ fontWeight: '600', color: '#4CAF50' }}>-₹{pointsDiscount.toLocaleString('en-IN')}</span>
                                                 </div>
-                                                <div className="discount-row" style={{ marginBottom: '8px', color: '#4CAF50', fontWeight: 'bold', display: 'flex', justifyContent: 'space-between' }}>
-                                                    <span>Reward Points:</span>
-                                                    <span>-₹{pointsDiscount.toLocaleString('en-IN')} ({pointsToUse} pts)</span>
-                                                </div>
-                                                <hr style={{ margin: '10px 0', border: 'none', borderTop: '1px solid #ddd' }} />
-                                                <div className="discount-row total" style={{ fontSize: '1.15rem', fontWeight: 'bold', display: 'flex', justifyContent: 'space-between' }}>
-                                                    <span>Remaining to Pay:</span>
-                                                    <span style={{ color: getFinalAmount() === 0 ? '#4CAF50' : '#333' }}>
+                                                <div style={{ display: 'flex', justifyContent: 'space-between', paddingTop: '8px', borderTop: '1px solid #eee' }}>
+                                                    <span style={{ fontWeight: '600' }}>You Pay:</span>
+                                                    <span style={{ fontSize: '1.05rem', fontWeight: '700', color: getFinalAmount() === 0 ? '#4CAF50' : '#667eea' }}>
                                                         ₹{getFinalAmount().toLocaleString('en-IN')}
                                                     </span>
                                                 </div>
                                                 {getFinalAmount() === 0 && (
                                                     <p style={{
-                                                        margin: '12px 0 0 0',
+                                                        margin: '8px 0 0 0',
                                                         color: '#4CAF50',
-                                                        fontSize: '0.95rem',
+                                                        fontSize: '0.8rem',
                                                         textAlign: 'center',
                                                         fontWeight: '600'
                                                     }}>
-                                                        🎉 Fully paid! No additional payment needed.
+                                                        ✨ Fully covered!
                                                     </p>
                                                 )}
                                             </div>
                                         )}
 
                                         {pointsToUse > 0 && pointsToUse < 100 && (
-                                            <p className="points-warning">⚠️ Minimum 100 points required for redemption</p>
+                                            <p style={{ margin: '8px 0 0 0', fontSize: '0.8rem', opacity: 0.9, textAlign: 'center' }}>
+                                                ⚠️ Minimum 100 points required
+                                            </p>
                                         )}
                                     </>
                                 ) : (
-                                    <div className="points-info-insufficient">
-                                        <p>Available Points: <strong>{rewardBalance.toLocaleString()}</strong></p>
+                                    <div style={{
+                                        background: 'rgba(255,255,255,0.15)',
+                                        borderRadius: '8px',
+                                        padding: '12px',
+                                        textAlign: 'center'
+                                    }}>
                                         {rewardBalance === 0 ? (
-                                            <p className="points-message">
-                                                🎁 You don't have any reward points yet. Start shopping to earn points!
-                                                <br />
-                                                <small>Earn 1 point for every ₹1 spent</small>
+                                            <p style={{ margin: 0, fontSize: '0.85rem', opacity: 0.9 }}>
+                                                Start shopping to earn points!<br />
+                                                <small style={{ opacity: 0.8 }}>1 point = ₹1 spent</small>
                                             </p>
                                         ) : (
-                                            <p className="points-message">
-                                                ⚠️ You need at least 100 points to redeem. You have {rewardBalance} points.
-                                                <br />
-                                                <small>Keep shopping to earn {100 - rewardBalance} more points!</small>
+                                            <p style={{ margin: 0, fontSize: '0.85rem', opacity: 0.9 }}>
+                                                Need {100 - rewardBalance} more points<br />
+                                                <small style={{ opacity: 0.8 }}>Minimum 100 required</small>
                                             </p>
                                         )}
                                     </div>
