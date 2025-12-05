@@ -1,73 +1,57 @@
 const User = require('../models/User');
+const RewardPoints = require('../models/RewardPoints');
+const Order = require('../models/Order');
 
 /**
  * Loyalty & Rewards Service
  * Handles points calculation, tier management, and referrals
  */
 
-// Tier thresholds
-const TIER_THRESHOLDS = {
-    Silver: 0,
-    Gold: 10000,
-    Platinum: 50000
-};
-
-// Tier benefits
-const TIER_BENEFITS = {
-    Silver: {
-        discount: 0.05, // 5%
-        freeShipping: false,
-        earlyAccess: false
-    },
-    Gold: {
-        discount: 0.10, // 10%
-        freeShipping: true,
-        earlyAccess: true
-    },
-    Platinum: {
-        discount: 0.15, // 15%
-        freeShipping: true,
-        earlyAccess: true,
-        prioritySupport: true
-    }
-};
-
-// Points conversion rate
-const POINTS_PER_RUPEE = 1; // 1 point per ₹1 spent
-const RUPEES_PER_100_POINTS = 10; // 100 points = ₹10 discount
+// Points conversion rate (simplified: 1% of order value)
+const POINTS_PERCENTAGE = 0.01; // 1% of order value
+const POINTS_TO_RUPEES = 1; // 1 point = ₹1
 
 /**
  * Award points to user for a purchase
  */
 const awardPoints = async (userId, orderAmount, orderId) => {
     try {
-        const points = Math.floor(orderAmount * POINTS_PER_RUPEE);
+        // Calculate points: 1% of order value
+        const points = Math.floor(orderAmount * POINTS_PERCENTAGE);
 
-        const user = await User.findByIdAndUpdate(
-            userId,
-            {
-                $inc: {
-                    'loyalty.points': points,
-                    'loyalty.totalSpent': orderAmount
-                },
-                $push: {
-                    'loyalty.pointsHistory': {
-                        points,
-                        type: 'earned',
-                        description: `Earned from purchase of ₹${orderAmount}`,
-                        orderId,
-                        date: new Date()
-                    }
-                }
-            },
-            { new: true }
-        );
+        // Find or create reward points record
+        let rewardPoints = await RewardPoints.findOne({ user: userId });
 
-        // Check for tier upgrade
-        await checkTierUpgrade(userId);
+        if (!rewardPoints) {
+            rewardPoints = await RewardPoints.create({
+                user: userId,
+                balance: 0,
+                totalEarned: 0,
+                totalRedeemed: 0,
+                transactions: []
+            });
+        }
+
+        // Update balance and totals
+        rewardPoints.balance += points;
+        rewardPoints.totalEarned += points;
+        rewardPoints.transactions.push({
+            type: 'earned',
+            points,
+            order: orderId,
+            description: `Earned from purchase of ₹${orderAmount.toLocaleString('en-IN')}`,
+            date: new Date()
+        });
+
+        await rewardPoints.save();
+
+        // Update order with earned points
+        await Order.findByIdAndUpdate(orderId, {
+            'rewardPoints.earned': points
+        });
 
         console.log(`[Loyalty] Awarded ${points} points to user ${userId}`);
-        return { points, newBalance: user.loyalty.points };
+        return { points, newBalance: rewardPoints.balance };
     } catch (error) {
         console.error('[Loyalty] Error awarding points:', error);
         throw error;
@@ -264,41 +248,38 @@ const calculatePointsDiscount = (points) => {
  */
 const deductPointsForOrder = async (userId, pointsToUse, orderId) => {
     try {
-        const user = await User.findById(userId);
+        const rewardPoints = await RewardPoints.findOne({ user: userId });
 
-        if (!user) {
-            throw new Error('User not found');
+        if (!rewardPoints) {
+            throw new Error('Reward points record not found');
         }
 
-        if (!user.loyalty || user.loyalty.points < pointsToUse) {
+        if (rewardPoints.balance < pointsToUse) {
             throw new Error('Insufficient points');
         }
 
-        if (pointsToUse < 100) {
-            throw new Error('Minimum 100 points required for redemption');
-        }
-
-        // Calculate discount amount
-        const discountAmount = calculatePointsDiscount(pointsToUse);
+        // 1 point = ₹1 discount
+        const discountAmount = pointsToUse * POINTS_TO_RUPEES;
 
         // Deduct points
-        user.loyalty.points -= pointsToUse;
-        user.loyalty.pointsHistory.push({
-            points: -pointsToUse,
+        rewardPoints.balance -= pointsToUse;
+        rewardPoints.totalRedeemed += pointsToUse;
+        rewardPoints.transactions.push({
             type: 'redeemed',
-            description: `Redeemed ${pointsToUse} points for ₹${discountAmount} discount on order`,
-            orderId: orderId,
+            points: pointsToUse,
+            order: orderId,
+            description: `Redeemed ${pointsToUse} points for ₹${discountAmount.toLocaleString('en-IN')} discount`,
             date: new Date()
         });
 
-        await user.save();
+        await rewardPoints.save();
 
         console.log(`[Loyalty] User ${userId} used ${pointsToUse} points (₹${discountAmount}) for order ${orderId}`);
         return {
             success: true,
             pointsDeducted: pointsToUse,
             discountAmount,
-            remainingPoints: user.loyalty.points
+            remainingPoints: rewardPoints.balance
         };
     } catch (error) {
         console.error('[Loyalty] Error deducting points for order:', error);
@@ -308,14 +289,7 @@ const deductPointsForOrder = async (userId, pointsToUse, orderId) => {
 
 module.exports = {
     awardPoints,
-    redeemPoints,
-    checkTierUpgrade,
-    processReferral,
-    getTierBenefits,
-    calculateTierDiscount,
-    awardBirthdayBonus,
-    calculatePointsDiscount,
     deductPointsForOrder,
-    TIER_THRESHOLDS,
-    TIER_BENEFITS
+    POINTS_PERCENTAGE,
+    POINTS_TO_RUPEES
 };

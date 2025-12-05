@@ -22,6 +22,7 @@ const tryAtHomeRoutes = require('./routes/tryAtHomeRoutes');
 const alertRoutes = require('./routes/alertRoutes');
 const recommendationRoutes = require('./routes/recommendationRoutes');
 const customizationRoutes = require('./routes/customizationRoutes');
+const rewardsRoutes = require('./routes/rewardsRoutes');
 const { errorHandler, notFound } = require('./middleware/errorMiddleware');
 
 const app = express();
@@ -92,6 +93,7 @@ app.use('/api/try-at-home', tryAtHomeRoutes);
 app.use('/api/alerts', alertRoutes);
 app.use('/api/recommendations', recommendationRoutes);
 app.use('/api/customizations', customizationRoutes);
+app.use('/api/rewards', rewardsRoutes);
 
 app.get('/', (req, res) => {
     res.send('Jewellery App API is running');

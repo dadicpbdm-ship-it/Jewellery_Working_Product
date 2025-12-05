@@ -161,6 +161,13 @@ const orderSchema = mongoose.Schema({
         type: Number,
         default: 0
     },
+    // Reward Points Earned
+    rewardPoints: {
+        earned: {
+            type: Number,
+            default: 0
+        }
+    },
     // Enhanced Order Tracking
     estimatedDeliveryDate: {
         type: Date
