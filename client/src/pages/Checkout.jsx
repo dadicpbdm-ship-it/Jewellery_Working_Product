@@ -549,7 +549,25 @@ const Checkout = () => {
                                         </div>
 
                                         <div className="points-selector">
-                                            <label>Points to Use (min 100):</label>
+                                            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '10px' }}>
+                                                <label>Points to Use (min 100):</label>
+                                                <button
+                                                    type="button"
+                                                    onClick={() => handlePointsChange(rewardBalance)}
+                                                    style={{
+                                                        padding: '6px 16px',
+                                                        background: '#4CAF50',
+                                                        color: 'white',
+                                                        border: 'none',
+                                                        borderRadius: '5px',
+                                                        cursor: 'pointer',
+                                                        fontSize: '0.9rem',
+                                                        fontWeight: '500'
+                                                    }}
+                                                >
+                                                    Use All Points
+                                                </button>
+                                            </div>
                                             <div className="points-input-group">
                                                 <input
                                                     type="range"
@@ -573,19 +591,39 @@ const Checkout = () => {
                                         </div>
 
                                         {pointsToUse >= 100 && (
-                                            <div className="points-discount-preview">
-                                                <div className="discount-row">
-                                                    <span>Points Applied:</span>
-                                                    <span className="highlight">{pointsToUse} points</span>
+                                            <div className="points-discount-preview" style={{
+                                                background: '#f0f8ff',
+                                                padding: '15px',
+                                                borderRadius: '8px',
+                                                marginTop: '15px',
+                                                border: '2px solid #4CAF50'
+                                            }}>
+                                                <div className="discount-row" style={{ marginBottom: '8px', display: 'flex', justifyContent: 'space-between' }}>
+                                                    <span>Order Total:</span>
+                                                    <span>₹{getCartTotal().toLocaleString('en-IN')}</span>
                                                 </div>
-                                                <div className="discount-row">
-                                                    <span>Discount:</span>
-                                                    <span className="highlight">-₹{pointsDiscount}</span>
+                                                <div className="discount-row" style={{ marginBottom: '8px', color: '#4CAF50', fontWeight: 'bold', display: 'flex', justifyContent: 'space-between' }}>
+                                                    <span>Reward Points:</span>
+                                                    <span>-₹{pointsDiscount.toLocaleString('en-IN')} ({pointsToUse} pts)</span>
                                                 </div>
-                                                <div className="discount-row total">
-                                                    <span>Amount to Pay:</span>
-                                                    <span className="highlight">₹{getFinalAmount().toLocaleString('en-IN')}</span>
+                                                <hr style={{ margin: '10px 0', border: 'none', borderTop: '1px solid #ddd' }} />
+                                                <div className="discount-row total" style={{ fontSize: '1.15rem', fontWeight: 'bold', display: 'flex', justifyContent: 'space-between' }}>
+                                                    <span>Remaining to Pay:</span>
+                                                    <span style={{ color: getFinalAmount() === 0 ? '#4CAF50' : '#333' }}>
+                                                        ₹{getFinalAmount().toLocaleString('en-IN')}
+                                                    </span>
                                                 </div>
+                                                {getFinalAmount() === 0 && (
+                                                    <p style={{
+                                                        margin: '12px 0 0 0',
+                                                        color: '#4CAF50',
+                                                        fontSize: '0.95rem',
+                                                        textAlign: 'center',
+                                                        fontWeight: '600'
+                                                    }}>
+                                                        🎉 Fully paid! No additional payment needed.
+                                                    </p>
+                                                )}
                                             </div>
                                         )}
 
