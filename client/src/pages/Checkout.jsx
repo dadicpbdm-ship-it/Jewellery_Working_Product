@@ -537,17 +537,28 @@ const Checkout = () => {
                         {/* Reward Points Section */}
                         {user && (
                             <div className="reward-points-section" style={{
-                                background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
-                                borderRadius: '12px',
-                                padding: '18px',
+                                background: 'white',
+                                border: '2px solid #eee',
+                                borderRadius: '8px',
+                                padding: '1.25rem',
                                 marginBottom: '25px',
-                                color: 'white',
-                                boxShadow: '0 4px 15px rgba(102, 126, 234, 0.25)'
-                            }}>
+                                color: '#2c3e50',
+                                transition: 'all 0.3s ease'
+                            }}
+                                onMouseOver={(e) => {
+                                    e.currentTarget.style.borderColor = '#c9a961';
+                                    e.currentTarget.style.background = '#fffdf5';
+                                }}
+                                onMouseOut={(e) => {
+                                    e.currentTarget.style.borderColor = '#eee';
+                                    e.currentTarget.style.background = 'white';
+                                }}
+                            >
                                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '12px' }}>
-                                    <h3 style={{ margin: 0, fontSize: '1.1rem', fontWeight: '600' }}>💎 Reward Points</h3>
+                                    <h3 style={{ margin: 0, fontSize: '1.1rem', fontWeight: '600', color: '#2c3e50' }}>💎 Reward Points</h3>
                                     <span style={{
-                                        background: 'rgba(255,255,255,0.2)',
+                                        background: '#f0f0f0',
+                                        color: '#2c3e50',
                                         padding: '4px 12px',
                                         borderRadius: '15px',
                                         fontSize: '0.9rem',
@@ -560,26 +571,30 @@ const Checkout = () => {
                                 {rewardBalance >= 100 ? (
                                     <>
                                         <div style={{
-                                            background: 'rgba(255,255,255,0.15)',
+                                            background: '#f8f9fa',
                                             borderRadius: '8px',
                                             padding: '12px',
-                                            marginBottom: '10px'
+                                            marginBottom: '10px',
+                                            border: '1px solid #eee'
                                         }}>
                                             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '10px' }}>
-                                                <span style={{ fontSize: '0.85rem', opacity: 0.9 }}>Select points:</span>
+                                                <span style={{ fontSize: '0.85rem', color: '#666' }}>Select points:</span>
                                                 <button
                                                     type="button"
                                                     onClick={() => handlePointsChange(rewardBalance)}
                                                     style={{
                                                         padding: '5px 12px',
-                                                        background: 'rgba(255,255,255,0.9)',
-                                                        color: '#667eea',
+                                                        background: '#c9a961',
+                                                        color: 'white',
                                                         border: 'none',
                                                         borderRadius: '6px',
                                                         cursor: 'pointer',
                                                         fontSize: '0.8rem',
-                                                        fontWeight: '600'
+                                                        fontWeight: '600',
+                                                        transition: 'background 0.2s'
                                                     }}
+                                                    onMouseOver={(e) => e.target.style.background = '#b8984f'}
+                                                    onMouseOut={(e) => e.target.style.background = '#c9a961'}
                                                 >
                                                     Use All
                                                 </button>
@@ -597,38 +612,39 @@ const Checkout = () => {
                                                     height: '6px',
                                                     borderRadius: '3px',
                                                     outline: 'none',
-                                                    marginBottom: '6px'
+                                                    marginBottom: '6px',
+                                                    accentColor: '#c9a961'
                                                 }}
                                             />
 
-                                            <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.8rem', opacity: 0.8 }}>
+                                            <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.8rem', color: '#888' }}>
                                                 <span>0</span>
-                                                <span>{pointsToUse} pts</span>
+                                                <span style={{ color: '#c9a961', fontWeight: '600' }}>{pointsToUse} pts</span>
                                                 <span>{rewardBalance}</span>
                                             </div>
                                         </div>
 
                                         {pointsToUse >= 100 && (
                                             <div style={{
-                                                background: 'rgba(255,255,255,0.95)',
+                                                background: '#fffdf5',
                                                 borderRadius: '8px',
                                                 padding: '12px',
-                                                color: '#333'
+                                                border: '1px solid #c9a961'
                                             }}>
                                                 <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '6px', fontSize: '0.85rem' }}>
                                                     <span style={{ color: '#666' }}>Discount:</span>
-                                                    <span style={{ fontWeight: '600', color: '#4CAF50' }}>-₹{pointsDiscount.toLocaleString('en-IN')}</span>
+                                                    <span style={{ fontWeight: '600', color: '#c9a961' }}>-₹{pointsDiscount.toLocaleString('en-IN')}</span>
                                                 </div>
                                                 <div style={{ display: 'flex', justifyContent: 'space-between', paddingTop: '8px', borderTop: '1px solid #eee' }}>
-                                                    <span style={{ fontWeight: '600' }}>You Pay:</span>
-                                                    <span style={{ fontSize: '1.05rem', fontWeight: '700', color: getFinalAmount() === 0 ? '#4CAF50' : '#667eea' }}>
+                                                    <span style={{ fontWeight: '600', color: '#2c3e50' }}>You Pay:</span>
+                                                    <span style={{ fontSize: '1.05rem', fontWeight: '700', color: getFinalAmount() === 0 ? '#c9a961' : '#2c3e50' }}>
                                                         ₹{getFinalAmount().toLocaleString('en-IN')}
                                                     </span>
                                                 </div>
                                                 {getFinalAmount() === 0 && (
                                                     <p style={{
                                                         margin: '8px 0 0 0',
-                                                        color: '#4CAF50',
+                                                        color: '#c9a961',
                                                         fontSize: '0.8rem',
                                                         textAlign: 'center',
                                                         fontWeight: '600'
@@ -640,27 +656,28 @@ const Checkout = () => {
                                         )}
 
                                         {pointsToUse > 0 && pointsToUse < 100 && (
-                                            <p style={{ margin: '8px 0 0 0', fontSize: '0.8rem', opacity: 0.9, textAlign: 'center' }}>
+                                            <p style={{ margin: '8px 0 0 0', fontSize: '0.8rem', color: '#e74c3c', textAlign: 'center' }}>
                                                 ⚠️ Minimum 100 points required
                                             </p>
                                         )}
                                     </>
                                 ) : (
                                     <div style={{
-                                        background: 'rgba(255,255,255,0.15)',
+                                        background: '#f8f9fa',
                                         borderRadius: '8px',
                                         padding: '12px',
-                                        textAlign: 'center'
+                                        textAlign: 'center',
+                                        border: '1px solid #eee'
                                     }}>
                                         {rewardBalance === 0 ? (
-                                            <p style={{ margin: 0, fontSize: '0.85rem', opacity: 0.9 }}>
+                                            <p style={{ margin: 0, fontSize: '0.85rem', color: '#666' }}>
                                                 Start shopping to earn points!<br />
-                                                <small style={{ opacity: 0.8 }}>1 point = ₹1 spent</small>
+                                                <small style={{ color: '#999' }}>1 point = ₹1 spent</small>
                                             </p>
                                         ) : (
-                                            <p style={{ margin: 0, fontSize: '0.85rem', opacity: 0.9 }}>
+                                            <p style={{ margin: 0, fontSize: '0.85rem', color: '#666' }}>
                                                 Need {100 - rewardBalance} more points<br />
-                                                <small style={{ opacity: 0.8 }}>Minimum 100 required</small>
+                                                <small style={{ color: '#999' }}>Minimum 100 required</small>
                                             </p>
                                         )}
                                     </div>
