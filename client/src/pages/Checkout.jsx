@@ -83,7 +83,10 @@ const Checkout = () => {
             });
             if (response.ok) {
                 const data = await response.json();
+                console.log('Loyalty points fetched:', data.points);
                 setLoyaltyPoints(data.points || 0);
+            } else {
+                console.error('Failed to fetch loyalty points:', response.status);
             }
         } catch (error) {
             console.error('Error fetching loyalty points:', error);
@@ -551,57 +554,79 @@ const Checkout = () => {
                         </div>
 
                         {/* Reward Points Section */}
-                        {user && loyaltyPoints >= 100 && (
+                        {user && (
                             <div className="reward-points-section">
                                 <h3>💎 Use Reward Points</h3>
-                                <div className="points-info">
-                                    <p>Available Points: <strong>{loyaltyPoints.toLocaleString()}</strong></p>
-                                    <p className="points-value">= ₹{Math.floor(loyaltyPoints / 100) * 10} discount value</p>
-                                </div>
 
-                                <div className="points-selector">
-                                    <label>Points to Use (min 100):</label>
-                                    <div className="points-input-group">
-                                        <input
-                                            type="range"
-                                            min="0"
-                                            max={loyaltyPoints}
-                                            step="100"
-                                            value={pointsToUse}
-                                            onChange={(e) => handlePointsChange(e.target.value)}
-                                            className="points-slider"
-                                        />
-                                        <input
-                                            type="number"
-                                            min="0"
-                                            max={loyaltyPoints}
-                                            step="100"
-                                            value={pointsToUse}
-                                            onChange={(e) => handlePointsChange(e.target.value)}
-                                            className="points-number-input"
-                                        />
+                                {loyaltyPoints >= 100 ? (
+                                    <>
+                                        <div className="points-info">
+                                            <p>Available Points: <strong>{loyaltyPoints.toLocaleString()}</strong></p>
+                                            <p className="points-value">= ₹{Math.floor(loyaltyPoints / 100) * 10} discount value</p>
+                                        </div>
+
+                                        <div className="points-selector">
+                                            <label>Points to Use (min 100):</label>
+                                            <div className="points-input-group">
+                                                <input
+                                                    type="range"
+                                                    min="0"
+                                                    max={loyaltyPoints}
+                                                    step="100"
+                                                    value={pointsToUse}
+                                                    onChange={(e) => handlePointsChange(e.target.value)}
+                                                    className="points-slider"
+                                                />
+                                                <input
+                                                    type="number"
+                                                    min="0"
+                                                    max={loyaltyPoints}
+                                                    step="100"
+                                                    value={pointsToUse}
+                                                    onChange={(e) => handlePointsChange(e.target.value)}
+                                                    className="points-number-input"
+                                                />
+                                            </div>
+                                        </div>
+
+                                        {pointsToUse >= 100 && (
+                                            <div className="points-discount-preview">
+                                                <div className="discount-row">
+                                                    <span>Points Applied:</span>
+                                                    <span className="highlight">{pointsToUse} points</span>
+                                                </div>
+                                                <div className="discount-row">
+                                                    <span>Discount:</span>
+                                                    <span className="highlight">-₹{pointsDiscount}</span>
+                                                </div>
+                                                <div className="discount-row total">
+                                                    <span>Amount to Pay:</span>
+                                                    <span className="highlight">₹{getFinalAmount().toLocaleString('en-IN')}</span>
+                                                </div>
+                                            </div>
+                                        )}
+
+                                        {pointsToUse > 0 && pointsToUse < 100 && (
+                                            <p className="points-warning">⚠️ Minimum 100 points required for redemption</p>
+                                        )}
+                                    </>
+                                ) : (
+                                    <div className="points-info-insufficient">
+                                        <p>Available Points: <strong>{loyaltyPoints.toLocaleString()}</strong></p>
+                                        {loyaltyPoints === 0 ? (
+                                            <p className="points-message">
+                                                🎁 You don't have any reward points yet. Start shopping to earn points!
+                                                <br />
+                                                <small>Earn 1 point for every ₹1 spent</small>
+                                            </p>
+                                        ) : (
+                                            <p className="points-message">
+                                                ⚠️ You need at least 100 points to redeem. You have {loyaltyPoints} points.
+                                                <br />
+                                                <small>Keep shopping to earn {100 - loyaltyPoints} more points!</small>
+                                            </p>
+                                        )}
                                     </div>
-                                </div>
-
-                                {pointsToUse >= 100 && (
-                                    <div className="points-discount-preview">
-                                        <div className="discount-row">
-                                            <span>Points Applied:</span>
-                                            <span className="highlight">{pointsToUse} points</span>
-                                        </div>
-                                        <div className="discount-row">
-                                            <span>Discount:</span>
-                                            <span className="highlight">-₹{pointsDiscount}</span>
-                                        </div>
-                                        <div className="discount-row total">
-                                            <span>Amount to Pay:</span>
-                                            <span className="highlight">₹{getFinalAmount().toLocaleString('en-IN')}</span>
-                                        </div>
-                                    </div>
-                                )}
-
-                                {pointsToUse > 0 && pointsToUse < 100 && (
-                                    <p className="points-warning">⚠️ Minimum 100 points required for redemption</p>
                                 )}
                             </div>
                         )}
