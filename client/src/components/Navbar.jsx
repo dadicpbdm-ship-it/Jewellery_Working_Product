@@ -165,7 +165,7 @@ const Navbar = () => {
                                     <>
                                         <li><Link to="/dashboard" onClick={closeMenu}>Dashboard</Link></li>
                                         <li>
-                                            <Link to="/dashboard" onClick={() => { closeMenu(); }} className="nav-link">
+                                            <Link to="/dashboard?tab=rewards" onClick={() => { closeMenu(); }} className="nav-link">
                                                 🏆 Rewards {balance > 0 && <span className="badge">{balance}</span>}
                                             </Link>
                                         </li>

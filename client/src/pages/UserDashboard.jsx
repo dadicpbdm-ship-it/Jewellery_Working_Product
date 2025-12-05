@@ -1,8 +1,9 @@
 import React, { useState, useEffect, useContext } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useSearchParams } from 'react-router-dom';
 import { AuthContext } from '../context/AuthContext';
 import { useToast } from '../context/ToastContext';
 import ChangePassword from '../components/ChangePassword';
+import RewardsTab from '../components/RewardsTab';
 import { API_URL } from '../config';
 import OrderTracking from '../components/OrderTracking';
 import './UserDashboard.css';
@@ -10,6 +11,7 @@ import './UserDashboard.css';
 const UserDashboard = () => {
     const { user } = useContext(AuthContext);
     const { success, error } = useToast();
+    const [searchParams] = useSearchParams();
     const [stats, setStats] = useState(null);
     const [orders, setOrders] = useState([]);
     const [addresses, setAddresses] = useState([]);
@@ -27,6 +29,14 @@ const UserDashboard = () => {
         postalCode: '',
         country: ''
     });
+
+    // Check URL query parameter for tab selection
+    useEffect(() => {
+        const tabParam = searchParams.get('tab');
+        if (tabParam) {
+            setActiveTab(tabParam);
+        }
+    }, [searchParams]);
 
     useEffect(() => {
         fetchDashboardData();
@@ -309,9 +319,13 @@ const UserDashboard = () => {
                                 </span>
                             </div>
                         </div>
-                        <Link to="/rewards" className="btn-primary" style={{ textDecoration: 'none' }}>
+                        <button
+                            onClick={() => setActiveTab('rewards')}
+                            className="btn-primary"
+                            style={{ textDecoration: 'none', cursor: 'pointer' }}
+                        >
                             View Rewards
-                        </Link>
+                        </button>
                     </div>
                 )}
 
@@ -340,6 +354,12 @@ const UserDashboard = () => {
                         onClick={() => setActiveTab('alerts')}
                     >
                         My Alerts
+                    </button>
+                    <button
+                        className={`tab-btn ${activeTab === 'rewards' ? 'active' : ''}`}
+                        onClick={() => setActiveTab('rewards')}
+                    >
+                        My Rewards
                     </button>
                     <button
                         className={`tab-btn ${activeTab === 'profile' ? 'active' : ''}`}
@@ -512,6 +532,12 @@ const UserDashboard = () => {
                                     ))}
                                 </div>
                             )}
+                        </div>
+                    )}
+
+                    {activeTab === 'rewards' && (
+                        <div className="rewards-section">
+                            <RewardsTab />
                         </div>
                     )}
 
