@@ -742,12 +742,12 @@ const AdminDashboard = () => {
                                                             </button>
                                                         </div>
                                                     )}
-                                                    {order.returnExchangeRequest.status === 'Approved' && (
+                                                    {order.returnExchangeRequest.status === 'Picked Up' && (
                                                         <button
                                                             className="btn-secondary btn-sm"
                                                             onClick={() => updateReturnStatus(order._id, 'Completed')}
                                                         >
-                                                            Mark Completed
+                                                            Mark Completed (Refund)
                                                         </button>
                                                     )}
                                                 </td>

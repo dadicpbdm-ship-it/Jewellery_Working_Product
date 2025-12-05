@@ -374,14 +374,14 @@ router.put('/:id/return-exchange-status', protect, async (req, res) => {
             // Permission Check
             const isAdmin = req.user.role === 'admin';
             const isDelivery = req.user.role === 'delivery';
-
-            if (!isAdmin && !isDelivery) {
-                return res.status(403).json({ message: 'Not authorized' });
+            // Delivery agents can only mark returns as Picked Up
+            if (isDelivery && status !== 'Picked Up') {
+                return res.status(403).json({ message: 'Delivery agents can only mark returns as Picked Up' });
             }
 
-            // Delivery agents can only mark as Completed
-            if (isDelivery && status !== 'Completed') {
-                return res.status(403).json({ message: 'Delivery agents can only mark returns as Completed' });
+            // Admin can only mark as Completed if it's already Picked Up (for Returns)
+            if (status === 'Completed' && order.returnExchangeRequest.type === 'Return' && order.returnExchangeRequest.status !== 'Picked Up') {
+                return res.status(400).json({ message: 'Returns must be marked as Picked Up by delivery agent before completion' });
             }
 
             if (order.returnExchangeRequest.type === 'None') {

@@ -130,12 +130,12 @@ const DeliveryDashboard = () => {
                     'Content-Type': 'application/json',
                     'Authorization': `Bearer ${user.token}`
                 },
-                body: JSON.stringify({ status: 'Completed' })
+                body: JSON.stringify({ status: 'Picked Up' })
             });
 
             if (response.ok) {
                 fetchOrders();
-                success('Return marked as completed!');
+                success('Return marked as Picked Up!');
             } else {
                 const errData = await response.json();
                 error(errData.message || 'Error updating return status');
