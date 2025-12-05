@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import ProductCard from '../components/ProductCard';
+import RecentlyViewed from '../components/RecentlyViewed';
 import { API_URL } from '../config';
 import './Home.css';
 import './BannerEnhancement.css';
@@ -99,6 +100,9 @@ const Home = () => {
                     </div>
                 )}
             </section>
+
+            {/* Recently Viewed Section */}
+            <RecentlyViewed />
 
             {/* Categories / Banner */}
             <section className="banner-section">

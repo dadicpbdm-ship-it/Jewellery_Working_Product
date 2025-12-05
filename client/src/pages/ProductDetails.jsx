@@ -12,6 +12,8 @@ import TryAtHomeModal from '../components/TryAtHomeModal';
 import AlertModal from '../components/AlertModal';
 import ProductRecommendations from '../components/ProductRecommendations';
 import CustomizationModal from '../components/CustomizationModal';
+import RelatedProducts from '../components/RelatedProducts';
+import RecentlyViewed from '../components/RecentlyViewed';
 import { API_URL } from '../config';
 import './ProductDetails.css';
 
@@ -60,31 +62,7 @@ const ProductDetails = () => {
         fetchProduct();
     }, [id]);
 
-    // Fetch related products when product changes
-    useEffect(() => {
-        const fetchRelatedProducts = async () => {
-            if (!product) return;
-
-            try {
-                const response = await fetch(`${API_URL}/api/products`);
-                if (response.ok) {
-                    const data = await response.json();
-                    // Handle both array response and paginated object response
-                    const allProducts = Array.isArray(data) ? data : (data.products || []);
-                    // Filter products by same category, exclude current product, limit to 4
-                    const related = allProducts
-                        .filter(p => p.category === product.category && p._id !== product._id)
-                        .slice(0, 4);
-                    setRelatedProducts(related);
-                }
-            } catch (error) {
-                console.error('Error fetching related products:', error);
-                // Silently fail for related products - not critical
-            }
-        };
-
-        fetchRelatedProducts();
-    }, [product]);
+    // Fetch related products logic removed - handled by backend
 
     const handleAddToCart = () => {
         if (product) {
@@ -454,31 +432,11 @@ const ProductDetails = () => {
             {/* Reviews Section */}
             <ProductReviews productId={product._id} />
 
-            {/* Similar Products Section */}
-            <ProductRecommendations
-                productId={product._id}
-                type="similar"
-                title="Similar Products You May Like"
-            />
-
-            {/* Complete the Look Section */}
-            <ProductRecommendations
-                productId={product._id}
-                type="complete-the-look"
-                title="Complete the Look"
-            />
-
             {/* Related Products Section */}
-            {relatedProducts.length > 0 && (
-                <div className="related-products-section">
-                    <h2 className="section-title">You May Also Like</h2>
-                    <div className="product-grid">
-                        {relatedProducts.map(relatedProduct => (
-                            <ProductCard key={relatedProduct._id} product={relatedProduct} />
-                        ))}
-                    </div>
-                </div>
-            )}
+            <RelatedProducts products={product.relatedProducts} />
+
+            {/* Recently Viewed Section */}
+            <RecentlyViewed />
 
             {/* Try At Home Modal */}
             {showTryAtHomeModal && (

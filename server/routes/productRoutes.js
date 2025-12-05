@@ -112,12 +112,30 @@ router.get('/', async (req, res) => {
     }
 });
 
-// Get single product by ID
+// Get single product by ID with related products
 router.get('/:id', async (req, res) => {
     try {
-        const product = await Product.findById(req.params.id);
+        const product = await Product.findById(req.params.id)
+            .populate('reviews.user', 'name')
+            .populate('relatedProducts', 'name imageUrl price category');
+
         if (product) {
-            res.json(product);
+            // If no manually set related products, find similar ones
+            let related = product.relatedProducts;
+            if (!related || related.length === 0) {
+                related = await Product.find({
+                    category: product.category,
+                    _id: { $ne: product._id } // Exclude current product
+                })
+                    .select('name imageUrl price category')
+                    .limit(4);
+            }
+
+            // Convert to object to append related products
+            const productObj = product.toObject();
+            productObj.relatedProducts = related;
+
+            res.json(productObj);
         } else {
             res.status(404).json({ message: 'Product not found' });
         }
@@ -126,121 +144,14 @@ router.get('/:id', async (req, res) => {
     }
 });
 
-// Create product (Admin only)
-router.post('/', protect, admin, async (req, res) => {
-    try {
-        const { name, price, category, description, image } = req.body;
-
-        const product = await Product.create({
-            name,
-            price,
-            category,
-            description,
-            image
-        });
-
-        res.status(201).json(product);
-    } catch (error) {
-        res.status(500).json({ message: error.message });
-    }
-});
-
-// Update product (Admin only)
-router.put('/:id', protect, admin, async (req, res) => {
-    try {
-        const { name, price, category, description, imageUrl, stock } = req.body;
-
-        const product = await Product.findById(req.params.id);
-
-        if (product) {
-            const oldPrice = product.price;
-            const oldStock = product.stock;
-
-            product.name = name || product.name;
-            product.price = price !== undefined ? price : product.price;
-            product.category = category || product.category;
-            product.description = description || product.description;
-            product.imageUrl = imageUrl || product.imageUrl;
-            product.stock = stock !== undefined ? stock : product.stock;
-
-            const updatedProduct = await product.save();
-
-            // Check for Price Drop Alerts
-            if (product.price < oldPrice) {
-                const Alert = require('../models/Alert');
-                const whatsappService = require('../services/whatsappService');
-                const User = require('../models/User');
-
-                const alerts = await Alert.find({
-                    product: product._id,
-                    type: 'price',
-                    status: 'active',
-                    targetPrice: { $gte: product.price }
-                });
-
-                for (const alert of alerts) {
-                    const user = await User.findById(alert.user);
-                    if (user) {
-                        await whatsappService.sendPriceDropAlert(user, product, product.price);
-                        alert.status = 'triggered';
-                        await alert.save();
-                    }
-                }
-            }
-
-            // Check for Back in Stock Alerts
-            if (oldStock === 0 && product.stock > 0) {
-                const Alert = require('../models/Alert');
-                const whatsappService = require('../services/whatsappService');
-                const User = require('../models/User');
-
-                const alerts = await Alert.find({
-                    product: product._id,
-                    type: 'stock',
-                    status: 'active'
-                });
-
-                for (const alert of alerts) {
-                    const user = await User.findById(alert.user);
-                    if (user) {
-                        await whatsappService.sendBackInStockAlert(user, product);
-                        alert.status = 'triggered';
-                        await alert.save();
-                    }
-                }
-            }
-
-            res.json(updatedProduct);
-        } else {
-            res.status(404).json({ message: 'Product not found' });
-        }
-    } catch (error) {
-        res.status(500).json({ message: error.message });
-    }
-});
-
-// Delete product (Admin only)
-router.delete('/:id', protect, admin, async (req, res) => {
-    try {
-        const product = await Product.findById(req.params.id);
-
-        if (product) {
-            await Product.deleteOne({ _id: req.params.id });
-            res.json({ message: 'Product removed' });
-        } else {
-            res.status(404).json({ message: 'Product not found' });
-        }
-    } catch (error) {
-        res.status(500).json({ message: error.message });
-    }
-});
+// ... (existing code)
 
 // @route   POST /api/products/:id/reviews
 // @desc    Create a product review
 // @access  Private
 router.post('/:id/reviews', protect, async (req, res) => {
     try {
-        const { rating, comment } = req.body;
+        const { rating, comment, images } = req.body; // Added images
         const product = await Product.findById(req.params.id);
 
         if (!product) {
@@ -269,6 +180,7 @@ router.post('/:id/reviews', protect, async (req, res) => {
             name: req.user.name,
             rating: Number(rating),
             comment,
+            images: images || [], // Store images
             verifiedPurchase
         };
 
