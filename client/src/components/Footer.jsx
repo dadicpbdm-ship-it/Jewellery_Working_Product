@@ -56,7 +56,7 @@ const Footer = () => {
                         <li><Link to="/contact">Help & FAQs</Link></li>
                         <li><Link to="/contact">Shipping Info</Link></li>
                         <li><Link to="/contact">Returns</Link></li>
-                        <li><Link to="/contact">Track Order</Link></li>
+                        <li><Link to="/dashboard?tab=overview">Track Order</Link></li>
                     </ul>
                 </div>
                 <div className="footer-section newsletter-section">

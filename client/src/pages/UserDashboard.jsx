@@ -379,24 +379,47 @@ const UserDashboard = () => {
                                     <p>No orders yet</p>
                                 </div>
                             ) : (
-                                <div className="orders-list">
+                                <div className="orders-grid">
                                     {orders.map(order => (
-                                        <div key={order._id} className="order-card">
-                                            <div className="order-header">
-                                                <div>
-                                                    <span className="order-id">#{order._id.substring(0, 8).toUpperCase()}</span>
-                                                    <span className="order-date">{new Date(order.createdAt).toLocaleDateString()}</span>
+                                        <div key={order._id} className="order-card compact-grid-item">
+                                            <div className="card-content">
+                                                <div className="product-image-container">
+                                                    {order.orderItems.length > 0 && (
+                                                        <Link to={`/product/${order.orderItems[0].product}`}>
+                                                            <img
+                                                                src={order.orderItems[0].image}
+                                                                alt={order.orderItems[0].name}
+                                                                className="main-product-thumb"
+                                                            />
+                                                        </Link>
+                                                    )}
                                                 </div>
-                                                <span className={`order-status ${order.isDelivered ? 'delivered' : 'pending'}`}>
-                                                    {order.isDelivered ? 'Delivered' : 'Processing'}
-                                                </span>
-                                            </div>
-                                            <div className="order-timeline-wrapper">
-                                                <OrderTracking order={order} />
-                                            </div>
-                                            <div className="order-footer">
-                                                <span className="order-total">₹{order.totalPrice.toLocaleString('en-IN')}</span>
-                                                <Link to={`/order/${order._id}`} className="btn-view-order">View Details</Link>
+                                                <div className="order-details-container">
+                                                    <div className="product-info">
+                                                        {order.orderItems.length > 0 && (
+                                                            <h4 className="product-name">
+                                                                <Link to={`/product/${order.orderItems[0].product}`}>
+                                                                    {order.orderItems[0].name}
+                                                                </Link>
+                                                            </h4>
+                                                        )}
+                                                        {order.orderItems.length > 1 && (
+                                                            <span className="more-items">+{order.orderItems.length - 1} more items</span>
+                                                        )}
+                                                    </div>
+
+                                                    <div className="order-meta-row">
+                                                        <span className="order-id">#{order._id.substring(0, 8).toUpperCase()}</span>
+                                                        <span className={`order-status-badge ${order.isDelivered ? 'delivered' : 'pending'}`}>
+                                                            {order.isDelivered ? 'Delivered' : 'Processing'}
+                                                        </span>
+                                                    </div>
+
+                                                    <div className="order-footer-row">
+                                                        <span className="order-total-price">₹{order.totalPrice.toLocaleString('en-IN')}</span>
+                                                        <Link to={`/order/${order._id}`} className="btn-view-details-sm">View Details &rarr;</Link>
+                                                    </div>
+                                                </div>
                                             </div>
                                         </div>
                                     ))}

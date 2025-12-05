@@ -164,6 +164,7 @@ const Navbar = () => {
                                 {user.role === 'user' && (
                                     <>
                                         <li><Link to="/dashboard" onClick={closeMenu}>Dashboard</Link></li>
+                                        <li><Link to="/dashboard?tab=overview" onClick={closeMenu}>Orders</Link></li>
                                         <li>
                                             <Link to="/dashboard?tab=rewards" onClick={() => { closeMenu(); }} className="nav-link">
                                                 🏆 Rewards {balance > 0 && <span className="badge">{balance}</span>}

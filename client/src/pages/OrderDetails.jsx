@@ -353,16 +353,22 @@ const OrderDetails = () => {
                     <h3>Order Items</h3>
                     <div className="items-list">
                         {order.orderItems.map((item, index) => (
-                            <div key={index} className="order-item-detail">
-                                <img src={item.image} alt={item.name} />
-                                <div className="item-info">
-                                    <h4>{item.name}</h4>
-                                    <p className="item-price">₹{item.price.toLocaleString('en-IN')} × {item.quantity}</p>
+                            <Link to={`/product/${item.product}`} key={index} className="order-item-detail" style={{ textDecoration: 'none', color: 'inherit', display: 'flex', alignItems: 'center', gap: '1rem', padding: '1rem', borderBottom: '1px solid #eee' }}>
+                                <img src={item.image} alt={item.name} style={{ width: '80px', height: '80px', objectFit: 'cover', borderRadius: '8px' }} />
+                                <div className="item-info" style={{ flex: 1 }}>
+                                    <h4 style={{ margin: '0 0 0.5rem 0', color: '#333' }}>{item.name}</h4>
+                                    <p className="item-price" style={{ margin: 0, color: '#666' }}>₹{item.price.toLocaleString('en-IN')} × {item.quantity}</p>
+                                    {item.customization && (
+                                        <div className="item-customization" style={{ fontSize: '0.85rem', color: '#888', marginTop: '0.25rem' }}>
+                                            {item.customization.selectedSize && <span>Size: {item.customization.selectedSize} | </span>}
+                                            {item.customization.selectedMaterial && <span>Material: {item.customization.selectedMaterial}</span>}
+                                        </div>
+                                    )}
                                 </div>
-                                <div className="item-total">
+                                <div className="item-total" style={{ fontWeight: 'bold', color: '#333' }}>
                                     ₹{(item.price * item.quantity).toLocaleString('en-IN')}
                                 </div>
-                            </div>
+                            </Link>
                         ))}
                     </div>
                 </div>
