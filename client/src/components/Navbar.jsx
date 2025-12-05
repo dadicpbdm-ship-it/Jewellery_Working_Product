@@ -3,6 +3,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import { AuthContext } from '../context/AuthContext';
 import { CartContext } from '../context/CartContext';
 import { WishlistContext } from '../context/WishlistContext';
+import { RewardsContext } from '../context/RewardsContext';
 import { API_URL } from '../config';
 import './Navbar.css';
 
@@ -10,6 +11,7 @@ const Navbar = () => {
     const { user, logout } = useContext(AuthContext);
     const { getCartCount } = useContext(CartContext);
     const { wishlist } = useContext(WishlistContext);
+    const { balance } = useContext(RewardsContext);
     const navigate = useNavigate();
 
     const [searchTerm, setSearchTerm] = React.useState('');
@@ -162,7 +164,11 @@ const Navbar = () => {
                                 {user.role === 'user' && (
                                     <>
                                         <li><Link to="/dashboard" onClick={closeMenu}>Dashboard</Link></li>
-                                        <li><Link to="/rewards" onClick={closeMenu}>Rewards</Link></li>
+                                        <li>
+                                            <Link to="/dashboard" onClick={() => { closeMenu(); }} className="nav-link">
+                                                🏆 Rewards {balance > 0 && <span className="badge">{balance}</span>}
+                                            </Link>
+                                        </li>
                                     </>
                                 )}
                                 <li><button onClick={handleLogout} className="logout-btn">Logout</button></li>

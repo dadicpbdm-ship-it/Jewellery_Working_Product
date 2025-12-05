@@ -22,6 +22,7 @@ import OrderSuccess from './pages/OrderSuccess';
 import OrderDetails from './pages/OrderDetails';
 import Wishlist from './pages/Wishlist';
 import { WishlistProvider } from './context/WishlistContext';
+import { RewardsProvider } from './context/RewardsContext';
 import { ToastProvider } from './context/ToastContext';
 import Contact from './pages/Contact';
 import DeliveryAgentRegister from './pages/DeliveryAgentRegister';
@@ -36,117 +37,119 @@ function App() {
   return (
     <AuthProvider>
       <ToastProvider>
-        <WishlistProvider>
-          <CartProvider>
-            <Router>
-              <ScrollToTop />
-              <div className="app-container">
-                <Navbar />
-                <main>
-                  <Routes>
-                    <Route path="/" element={<Home />} />
-                    <Route path="/shop" element={<Shop />} />
-                    <Route path="/product/:id" element={<ProductDetails />} />
-                    <Route path="/cart" element={<Cart />} />
-                    <Route path="/wishlist" element={<Wishlist />} />
-                    <Route path="/contact" element={<Contact />} />
-                    <Route path="/login" element={<Login />} />
-                    <Route path="/register" element={<Register />} />
-                    <Route path="/admin/login" element={<AdminLogin />} />
-                    <Route
-                      path="/admin/dashboard"
-                      element={
-                        <ProtectedRoute adminOnly={true}>
-                          <AdminDashboard />
-                        </ProtectedRoute>
-                      }
-                    />
-                    <Route
-                      path="/delivery/dashboard"
-                      element={
-                        <ProtectedRoute deliveryOnly={true}>
-                          <DeliveryDashboard />
-                        </ProtectedRoute>
-                      }
-                    />
-                    <Route
-                      path="/admin/delivery-agents"
-                      element={
-                        <ProtectedRoute adminOnly={true}>
-                          <ManageDeliveryAgents />
-                        </ProtectedRoute>
-                      }
-                    />
-                    <Route
-                      path="/admin/delivery-agents/register"
-                      element={
-                        <ProtectedRoute adminOnly={true}>
-                          <DeliveryAgentRegister />
-                        </ProtectedRoute>
-                      }
-                    />
-                    <Route
-                      path="/checkout"
-                      element={<Checkout />}
-                    />
-                    <Route
-                      path="/order-success"
-                      element={<OrderSuccess />}
-                    />
-                    <Route
-                      path="/dashboard"
-                      element={
-                        <ProtectedRoute>
-                          <UserDashboard />
-                        </ProtectedRoute>
-                      }
-                    />
-                    <Route
-                      path="/order/:id"
-                      element={<OrderDetails />}
-                    />
-                    <Route
-                      path="/wishlist"
-                      element={
-                        <ProtectedRoute>
-                          <Wishlist />
-                        </ProtectedRoute>
-                      }
-                    />
-                    <Route
-                      path="/rewards"
-                      element={
-                        <ProtectedRoute>
-                          <LoyaltyDashboard />
-                        </ProtectedRoute>
-                      }
-                    />
-                    <Route path="/verify-certificate/:certificateNumber?" element={<CertificateVerify />} />
-                    <Route path="/custom-designer" element={<CustomDesigner />} />
-                    <Route
-                      path="/admin/pincodes"
-                      element={
-                        <ProtectedRoute adminOnly={true}>
-                          <ManagePincodes />
-                        </ProtectedRoute>
-                      }
-                    />
-                    <Route
-                      path="/admin/warehouses"
-                      element={
-                        <ProtectedRoute adminOnly={true}>
-                          <ManageWarehouses />
-                        </ProtectedRoute>
-                      }
-                    />
-                  </Routes>
-                </main>
-                <Footer />
-                <BackToTop />
-              </div>
-            </Router>
-          </CartProvider>
-        </WishlistProvider>
+        <RewardsProvider>
+          <WishlistProvider>
+            <CartProvider>
+              <Router>
+                <ScrollToTop />
+                <div className="app-container">
+                  <Navbar />
+                  <main>
+                    <Routes>
+                      <Route path="/" element={<Home />} />
+                      <Route path="/shop" element={<Shop />} />
+                      <Route path="/product/:id" element={<ProductDetails />} />
+                      <Route path="/cart" element={<Cart />} />
+                      <Route path="/wishlist" element={<Wishlist />} />
+                      <Route path="/contact" element={<Contact />} />
+                      <Route path="/login" element={<Login />} />
+                      <Route path="/register" element={<Register />} />
+                      <Route path="/admin/login" element={<AdminLogin />} />
+                      <Route
+                        path="/admin/dashboard"
+                        element={
+                          <ProtectedRoute adminOnly={true}>
+                            <AdminDashboard />
+                          </ProtectedRoute>
+                        }
+                      />
+                      <Route
+                        path="/delivery/dashboard"
+                        element={
+                          <ProtectedRoute deliveryOnly={true}>
+                            <DeliveryDashboard />
+                          </ProtectedRoute>
+                        }
+                      />
+                      <Route
+                        path="/admin/delivery-agents"
+                        element={
+                          <ProtectedRoute adminOnly={true}>
+                            <ManageDeliveryAgents />
+                          </ProtectedRoute>
+                        }
+                      />
+                      <Route
+                        path="/admin/delivery-agents/register"
+                        element={
+                          <ProtectedRoute adminOnly={true}>
+                            <DeliveryAgentRegister />
+                          </ProtectedRoute>
+                        }
+                      />
+                      <Route
+                        path="/checkout"
+                        element={<Checkout />}
+                      />
+                      <Route
+                        path="/order-success"
+                        element={<OrderSuccess />}
+                      />
+                      <Route
+                        path="/dashboard"
+                        element={
+                          <ProtectedRoute>
+                            <UserDashboard />
+                          </ProtectedRoute>
+                        }
+                      />
+                      <Route
+                        path="/order/:id"
+                        element={<OrderDetails />}
+                      />
+                      <Route
+                        path="/wishlist"
+                        element={
+                          <ProtectedRoute>
+                            <Wishlist />
+                          </ProtectedRoute>
+                        }
+                      />
+                      <Route
+                        path="/rewards"
+                        element={
+                          <ProtectedRoute>
+                            <LoyaltyDashboard />
+                          </ProtectedRoute>
+                        }
+                      />
+                      <Route path="/verify-certificate/:certificateNumber?" element={<CertificateVerify />} />
+                      <Route path="/custom-designer" element={<CustomDesigner />} />
+                      <Route
+                        path="/admin/pincodes"
+                        element={
+                          <ProtectedRoute adminOnly={true}>
+                            <ManagePincodes />
+                          </ProtectedRoute>
+                        }
+                      />
+                      <Route
+                        path="/admin/warehouses"
+                        element={
+                          <ProtectedRoute adminOnly={true}>
+                            <ManageWarehouses />
+                          </ProtectedRoute>
+                        }
+                      />
+                    </Routes>
+                  </main>
+                  <Footer />
+                  <BackToTop />
+                </div>
+              </Router>
+            </CartProvider>
+          </WishlistProvider>
+        </RewardsProvider>
       </ToastProvider>
     </AuthProvider >
   );
