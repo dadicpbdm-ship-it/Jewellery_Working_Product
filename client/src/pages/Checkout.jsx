@@ -2,6 +2,7 @@ import React, { useState, useContext, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useCart } from '../context/CartContext';
 import { AuthContext } from '../context/AuthContext';
+import { RewardsContext } from '../context/RewardsContext';
 import { API_URL } from '../config';
 import BNPLOption from '../components/BNPLOption';
 import './Checkout.css';
@@ -9,6 +10,7 @@ import './Checkout.css';
 const Checkout = () => {
     const { cartItems, getCartTotal, clearCart } = useCart();
     const { user } = useContext(AuthContext);
+    const { balance: rewardBalance } = useContext(RewardsContext);
     const navigate = useNavigate();
 
     const [savedAddresses, setSavedAddresses] = useState([]);
@@ -31,11 +33,9 @@ const Checkout = () => {
     const [paymentMethod, setPaymentMethod] = useState('Cash on Delivery');
     const [bnplProvider, setBnplProvider] = useState(null);
 
-    // Reward Points State
-    const [loyaltyPoints, setLoyaltyPoints] = useState(0);
+    // Reward Points State - now using RewardsContext balance
     const [pointsToUse, setPointsToUse] = useState(0);
     const [pointsDiscount, setPointsDiscount] = useState(0);
-    const [loadingPoints, setLoadingPoints] = useState(false);
 
     const bnplProviders = [
         { name: 'Simpl', logo: 'simpl-logo', installments: 3 },
@@ -46,7 +46,6 @@ const Checkout = () => {
     useEffect(() => {
         if (user) {
             fetchSavedAddresses();
-            fetchLoyaltyPoints();
         } else {
             setLoadingAddresses(false);
         }
@@ -74,24 +73,6 @@ const Checkout = () => {
         }
     };
 
-    const fetchLoyaltyPoints = async () => {
-        try {
-            const response = await fetch(`${API_URL}/api/loyalty/dashboard`, {
-                headers: {
-                    'Authorization': `Bearer ${user.token}`
-                }
-            });
-            if (response.ok) {
-                const data = await response.json();
-                console.log('Loyalty points fetched:', data.points);
-                setLoyaltyPoints(data.points || 0);
-            } else {
-                console.error('Failed to fetch loyalty points:', response.status);
-            }
-        } catch (error) {
-            console.error('Error fetching loyalty points:', error);
-        }
-    };
 
     const selectAddress = (addr) => {
         setSelectedAddressId(addr._id);
@@ -150,7 +131,7 @@ const Checkout = () => {
         const numPoints = parseInt(points) || 0;
 
         // Ensure points don't exceed available balance
-        const validPoints = Math.min(numPoints, loyaltyPoints);
+        const validPoints = Math.min(numPoints, rewardBalance);
 
         // Calculate discount (100 points = ₹10)
         const discount = Math.floor(validPoints / 100) * 10;
@@ -554,15 +535,17 @@ const Checkout = () => {
                         </div>
 
                         {/* Reward Points Section */}
+                        {console.log('Checkout - User:', user ? 'Logged in' : 'Not logged in', 'Reward Points:', rewardBalance)}
                         {user && (
                             <div className="reward-points-section">
                                 <h3>💎 Use Reward Points</h3>
+                                <p style={{ color: 'blue', fontSize: '12px' }}>DEBUG: Points loaded = {rewardBalance}</p>
 
-                                {loyaltyPoints >= 100 ? (
+                                {rewardBalance >= 100 ? (
                                     <>
                                         <div className="points-info">
-                                            <p>Available Points: <strong>{loyaltyPoints.toLocaleString()}</strong></p>
-                                            <p className="points-value">= ₹{Math.floor(loyaltyPoints / 100) * 10} discount value</p>
+                                            <p>Available Points: <strong>{rewardBalance.toLocaleString()}</strong></p>
+                                            <p className="points-value">= ₹{Math.floor(rewardBalance / 100) * 10} discount value</p>
                                         </div>
 
                                         <div className="points-selector">
@@ -571,7 +554,7 @@ const Checkout = () => {
                                                 <input
                                                     type="range"
                                                     min="0"
-                                                    max={loyaltyPoints}
+                                                    max={rewardBalance}
                                                     step="100"
                                                     value={pointsToUse}
                                                     onChange={(e) => handlePointsChange(e.target.value)}
@@ -580,7 +563,7 @@ const Checkout = () => {
                                                 <input
                                                     type="number"
                                                     min="0"
-                                                    max={loyaltyPoints}
+                                                    max={rewardBalance}
                                                     step="100"
                                                     value={pointsToUse}
                                                     onChange={(e) => handlePointsChange(e.target.value)}
@@ -612,8 +595,8 @@ const Checkout = () => {
                                     </>
                                 ) : (
                                     <div className="points-info-insufficient">
-                                        <p>Available Points: <strong>{loyaltyPoints.toLocaleString()}</strong></p>
-                                        {loyaltyPoints === 0 ? (
+                                        <p>Available Points: <strong>{rewardBalance.toLocaleString()}</strong></p>
+                                        {rewardBalance === 0 ? (
                                             <p className="points-message">
                                                 🎁 You don't have any reward points yet. Start shopping to earn points!
                                                 <br />
@@ -621,9 +604,9 @@ const Checkout = () => {
                                             </p>
                                         ) : (
                                             <p className="points-message">
-                                                ⚠️ You need at least 100 points to redeem. You have {loyaltyPoints} points.
+                                                ⚠️ You need at least 100 points to redeem. You have {rewardBalance} points.
                                                 <br />
-                                                <small>Keep shopping to earn {100 - loyaltyPoints} more points!</small>
+                                                <small>Keep shopping to earn {100 - rewardBalance} more points!</small>
                                             </p>
                                         )}
                                     </div>
