@@ -95,16 +95,26 @@ const ProductDetails = () => {
         setCheckResult(null);
 
         try {
-            const response = await fetch(`${API_URL}/api/pincodes/check/${pincode}`);
+            // Pass productId to check stock availability at the specific location
+            const response = await fetch(`${API_URL}/api/pincodes/check/${pincode}?productId=${product._id}`);
             const data = await response.json();
 
             if (response.ok && data.serviceable) {
-                const date = new Date();
-                date.setDate(date.getDate() + (data.deliveryDays || 5));
-                setCheckResult({
-                    serviceable: true,
-                    message: `Delivery available to ${data.city}, ${data.state} by ${date.toDateString()}${data.codAvailable ? ' (COD Available)' : ''}`
-                });
+                // Check if product is in stock at this location (if backend returns this info)
+                if (data.inStock === false) {
+                    setCheckResult({
+                        serviceable: false, // Treat as not serviceable for this product
+                        message: data.stockMessage || 'Currently out of stock at this location.',
+                        isStockIssue: true
+                    });
+                } else {
+                    const date = new Date();
+                    date.setDate(date.getDate() + (data.deliveryDays || 5));
+                    setCheckResult({
+                        serviceable: true,
+                        message: `Delivery available to ${data.city}, ${data.state} by ${date.toDateString()}${data.codAvailable ? ' (COD Available)' : ''}`
+                    });
+                }
             } else {
                 setCheckResult({
                     serviceable: false,
@@ -349,22 +359,44 @@ const ProductDetails = () => {
                                 <button
                                     className="btn-secondary"
                                     onClick={() => setShowCustomizationModal(true)}
-                                    style={{ display: 'flex', alignItems: 'center', gap: '5px' }}
+                                    disabled={!checkResult?.serviceable}
+                                    title={!checkResult?.serviceable ? "Please check delivery availability first" : "Customize this product"}
+                                    style={{ display: 'flex', alignItems: 'center', gap: '5px', opacity: !checkResult?.serviceable ? 0.6 : 1 }}
                                 >
                                     ✨ Customize
                                 </button>
                             )}
-                        <button className="btn-primary" onClick={() => {
-                            if (customizationData) {
-                                addToCart({ ...product, customization: customizationData });
-                            } else {
-                                addToCart(product);
-                            }
-                        }}>Add to Cart</button>
-                        <button className="btn-secondary" onClick={handleBuyNow}>Buy Now</button>
+
+                        <button
+                            className="btn-primary"
+                            onClick={() => {
+                                if (customizationData) {
+                                    addToCart({ ...product, customization: customizationData });
+                                } else {
+                                    addToCart(product);
+                                }
+                            }}
+                            disabled={!checkResult?.serviceable}
+                            title={!checkResult?.serviceable ? "Please check delivery availability first" : "Add to Cart"}
+                            style={{ opacity: !checkResult?.serviceable ? 0.6 : 1 }}
+                        >
+                            Add to Cart
+                        </button>
+
+                        <button
+                            className="btn-secondary"
+                            onClick={handleBuyNow}
+                            disabled={!checkResult?.serviceable}
+                            title={!checkResult?.serviceable ? "Please check delivery availability first" : "Buy Now"}
+                            style={{ opacity: !checkResult?.serviceable ? 0.6 : 1 }}
+                        >
+                            Buy Now
+                        </button>
+
                         <button
                             className="btn-try-at-home"
                             onClick={() => setShowTryAtHomeModal(true)}
+                            disabled={!checkResult?.serviceable}
                             style={{
                                 background: 'linear-gradient(135deg, #6a11cb 0%, #2575fc 100%)',
                                 color: 'white',
@@ -376,11 +408,29 @@ const ProductDetails = () => {
                                 display: 'flex',
                                 alignItems: 'center',
                                 gap: '8px',
-                                boxShadow: '0 4px 15px rgba(37, 117, 252, 0.2)'
+                                boxShadow: '0 4px 15px rgba(37, 117, 252, 0.2)',
+                                opacity: !checkResult?.serviceable ? 0.6 : 1
                             }}
                         >
                             🏠 Try at Home
                         </button>
+
+                        {!checkResult?.serviceable && (
+                            <div style={{ width: '100%', marginTop: '10px', textAlign: 'center' }}>
+                                <div style={{ color: '#e74c3c', fontSize: '0.9rem', marginBottom: '10px' }}>
+                                    ⚠️ Please check delivery availability to proceed
+                                </div>
+                                {checkResult && (
+                                    <button
+                                        className="btn-secondary"
+                                        onClick={() => setAlertModal({ show: true, type: 'availability' })}
+                                        style={{ width: '100%', fontSize: '0.9rem' }}
+                                    >
+                                        🔔 Notify me when available
+                                    </button>
+                                )}
+                            </div>
+                        )}
 
                         {product.countInStock > 0 ? (
                             <button

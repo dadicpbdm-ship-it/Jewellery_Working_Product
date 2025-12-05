@@ -45,7 +45,11 @@ const AlertModal = ({ product, type, onClose, user }) => {
         <div className="modal-overlay" onClick={onClose}>
             <div className="modal-content" onClick={e => e.stopPropagation()}>
                 <div className="modal-header">
-                    <h2>{type === 'price' ? 'Set Price Alert' : 'Back in Stock Alert'}</h2>
+                    <h2>
+                        {type === 'price' ? 'Set Price Alert' :
+                            type === 'availability' ? 'Availability Alert' :
+                                'Back in Stock Alert'}
+                    </h2>
                     <button className="modal-close" onClick={onClose}>×</button>
                 </div>
                 <form onSubmit={handleSubmit}>
@@ -69,6 +73,10 @@ const AlertModal = ({ product, type, onClose, user }) => {
                             />
                             <small>We suggest setting a target at least 10% lower.</small>
                         </div>
+                    ) : type === 'availability' ? (
+                        <p className="stock-alert-text">
+                            We will notify you on WhatsApp (<strong>{user.phone}</strong>) when delivery becomes available to your location.
+                        </p>
                     ) : (
                         <p className="stock-alert-text">
                             We will send a WhatsApp message to <strong>{user.phone}</strong> as soon as this item is back in stock.

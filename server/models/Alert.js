@@ -13,7 +13,7 @@ const alertSchema = new mongoose.Schema({
     },
     type: {
         type: String,
-        enum: ['price', 'stock'],
+        enum: ['price', 'stock', 'availability'],
         required: true
     },
     targetPrice: {
