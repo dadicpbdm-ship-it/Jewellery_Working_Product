@@ -68,3 +68,25 @@ ADMIN_EMAIL=admin-email@example.com
 Important: Please make sure you have added your Razorpay Test Keys to server/.env file. RAZORPAY_KEY_ID=rzp_test_... RAZORPAY_KEY_SECRET=...
 
 You can now test the payment flow by selecting "Online Payment (Razorpay)" at checkout.
+
+
+there is some issue in the pincode implementation logic
+if pincode from which the user is trying to place order is not "serviceable" or "out of stock" area
+then notify the user with message when the user enters pincode and still the user must be able to add items to the wishlist or add to cart for future reference
+and if the area is serceable and stock is available then send notifications using whatsapp, mail and messages or even push notifications if possible
+but "try at home" must be disabled if entered pincode is not "serviceable" or "out of stock" area and notify the user when stock available again in the particular area
+
+order id - 6933c277754f0562175d6936, return completted but stock still showing 8 actually it should be 9....could you please help me to fix the issue?
+
+
+still some improvements can be made
+1. change password text is not clearly visible
+2. width of the all the panels like dashboard header and other panels is more.....design will be good if we reduce it a bit
+3.spacing between different headers is still more......design will be good if we reduce it a bit
+
+Can you make these enhancements to make our platform the best indian jewellery sector
+
+1. Categories in header.
+2. Call delivery option must be after out for delivery.
+3. Buyer contact number need to include in  shipping address page.
+4. Billing address also need to be there beside shipping addresss
