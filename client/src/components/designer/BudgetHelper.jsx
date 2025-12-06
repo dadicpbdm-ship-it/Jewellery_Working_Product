@@ -136,10 +136,10 @@ const BudgetHelper = ({ onBudgetChange }) => {
     };
 
     return (
-        <div style={styles.container}>
-            <div style={styles.header}>
-                <h3 style={styles.title}>💰 Budget Helper</h3>
-                <div style={styles.budgetDisplay}>₹{budget.toLocaleString('en-IN')}</div>
+        <div className="budget-helper-container">
+            <div className="budget-header">
+                <h3 className="budget-title">💰 Budget Helper</h3>
+                <div className="budget-display">₹{budget.toLocaleString('en-IN')}</div>
             </div>
 
             <input
@@ -149,48 +149,40 @@ const BudgetHelper = ({ onBudgetChange }) => {
                 step="5000"
                 value={budget}
                 onChange={(e) => handleBudgetChange(parseInt(e.target.value))}
-                style={styles.slider}
+                className="budget-slider"
             />
 
-            <div style={styles.quickButtons}>
+            <div className="budget-quick-buttons">
                 {BUDGET_RANGES.map((range, idx) => (
                     <button
                         key={idx}
-                        style={styles.quickBtn}
+                        className="budget-quick-btn"
                         onClick={() => handleBudgetChange(range.value)}
-                        onMouseEnter={(e) => {
-                            e.currentTarget.style.background = 'rgba(255,255,255,0.35)';
-                            e.currentTarget.style.transform = 'scale(1.05)';
-                        }}
-                        onMouseLeave={(e) => {
-                            e.currentTarget.style.background = 'rgba(255,255,255,0.2)';
-                            e.currentTarget.style.transform = 'scale(1)';
-                        }}
                     >
-                        <div style={{ fontSize: '1.5rem', marginBottom: '4px' }}>{range.icon}</div>
+                        <div className="budget-btn-icon">{range.icon}</div>
                         {range.label}
                     </button>
                 ))}
             </div>
 
             <button
-                style={styles.suggestionsToggle}
+                className="budget-suggestions-toggle"
                 onClick={() => setShowSuggestions(!showSuggestions)}
             >
                 {showSuggestions ? '▼' : '▶'} Smart Suggestions
             </button>
 
             {showSuggestions && (
-                <div style={styles.suggestions}>
-                    <div style={styles.suggestionSection}>
-                        <div style={styles.suggestionLabel}>Recommended Metals:</div>
-                        <div style={styles.suggestionItems}>{suggestions.metals.join(', ')}</div>
+                <div className="budget-suggestions">
+                    <div className="suggestion-section">
+                        <div className="suggestion-label">Recommended Metals:</div>
+                        <div className="suggestion-items">{suggestions.metals.join(', ')}</div>
                     </div>
-                    <div style={styles.suggestionSection}>
-                        <div style={styles.suggestionLabel}>Recommended Gemstones:</div>
-                        <div style={styles.suggestionItems}>{suggestions.gemstones.join(', ')}</div>
+                    <div className="suggestion-section">
+                        <div className="suggestion-label">Recommended Gemstones:</div>
+                        <div className="suggestion-items">{suggestions.gemstones.join(', ')}</div>
                     </div>
-                    <div style={styles.tip}>
+                    <div className="suggestion-tip">
                         💡 Tip: {suggestions.tip}
                     </div>
                 </div>

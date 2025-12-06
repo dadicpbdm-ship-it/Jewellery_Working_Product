@@ -168,51 +168,32 @@ const DesignGallery = ({ onSelectDesign }) => {
     };
 
     return (
-        <div style={styles.container}>
-            <div style={styles.header}>
-                <h2 style={styles.title}>🔥 Trending Designs</h2>
-                <p style={styles.subtitle}>Get inspired by popular designs from our community</p>
+        <div className="gallery-container">
+            <div className="gallery-header">
+                <h2 className="gallery-title">🔥 Trending Designs</h2>
+                <p className="gallery-subtitle">Get inspired by popular designs from our community</p>
             </div>
 
-            <div style={styles.grid}>
+            <div className="gallery-grid">
                 {TRENDING_DESIGNS.map(design => (
-                    <div
-                        key={design.id}
-                        style={styles.card}
-                        onMouseEnter={(e) => {
-                            e.currentTarget.style.transform = 'translateY(-8px)';
-                            e.currentTarget.style.boxShadow = '0 8px 24px rgba(201, 169, 97, 0.3)';
-                        }}
-                        onMouseLeave={(e) => {
-                            e.currentTarget.style.transform = 'translateY(0)';
-                            e.currentTarget.style.boxShadow = '0 4px 12px rgba(0,0,0,0.1)';
-                        }}
-                    >
+                    <div key={design.id} className="gallery-card">
                         {design.trending && (
-                            <div style={styles.badge}>🔥 TRENDING</div>
+                            <div className="gallery-badge">🔥 TRENDING</div>
                         )}
 
-                        <div style={styles.icon}>{design.image}</div>
-                        <h3 style={styles.designName}>{design.name}</h3>
-                        <p style={styles.details}>
+                        <div className="gallery-icon">{design.image}</div>
+                        <h3 className="gallery-design-name">{design.name}</h3>
+                        <p className="gallery-details">
                             {design.metal} • {design.gemstone}
                             {design.gemstoneSize > 0 && ` (${design.gemstoneSize}ct)`}
                         </p>
-                        <div style={styles.price}>₹{design.price.toLocaleString('en-IN')}</div>
+                        <div className="gallery-price">₹{design.price.toLocaleString('en-IN')}</div>
 
-                        <div style={styles.footer}>
-                            <span style={styles.likes}>❤️ {design.likes} likes</span>
+                        <div className="gallery-footer">
+                            <span className="gallery-likes">❤️ {design.likes} likes</span>
                             <button
-                                style={styles.remixBtn}
+                                className="gallery-remix-btn"
                                 onClick={() => onSelectDesign(design)}
-                                onMouseEnter={(e) => {
-                                    e.currentTarget.style.background = '#A68B4D';
-                                    e.currentTarget.style.transform = 'scale(1.05)';;
-                                }}
-                                onMouseLeave={(e) => {
-                                    e.currentTarget.style.background = '#C9A961';
-                                    e.currentTarget.style.transform = 'scale(1)';
-                                }}
                             >
                                 Remix This
                             </button>

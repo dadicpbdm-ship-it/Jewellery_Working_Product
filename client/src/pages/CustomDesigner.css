@@ -109,14 +109,17 @@
 
 .template-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-    gap: 20px;
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    /* Reduced size */
+    gap: 15px;
+    /* Compacter gap */
     margin-bottom: 3rem;
 }
 
 .template-card {
     background: #FFFFFF;
-    padding: 2rem;
+    padding: 1.5rem;
+    /* Reduced padding */
     border-radius: 12px;
     text-align: center;
     cursor: pointer;
@@ -527,4 +530,325 @@
     .designer-hero h1 {
         font-size: 2rem;
     }
+}
+
+/* --- Added: Budget Helper Styles --- */
+.budget-helper-container {
+    background: linear-gradient(135deg, #111 0%, #333 100%);
+    /* Premium Dark Theme */
+    padding: 2.5rem;
+    /* Increased padding for better internal spacing */
+    border-radius: 16px;
+    color: #fff;
+
+    /* Centering and Width Control */
+    max-width: 900px;
+    margin: 5rem auto 3rem;
+    /* 5rem top margin for separation */
+
+    border: 1px solid #C9A961;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+    position: relative;
+    overflow: hidden;
+}
+
+.budget-helper-container::before {
+    content: '';
+    position: absolute;
+    top: -50%;
+    right: -20%;
+    width: 300px;
+    height: 300px;
+    background: radial-gradient(circle, rgba(201, 169, 97, 0.2) 0%, transparent 70%);
+    border-radius: 50%;
+}
+
+.budget-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1.5rem;
+    position: relative;
+    z-index: 1;
+}
+
+.budget-title {
+    font-size: 1.4rem;
+    font-weight: 700;
+    margin: 0;
+    font-family: 'Playfair Display', serif;
+    color: #C9A961;
+}
+
+.budget-display {
+    font-size: 2rem;
+    font-weight: 700;
+    color: #fff;
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+}
+
+.budget-slider {
+    width: 100%;
+    height: 6px;
+    -webkit-appearance: none;
+    background: rgba(255, 255, 255, 0.2);
+    border-radius: 3px;
+    outline: none;
+    margin-bottom: 1.5rem;
+    cursor: pointer;
+    position: relative;
+    z-index: 1;
+}
+
+.budget-slider::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    background: #C9A961;
+    cursor: pointer;
+    box-shadow: 0 0 10px rgba(201, 169, 97, 0.5);
+    border: 2px solid #fff;
+    transition: transform 0.2s;
+}
+
+.budget-slider::-webkit-slider-thumb:hover {
+    transform: scale(1.2);
+}
+
+.budget-quick-buttons {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
+    gap: 15px;
+    margin-bottom: 1.5rem;
+    position: relative;
+    z-index: 1;
+}
+
+.budget-quick-btn {
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    padding: 12px;
+    border-radius: 12px;
+    color: #ccc;
+    cursor: pointer;
+    font-size: 0.9rem;
+    font-weight: 500;
+    transition: all 0.3s;
+    text-align: center;
+    backdrop-filter: blur(5px);
+}
+
+.budget-quick-btn:hover {
+    background: rgba(201, 169, 97, 0.2);
+    border-color: #C9A961;
+    transform: translateY(-2px);
+    color: #fff;
+}
+
+.budget-btn-icon {
+    font-size: 1.4rem;
+    margin-bottom: 5px;
+}
+
+.budget-suggestions-toggle {
+    background: linear-gradient(135deg, #C9A961 0%, #aa8b45 100%);
+    border: none;
+    padding: 12px 24px;
+    border-radius: 8px;
+    color: #fff;
+    cursor: pointer;
+    font-size: 1rem;
+    font-weight: 600;
+    width: 100%;
+    transition: all 0.3s;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.budget-suggestions-toggle:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(201, 169, 97, 0.3);
+}
+
+.budget-suggestions {
+    background: rgba(255, 255, 255, 0.05);
+    padding: 1.5rem;
+    border-radius: 12px;
+    margin-top: 1rem;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    animation: fadeIn 0.4s ease-out;
+}
+
+.suggestion-section {
+    margin-bottom: 10px;
+}
+
+.suggestion-label {
+    font-weight: 700;
+    color: #C9A961;
+    margin-bottom: 4px;
+    font-size: 0.9rem;
+    text-transform: uppercase;
+}
+
+.suggestion-items {
+    font-size: 0.95rem;
+    color: #eee;
+}
+
+.suggestion-tip {
+    background: rgba(201, 169, 97, 0.1);
+    padding: 10px;
+    border-radius: 6px;
+    font-size: 0.9rem;
+    margin-top: 15px;
+    color: #fff;
+    border-left: 3px solid #C9A961;
+}
+
+/* --- Added: Design Gallery Styles --- */
+.gallery-container {
+    margin-top: 50px;
+    padding: 10px;
+    /* Container padding */
+}
+
+.gallery-header {
+    text-align: center;
+    margin-bottom: 2.5rem;
+}
+
+.gallery-title {
+    font-size: 2.2rem;
+    margin-bottom: 0.5rem;
+    color: #111;
+    font-family: 'Playfair Display', serif;
+}
+
+.gallery-subtitle {
+    color: #666;
+    font-size: 1.1rem;
+}
+
+.gallery-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 25px;
+}
+
+.gallery-card {
+    background: #FFFFFF;
+    border-radius: 16px;
+    padding: 24px;
+    cursor: pointer;
+    transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    position: relative;
+    border: 1px solid #eee;
+    overflow: hidden;
+}
+
+.gallery-card:hover {
+    transform: translateY(-10px);
+    box-shadow: 0 15px 30px rgba(0, 0, 0, 0.1);
+    border-color: #C9A961;
+}
+
+.gallery-card::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: 4px;
+    background: linear-gradient(90deg, #C9A961, #F0E68C);
+    transform: scaleX(0);
+    transform-origin: left;
+    transition: transform 0.4s ease;
+}
+
+.gallery-card:hover::after {
+    transform: scaleX(1);
+}
+
+.gallery-badge {
+    position: absolute;
+    top: 15px;
+    right: 15px;
+    background: linear-gradient(135deg, #ff6b6b, #ee5253);
+    color: white;
+    padding: 4px 12px;
+    border-radius: 20px;
+    font-size: 0.7rem;
+    font-weight: 800;
+    box-shadow: 0 4px 10px rgba(238, 82, 83, 0.3);
+    z-index: 2;
+}
+
+.gallery-icon {
+    font-size: 3.5rem;
+    text-align: center;
+    margin-bottom: 20px;
+    transition: transform 0.3s;
+}
+
+.gallery-card:hover .gallery-icon {
+    transform: scale(1.1);
+}
+
+.gallery-design-name {
+    font-size: 1.2rem;
+    font-weight: 700;
+    margin-bottom: 8px;
+    color: #2c3e50;
+    font-family: 'Playfair Display', serif;
+}
+
+.gallery-details {
+    color: #7f8c8d;
+    font-size: 0.9rem;
+    margin-bottom: 12px;
+}
+
+.gallery-price {
+    font-size: 1.4rem;
+    font-weight: 800;
+    color: #2c3e50;
+    margin-bottom: 15px;
+    background: linear-gradient(135deg, #111, #444);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+.gallery-footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding-top: 15px;
+    border-top: 1px solid #f0f0f0;
+}
+
+.gallery-likes {
+    color: #95a5a6;
+    font-size: 0.85rem;
+    font-weight: 500;
+}
+
+.gallery-remix-btn {
+    background: transparent;
+    color: #C9A961;
+    border: 1px solid #C9A961;
+    padding: 6px 18px;
+    border-radius: 20px;
+    font-size: 0.85rem;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.3s;
+}
+
+.gallery-remix-btn:hover {
+    background: #C9A961;
+    color: white;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 10px rgba(201, 169, 97, 0.3);
 }

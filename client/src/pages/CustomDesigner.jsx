@@ -236,8 +236,7 @@ const CustomDesigner = () => {
                     </div>
                 </div>
 
-                {/* Budget Helper */}
-                <BudgetHelper onBudgetChange={setBudgetLimit} />
+                {/* Budget Helper Moved to Bottom */}
 
                 <div className="designer-main-grid">
                     {/* 3D Preview Section */}
@@ -432,6 +431,9 @@ const CustomDesigner = () => {
                         </div>
                     </div>
                 )}
+
+                {/* Budget Helper */}
+                <BudgetHelper onBudgetChange={setBudgetLimit} />
 
                 {/* Design Gallery */}
                 <DesignGallery onSelectDesign={handleGalleryDesignSelect} />
