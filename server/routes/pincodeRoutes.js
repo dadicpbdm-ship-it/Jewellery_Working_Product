@@ -24,11 +24,26 @@ router.get('/check/:code', async (req, res) => {
             };
 
             // If productId provided, check warehouse stock
+            // TEMPORARY: Modified to check Global Stock for testing ease
             if (productId) {
+                /* WAREHOUSE LOGIC COMMENTED OUT
                 const stockInfo = await checkProductAvailability(productId, code);
                 response.inStock = stockInfo.available;
                 response.stockMessage = stockInfo.reason;
                 response.warehouse = stockInfo.warehouse;
+                */
+
+                // Global Stock Logic
+                const Product = require('../models/Product');
+                const product = await Product.findById(productId);
+                if (product) {
+                    response.inStock = product.stock > 0;
+                    response.stockMessage = response.inStock ? 'In Stock (Global Check)' : 'Out of Stock';
+                    // We don't attach warehouse info in this mode
+                } else {
+                    response.inStock = false;
+                    response.stockMessage = 'Product not found';
+                }
             }
 
             res.json(response);

@@ -94,8 +94,33 @@ router.post('/', optionalProtect, async (req, res) => {
             console.error('[Order] Error assigning delivery agent:', error);
         }
 
-        // Inventory Management: Reserve Stock
+        // Inventory Management: Global Stock Check (Temporary for Testing)
+        // Note: Warehouse logic commented out as per user request to facilitate easier testing.
         try {
+            const Product = require('../models/Product');
+
+            // 1. Check Stock for ALL items first
+            for (const item of orderItems) {
+                const product = await Product.findById(item.product);
+                if (!product) {
+                    return res.status(404).json({ message: `Product not found: ${item.name}` });
+                }
+                if (product.stock < item.quantity) {
+                    return res.status(400).json({
+                        message: `Insufficient stock for ${product.name}. Available: ${product.stock}`
+                    });
+                }
+            }
+
+            // 2. Deduct Stock
+            for (const item of orderItems) {
+                const product = await Product.findById(item.product);
+                product.stock -= item.quantity;
+                await product.save();
+                console.log(`[Inventory] Deducted ${item.quantity} from global stock for ${product.name}`);
+            }
+
+            /* WAREHOUSE LOGIC COMMENTED OUT
             const { findWarehouseByPincode, reserveStock } = require('../services/warehouseService');
 
             // 1. Find warehouse serving this pincode
@@ -115,14 +140,17 @@ router.post('/', optionalProtect, async (req, res) => {
                 await reserveStock(warehouse._id, reservationItems);
                 console.log('[Inventory] Stock reserved successfully.');
             } else {
-                console.warn(`[Inventory] No warehouse found for pincode ${shippingAddress.postalCode}. Proceeding without stock deduction.`);
-                // Decision: We allow the order to proceed even if no warehouse is found (legacy support/fallback),
-                // but we can't deduct stock. 
+                console.warn(`[Inventory] No warehouse found for pincode ${shippingAddress.postalCode}.`);
+                return res.status(400).json({
+                    message: `Order failed: No warehouse covers the pincode ${shippingAddress.postalCode}. Please contact support.`,
+                    error: 'Inventory Source Missing'
+                });
             }
+            */
         } catch (error) {
-            console.error('[Inventory] Stock reservation failed:', error.message);
+            console.error('[Inventory] Global stock update failed:', error.message);
             return res.status(400).json({
-                message: 'Order failed: One or more items are out of stock at your location.',
+                message: 'Order failed during stock check.',
                 error: error.message
             });
         }
