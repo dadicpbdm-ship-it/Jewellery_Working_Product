@@ -213,77 +213,131 @@
     font-style: italic;
 }
 
-/* Premium Banner Section */
+/* Premium Banner Section - Custom Designs (Light Luxury Theme) */
 .banner-section {
-    background: var(--gradient-secondary);
-    color: #fff;
-    padding: 5rem 0;
+    background: linear-gradient(135deg, #FAF8F3 0%, #FFFFFF 100%);
+    color: var(--secondary-color);
+    padding: 4rem 0;
     text-align: center;
-    margin-bottom: 5rem;
+    margin-bottom: 4rem;
     position: relative;
     overflow: hidden;
+    border-top: 1px solid rgba(201, 169, 97, 0.2);
+    border-bottom: 1px solid rgba(201, 169, 97, 0.2);
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.03);
 }
 
 .banner-section::before {
     content: '';
     position: absolute;
-    top: -50%;
-    right: -10%;
-    width: 500px;
-    height: 500px;
-    background: radial-gradient(circle, rgba(201, 169, 97, 0.15) 0%, transparent 70%);
-    border-radius: 50%;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 3px;
+    background: linear-gradient(90deg, transparent, #C9A961, transparent);
 }
 
 .banner-section::after {
     content: '';
     position: absolute;
-    bottom: -50%;
-    left: -10%;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 3px;
+    background: linear-gradient(90deg, transparent, #C9A961, transparent);
+}
+
+/* Decorative Background Elements */
+.banner-section .container {
+    position: relative;
+    z-index: 2;
+}
+
+.banner-bg-decoration {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
     width: 500px;
     height: 500px;
-    background: radial-gradient(circle, rgba(183, 110, 121, 0.15) 0%, transparent 70%);
+    border: 1px solid rgba(201, 169, 97, 0.08);
+    border-radius: 50%;
+    pointer-events: none;
+    z-index: 1;
+}
+
+.banner-bg-decoration::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 420px;
+    height: 420px;
+    border: 1px solid rgba(201, 169, 97, 0.12);
     border-radius: 50%;
 }
 
 .banner-content {
-    position: relative;
-    z-index: 2;
-    max-width: 800px;
+    max-width: 700px;
     margin: 0 auto;
 }
 
 .banner-content h2 {
-    background: var(--gradient-primary);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    background-clip: text;
-    font-size: clamp(2rem, 4vw, 3rem);
-    margin-bottom: 1.5rem;
-    font-weight: 700;
+    font-family: var(--font-heading);
+    color: var(--secondary-color);
+    font-size: clamp(2rem, 3.5vw, 2.5rem);
+    margin-bottom: 1rem;
+    font-weight: 600;
+    letter-spacing: 0.5px;
 }
 
 .banner-content p {
-    margin-bottom: 2.5rem;
-    font-size: clamp(1rem, 2vw, 1.3rem);
-    max-width: 600px;
+    margin-bottom: 2rem;
+    font-size: 1.1rem;
+    max-width: 580px;
     margin-left: auto;
     margin-right: auto;
-    color: rgba(255, 255, 255, 0.9);
-    line-height: 1.7;
+    color: var(--text-light);
+    line-height: 1.6;
+    font-weight: 400;
 }
 
-.banner-content .btn-primary {
-    background: white;
-    color: var(--secondary-color);
-    box-shadow: 0 8px 20px rgba(255, 255, 255, 0.2);
+/* Unify button styles to be exactly the same size, color, and texture */
+.banner-content .btn-primary,
+.banner-content .btn-secondary-custom {
+    background: var(--secondary-color);
+    color: #fff;
+    border: 1px solid var(--secondary-color);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+    transition: all 0.3s ease;
+    padding: 0;
+    /* Remove padding as we use fixed height/flex */
+    font-size: 0.9rem;
+    border-radius: var(--radius-lg);
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 1.2px;
+    text-decoration: none;
+    display: inline-flex;
+    /* Use flex for perfect centering */
+    justify-content: center;
+    align-items: center;
+    width: 240px;
+    /* STRICT FIXED WIDTH */
+    height: 48px;
+    /* STRICT FIXED HEIGHT */
+    box-sizing: border-box;
+    /* Ensure border doesn't add to size */
 }
 
-.banner-content .btn-primary:hover {
-    background: var(--gradient-primary);
-    color: var(--secondary-color);
-    transform: translateY(-3px);
-    box-shadow: 0 12px 30px rgba(201, 169, 97, 0.4);
+.banner-content .btn-primary:hover,
+.banner-content .btn-secondary-custom:hover {
+    background: #000;
+    border-color: #000;
+    transform: translateY(-2px);
+    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.15);
+    color: #fff;
 }
 
 /* Trust Section */

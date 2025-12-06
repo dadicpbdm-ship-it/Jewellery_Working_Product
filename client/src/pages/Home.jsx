@@ -4,7 +4,6 @@ import ProductCard from '../components/ProductCard';
 import RecentlyViewed from '../components/RecentlyViewed';
 import { API_URL } from '../config';
 import './Home.css';
-import './BannerEnhancement.css';
 
 import diamondJewelleryImg from '../assets/diamond-jewellery.png';
 
@@ -106,13 +105,14 @@ const Home = () => {
 
             {/* Categories / Banner */}
             <section className="banner-section">
+                <div className="banner-bg-decoration"></div>
                 <div className="container">
                     <div className="banner-content">
                         <h2>Custom Designs Available</h2>
-                        <p>Bring your dream jewellery to life with our bespoke services.</p>
-                        <div style={{ display: 'flex', gap: '1rem', justifyContent: 'center', flexWrap: 'wrap' }}>
+                        <p>Bring your dream jewellery to life with our bespoke services. From sketch to reality, we craft unique pieces just for you.</p>
+                        <div style={{ display: 'flex', gap: '1.5rem', justifyContent: 'center', flexWrap: 'wrap' }}>
                             <Link to="/custom-designer" className="btn-primary">Design Your Own</Link>
-                            <Link to="/contact" className="btn-primary" style={{ background: '#2c3e50' }}>Contact Us</Link>
+                            <Link to="/contact" className="btn-secondary-custom">Contact Designer</Link>
                         </div>
                     </div>
                 </div>

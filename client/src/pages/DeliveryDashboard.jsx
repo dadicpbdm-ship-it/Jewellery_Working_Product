@@ -267,124 +267,126 @@ const DeliveryDashboard = () => {
                 </div>
 
                 {/* Orders Section */}
-                <div className="orders-section">
-                    <h2>Delivery Orders</h2>
+                {filterStatus !== 'tryathome' && (
+                    <div className="orders-section">
+                        <h2>Delivery Orders</h2>
 
-                    {loading ? (
-                        <div className="loading-spinner">
-                            <div className="spinner"></div>
-                            <p>Loading orders...</p>
-                        </div>
-                    ) : filteredOrders.length === 0 ? (
-                        <div className="empty-state">
-                            <div className="empty-state-icon">📭</div>
-                            <h3>No orders found</h3>
-                            <p>There are no orders matching your filter criteria.</p>
-                        </div>
-                    ) : (
-                        <div className="orders-grid">
-                            {filteredOrders.map(order => (
-                                <div key={order._id} className="order-card">
-                                    <div className="order-header">
-                                        <div className="order-id-section">
-                                            <span className="order-id">#{order._id.substring(0, 8).toUpperCase()}</span>
-                                            <span className="order-customer">{order.user && order.user.name}</span>
-                                        </div>
-                                        <span className={`order-status ${order.returnExchangeRequest?.status === 'Approved' ? 'pending' : (order.isDelivered ? 'delivered' : 'pending')}`}>
-                                            {order.returnExchangeRequest?.status === 'Approved' ? '🔄 Pickup Pending' : (order.isDelivered ? '✓ Delivered' : '⏳ Pending')}
-                                        </span>
-                                    </div>
-
-                                    <div className="order-body">
-                                        <div className="order-row">
-                                            <div className="order-info-group">
-                                                <span className="info-icon">📍</span>
-                                                <div className="info-content">
-                                                    <span className="info-label">Delivery Address</span>
-                                                    <span className="info-text">
-                                                        {order.shippingAddress.address}, {order.shippingAddress.city}, {order.shippingAddress.postalCode}
-                                                    </span>
-                                                </div>
+                        {loading ? (
+                            <div className="loading-spinner">
+                                <div className="spinner"></div>
+                                <p>Loading orders...</p>
+                            </div>
+                        ) : filteredOrders.length === 0 ? (
+                            <div className="empty-state">
+                                <div className="empty-state-icon">📭</div>
+                                <h3>No orders found</h3>
+                                <p>There are no orders matching your filter criteria.</p>
+                            </div>
+                        ) : (
+                            <div className="orders-grid">
+                                {filteredOrders.map(order => (
+                                    <div key={order._id} className="order-card">
+                                        <div className="order-header">
+                                            <div className="order-id-section">
+                                                <span className="order-id">#{order._id.substring(0, 8).toUpperCase()}</span>
+                                                <span className="order-customer">{order.user && order.user.name}</span>
                                             </div>
+                                            <span className={`order-status ${order.returnExchangeRequest?.status === 'Approved' ? 'pending' : (order.isDelivered ? 'delivered' : 'pending')}`}>
+                                                {order.returnExchangeRequest?.status === 'Approved' ? '🔄 Pickup Pending' : (order.isDelivered ? '✓ Delivered' : '⏳ Pending')}
+                                            </span>
                                         </div>
 
-                                        <div className="order-row">
-                                            <div className="order-info-group">
-                                                <span className="info-icon">💰</span>
-                                                <div className="info-content">
-                                                    <span className="info-label">Order Amount</span>
-                                                    <span className="info-value">₹{order.totalPrice.toLocaleString('en-IN')}</span>
-                                                </div>
-                                            </div>
-                                            <div className="order-info-group">
-                                                <span className="info-icon">💳</span>
-                                                <div className="info-content">
-                                                    <span className="info-label">Payment</span>
-                                                    <span className={`payment-badge ${order.paymentMethod === 'Cash on Delivery' ? 'cod' : 'online'}`}>
-                                                        {order.paymentMethod === 'Cash on Delivery' ? 'COD' : 'Paid'}
-                                                    </span>
-                                                </div>
-                                            </div>
-                                            {order.paymentMethod === 'Cash on Delivery' && (
+                                        <div className="order-body">
+                                            <div className="order-row">
                                                 <div className="order-info-group">
-                                                    <span className="info-icon">💵</span>
+                                                    <span className="info-icon">📍</span>
                                                     <div className="info-content">
-                                                        <span className="info-label">COD Status</span>
-                                                        <span className={`cod-badge ${order.codPaymentReceived ? 'received' : 'pending'}`}>
-                                                            {order.codPaymentReceived ? 'Collected' : 'Pending'}
+                                                        <span className="info-label">Delivery Address</span>
+                                                        <span className="info-text">
+                                                            {order.shippingAddress.address}, {order.shippingAddress.city}, {order.shippingAddress.postalCode}
                                                         </span>
                                                     </div>
                                                 </div>
-                                            )}
-                                        </div>
-                                    </div>
+                                            </div>
 
-                                    {(!order.isDelivered || (order.paymentMethod === 'Cash on Delivery' && !order.codPaymentReceived) || (order.returnExchangeRequest && order.returnExchangeRequest.status === 'Approved')) && (
-                                        <div className="order-actions">
-                                            {!order.isDelivered && (
-                                                <button
-                                                    className={`btn-action btn-primary ${order.paymentMethod === 'Cash on Delivery' && !order.codPaymentReceived ? 'disabled' : ''}`}
-                                                    onClick={() => {
-                                                        if (order.paymentMethod === 'Cash on Delivery' && !order.codPaymentReceived) {
-                                                            alert('Please confirm COD payment received before marking as delivered.');
-                                                            return;
-                                                        }
-                                                        markAsDelivered(order._id);
-                                                    }}
-                                                    style={order.paymentMethod === 'Cash on Delivery' && !order.codPaymentReceived ? { opacity: 0.5, cursor: 'not-allowed' } : {}}
-                                                    title={order.paymentMethod === 'Cash on Delivery' && !order.codPaymentReceived ? "Collect COD payment first" : ""}
-                                                >
-                                                    ✓ Mark as Delivered
-                                                </button>
-                                            )}
-                                            {order.paymentMethod === 'Cash on Delivery' && !order.codPaymentReceived && (
-                                                <button
-                                                    className="btn-action btn-secondary"
-                                                    onClick={() => markCODReceived(order._id)}
-                                                >
-                                                    💰 Confirm COD Received
-                                                </button>
-                                            )}
-                                            {order.returnExchangeRequest &&
-                                                order.returnExchangeRequest.type &&
-                                                order.returnExchangeRequest.type !== 'None' &&
-                                                order.returnExchangeRequest.status &&
-                                                order.returnExchangeRequest.status.trim() === 'Approved' && (
+                                            <div className="order-row">
+                                                <div className="order-info-group">
+                                                    <span className="info-icon">💰</span>
+                                                    <div className="info-content">
+                                                        <span className="info-label">Order Amount</span>
+                                                        <span className="info-value">₹{order.totalPrice.toLocaleString('en-IN')}</span>
+                                                    </div>
+                                                </div>
+                                                <div className="order-info-group">
+                                                    <span className="info-icon">💳</span>
+                                                    <div className="info-content">
+                                                        <span className="info-label">Payment</span>
+                                                        <span className={`payment-badge ${order.paymentMethod === 'Cash on Delivery' ? 'cod' : 'online'}`}>
+                                                            {order.paymentMethod === 'Cash on Delivery' ? 'COD' : 'Paid'}
+                                                        </span>
+                                                    </div>
+                                                </div>
+                                                {order.paymentMethod === 'Cash on Delivery' && (
+                                                    <div className="order-info-group">
+                                                        <span className="info-icon">💵</span>
+                                                        <div className="info-content">
+                                                            <span className="info-label">COD Status</span>
+                                                            <span className={`cod-badge ${order.codPaymentReceived ? 'received' : 'pending'}`}>
+                                                                {order.codPaymentReceived ? 'Collected' : 'Pending'}
+                                                            </span>
+                                                        </div>
+                                                    </div>
+                                                )}
+                                            </div>
+                                        </div>
+
+                                        {(!order.isDelivered || (order.paymentMethod === 'Cash on Delivery' && !order.codPaymentReceived) || (order.returnExchangeRequest && order.returnExchangeRequest.status === 'Approved')) && (
+                                            <div className="order-actions">
+                                                {!order.isDelivered && (
                                                     <button
-                                                        className="btn-action btn-primary"
-                                                        style={{ backgroundColor: '#e74c3c' }}
-                                                        onClick={() => completeReturn(order._id)}
+                                                        className={`btn-action btn-primary ${order.paymentMethod === 'Cash on Delivery' && !order.codPaymentReceived ? 'disabled' : ''}`}
+                                                        onClick={() => {
+                                                            if (order.paymentMethod === 'Cash on Delivery' && !order.codPaymentReceived) {
+                                                                alert('Please confirm COD payment received before marking as delivered.');
+                                                                return;
+                                                            }
+                                                            markAsDelivered(order._id);
+                                                        }}
+                                                        style={order.paymentMethod === 'Cash on Delivery' && !order.codPaymentReceived ? { opacity: 0.5, cursor: 'not-allowed' } : {}}
+                                                        title={order.paymentMethod === 'Cash on Delivery' && !order.codPaymentReceived ? "Collect COD payment first" : ""}
                                                     >
-                                                        📦 Mark Picked Up
+                                                        ✓ Mark as Delivered
                                                     </button>
                                                 )}
-                                        </div>
-                                    )}
-                                </div>
-                            ))}
-                        </div>
-                    )}
-                </div>
+                                                {order.paymentMethod === 'Cash on Delivery' && !order.codPaymentReceived && (
+                                                    <button
+                                                        className="btn-action btn-secondary"
+                                                        onClick={() => markCODReceived(order._id)}
+                                                    >
+                                                        💰 Confirm COD Received
+                                                    </button>
+                                                )}
+                                                {order.returnExchangeRequest &&
+                                                    order.returnExchangeRequest.type &&
+                                                    order.returnExchangeRequest.type !== 'None' &&
+                                                    order.returnExchangeRequest.status &&
+                                                    order.returnExchangeRequest.status.trim() === 'Approved' && (
+                                                        <button
+                                                            className="btn-action btn-primary"
+                                                            style={{ backgroundColor: '#e74c3c' }}
+                                                            onClick={() => completeReturn(order._id)}
+                                                        >
+                                                            📦 Mark Picked Up
+                                                        </button>
+                                                    )}
+                                            </div>
+                                        )}
+                                    </div>
+                                ))}
+                            </div>
+                        )}
+                    </div>
+                )}
 
                 {/* Try At Home Section */}
                 {filterStatus === 'tryathome' && (
