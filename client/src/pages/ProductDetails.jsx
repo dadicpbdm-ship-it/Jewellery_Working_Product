@@ -2,6 +2,7 @@ import React, { useState, useEffect, useContext } from 'react';
 import { useParams, useNavigate, Link } from 'react-router-dom';
 import { useCart } from '../context/CartContext';
 import { WishlistContext } from '../context/WishlistContext';
+import { AuthContext } from '../context/AuthContext';
 import ProductCard from '../components/ProductCard';
 import ImageGallery from '../components/ImageGallery';
 import ProductReviews from '../components/ProductReviews';
@@ -10,14 +11,12 @@ import EMICalculator from '../components/EMICalculator';
 import ARTryOn from '../components/ARTryOn';
 import TryAtHomeModal from '../components/TryAtHomeModal';
 import AlertModal from '../components/AlertModal';
-import ProductRecommendations from '../components/ProductRecommendations';
 import CustomizationModal from '../components/CustomizationModal';
 import RelatedProducts from '../components/RelatedProducts';
 import RecentlyViewed from '../components/RecentlyViewed';
+import TrustCertificate from '../components/TrustCertificate';
 import { API_URL } from '../config';
 import './ProductDetails.css';
-
-import { AuthContext } from '../context/AuthContext';
 
 const ProductDetails = () => {
     const { id } = useParams();
@@ -25,21 +24,27 @@ const ProductDetails = () => {
     const { user } = useContext(AuthContext);
     const { addToCart } = useCart();
     const { addToWishlist, removeFromWishlist, isInWishlist } = useContext(WishlistContext);
+
+    // State
     const [product, setProduct] = useState(null);
-    const [relatedProducts, setRelatedProducts] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
     const [pincode, setPincode] = useState('');
     const [checkResult, setCheckResult] = useState(null);
     const [checkLoading, setCheckLoading] = useState(false);
+
+    // Modal States
     const [showTryAtHomeModal, setShowTryAtHomeModal] = useState(false);
     const [alertModal, setAlertModal] = useState({ show: false, type: null });
     const [showCustomizationModal, setShowCustomizationModal] = useState(false);
     const [customizationData, setCustomizationData] = useState(null);
+    const [isARActive, setIsARActive] = useState(false);
+    const [showCertificate, setShowCertificate] = useState(false);
 
     useEffect(() => {
         const fetchProduct = async () => {
             try {
+                window.scrollTo(0, 0);
                 const response = await fetch(`${API_URL}/api/products/${id}`);
                 if (!response.ok) throw new Error('Product not found');
                 const data = await response.json();
@@ -62,17 +67,19 @@ const ProductDetails = () => {
         fetchProduct();
     }, [id]);
 
-    // Fetch related products logic removed - handled by backend
-
     const handleAddToCart = () => {
         if (product) {
-            addToCart(product);
+            if (customizationData) {
+                addToCart({ ...product, customization: customizationData });
+            } else {
+                addToCart(product);
+            }
         }
     };
 
     const handleBuyNow = () => {
         if (product) {
-            addToCart(product);
+            handleAddToCart();
             navigate('/cart');
         }
     };
@@ -87,7 +94,6 @@ const ProductDetails = () => {
         }
     }
 
-
     const checkAvailability = async () => {
         if (pincode.length !== 6) return;
 
@@ -95,15 +101,13 @@ const ProductDetails = () => {
         setCheckResult(null);
 
         try {
-            // Pass productId to check stock availability at the specific location
             const response = await fetch(`${API_URL}/api/pincodes/check/${pincode}?productId=${product._id}`);
             const data = await response.json();
 
             if (response.ok && data.serviceable) {
-                // Check if product is in stock at this location (if backend returns this info)
                 if (data.inStock === false) {
                     setCheckResult({
-                        serviceable: false, // Treat as not serviceable for this product
+                        serviceable: false,
                         message: data.stockMessage || 'Currently out of stock at this location.',
                         isStockIssue: true
                     });
@@ -143,6 +147,8 @@ const ProductDetails = () => {
     if (!product) return <div className="container loading-text">Product not found</div>;
 
     const isWishlisted = isInWishlist(product._id);
+    const basePrice = product.price;
+    const customizationCost = customizationData ? customizationData.totalPrice - basePrice : 0;
 
     return (
         <div className="product-details-page container">
@@ -153,7 +159,9 @@ const ProductDetails = () => {
                     <ImageGallery
                         images={product.images || [product.imageUrl]}
                         productName={product.name}
+                        videoUrl={product.videoUrl}
                     />
+
                     {/* Price Breakup */}
                     <div className="price-breakup">
                         <div className="breakup-toggle">
@@ -163,23 +171,24 @@ const ProductDetails = () => {
                         <div className="breakup-table">
                             <div className="breakup-row">
                                 <span>Metal Value (approx.)</span>
-                                <span>₹{Math.round(product.price * 0.87).toLocaleString('en-IN')}</span>
+                                <span>₹{Math.round(basePrice * 0.87).toLocaleString('en-IN')}</span>
                             </div>
                             <div className="breakup-row">
                                 <span>Making Charges (10%)</span>
-                                <span>₹{Math.round(product.price * 0.10).toLocaleString('en-IN')}</span>
+                                <span>₹{Math.round(basePrice * 0.10).toLocaleString('en-IN')}</span>
                             </div>
                             <div className="breakup-row">
                                 <span>GST (3%)</span>
-                                <span>₹{Math.round(product.price * 0.03).toLocaleString('en-IN')}</span>
+                                <span>₹{Math.round(basePrice * 0.03).toLocaleString('en-IN')}</span>
                             </div>
                             <div className="breakup-row total">
                                 <span>Total</span>
-                                <span>₹{product.price.toLocaleString('en-IN')}</span>
+                                <span>₹{basePrice.toLocaleString('en-IN')}</span>
                             </div>
                         </div>
                     </div>
                 </div>
+
                 <div className="details-info">
                     <span className="details-category">{product.category}</span>
                     <h1>{product.name}</h1>
@@ -188,10 +197,41 @@ const ProductDetails = () => {
                         {'☆'.repeat(5 - Math.floor(product.rating))}
                         <span>({product.rating}) · {product.numReviews || 0} reviews</span>
                     </div>
-                    <p className="details-price">₹{product.price.toLocaleString('en-IN')}</p>
+
+                    <div className="price-container">
+                        <p className="details-price">₹{basePrice.toLocaleString('en-IN')}</p>
+                        {customizationCost > 0 && (
+                            <span className="customization-cost-tag">+₹{customizationCost} customization</span>
+                        )}
+                    </div>
+
+                    {/* Blockchain Trust Badge */}
+                    <div
+                        className="trust-badge-container"
+                        onClick={() => setShowCertificate(true)}
+                        style={{
+                            display: 'flex',
+                            alignItems: 'center',
+                            gap: '10px',
+                            margin: '15px 0',
+                            padding: '10px 15px',
+                            background: '#f8f9fa',
+                            border: '1px solid #e9ecef',
+                            borderRadius: '8px',
+                            cursor: 'pointer',
+                            width: 'fit-content',
+                            transition: 'all 0.2s'
+                        }}
+                    >
+                        <span style={{ fontSize: '1.5rem' }}>🛡️</span>
+                        <div>
+                            <div style={{ fontSize: '0.9rem', fontWeight: 'bold', color: '#2c3e50' }}>Blockchain Verified</div>
+                            <div style={{ fontSize: '0.75rem', color: '#c9a961', fontWeight: '500' }}>View Authenticity Certificate &gt;</div>
+                        </div>
+                    </div>
 
                     {/* EMI Calculator */}
-                    <EMICalculator price={product.price} />
+                    <EMICalculator price={basePrice + customizationCost} />
 
                     {/* Stock Status */}
                     {product.stock !== undefined && (
@@ -249,7 +289,7 @@ const ProductDetails = () => {
                                 onChange={(e) => {
                                     const val = e.target.value;
                                     if (/^\d*$/.test(val)) setPincode(val);
-                                    setCheckResult(null); // Reset result on change
+                                    setCheckResult(null);
                                 }}
                                 onKeyPress={(e) => {
                                     if (e.key === 'Enter' && pincode.length === 6) {
@@ -277,8 +317,6 @@ const ProductDetails = () => {
                         )}
                     </div>
 
-
-
                     {/* Share Button */}
                     <div className="social-sharing" style={{ marginTop: '1rem', display: 'flex', alignItems: 'center', gap: '10px' }}>
                         <button
@@ -288,7 +326,7 @@ const ProductDetails = () => {
                                     try {
                                         await navigator.share({
                                             title: product.name,
-                                            text: `Check out this ${product.name} - ₹${product.price.toLocaleString('en-IN')}`,
+                                            text: `Check out this ${product.name} - ₹${basePrice.toLocaleString('en-IN')}`,
                                             url: window.location.href,
                                         });
                                     } catch (error) {
@@ -375,16 +413,8 @@ const ProductDetails = () => {
 
                         <button
                             className="btn-primary"
-                            onClick={() => {
-                                if (customizationData) {
-                                    addToCart({ ...product, customization: customizationData });
-                                } else {
-                                    addToCart(product);
-                                }
-                            }}
-                            // disabled={!checkResult?.serviceable} // User Request: Allow adding to cart for future
+                            onClick={handleAddToCart}
                             title={"Add to Cart"}
-                        // style={{ opacity: !checkResult?.serviceable ? 0.6 : 1 }}
                         >
                             Add to Cart
                         </button>
@@ -392,9 +422,7 @@ const ProductDetails = () => {
                         <button
                             className="btn-secondary"
                             onClick={handleBuyNow}
-                            // disabled={!checkResult?.serviceable} // User Request: Allow buying even if check fails (user will be blocked at checkout anyway if address invalid)
                             title={"Buy Now"}
-                        // style={{ opacity: !checkResult?.serviceable ? 0.6 : 1 }}
                         >
                             Buy Now
                         </button>
@@ -421,11 +449,8 @@ const ProductDetails = () => {
                             🏠 Try at Home
                         </button>
 
-
-
-                        {/* Notification Button - Handles Price, Stock, and Availability Alerts */}
+                        {/* Notification Button */}
                         {(() => {
-                            // Determine button type and action based on state priority
                             let alertType = 'price';
                             let btnLabel = '🔔 Price Alert';
                             let btnStyle = { display: 'flex', alignItems: 'center', gap: '5px' };
@@ -454,7 +479,6 @@ const ProductDetails = () => {
                             );
                         })()}
 
-                        <ARTryOn productName={product.name} productImage={product.imageUrl} />
                         <button
                             className={`btn-wishlist ${isWishlisted ? 'active' : ''}`}
                             onClick={handleWishlistClick}
@@ -492,7 +516,7 @@ const ProductDetails = () => {
             {/* Recently Viewed Section */}
             <RecentlyViewed />
 
-            {/* Try At Home Modal */}
+            {/* Modals */}
             {showTryAtHomeModal && (
                 <TryAtHomeModal
                     product={product}
@@ -500,18 +524,16 @@ const ProductDetails = () => {
                 />
             )}
 
-            {/* Alert Modal */}
             {alertModal.show && (
                 <AlertModal
                     product={product}
                     type={alertModal.type}
                     user={user}
-                    pincode={pincode} // Pass checked pincode to modal
+                    pincode={pincode}
                     onClose={() => setAlertModal({ show: false, type: null })}
                 />
             )}
 
-            {/* Customization Modal */}
             {showCustomizationModal && (
                 <CustomizationModal
                     product={product}
@@ -519,6 +541,20 @@ const ProductDetails = () => {
                     onCustomize={(data) => setCustomizationData(data)}
                 />
             )}
+
+            {isARActive && (
+                <ARTryOn
+                    productName={product.name}
+                    productImage={product.imageUrl}
+                    onClose={() => setIsARActive(false)}
+                />
+            )}
+
+            <TrustCertificate
+                product={product}
+                isOpen={showCertificate}
+                onClose={() => setShowCertificate(false)}
+            />
         </div>
     );
 };

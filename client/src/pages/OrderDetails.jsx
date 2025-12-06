@@ -4,6 +4,7 @@ import { AuthContext } from '../context/AuthContext';
 import { API_URL } from '../config';
 import OrderTimeline from '../components/OrderTimeline';
 import DeliveryCountdown from '../components/DeliveryCountdown';
+import TrustCertificate from '../components/TrustCertificate';
 import './OrderDetails.css';
 
 const OrderDetails = () => {
@@ -16,6 +17,10 @@ const OrderDetails = () => {
     const [returnType, setReturnType] = useState('Return');
     const [returnReason, setReturnReason] = useState('');
     const [submittingReturn, setSubmittingReturn] = useState(false);
+
+    // Certificate State
+    const [showCertificate, setShowCertificate] = useState(false);
+    const [selectedCertificateProduct, setSelectedCertificateProduct] = useState(null);
 
     useEffect(() => {
         const fetchOrder = async () => {
@@ -252,7 +257,6 @@ const OrderDetails = () => {
                 </div>
             </div>
 
-            {/* Order Tracking Section */}
             {/* Enhanced Order Tracking Section */}
             <div className="enhanced-tracking-section">
                 {!order.isDelivered && order.estimatedDeliveryDate && (
@@ -353,22 +357,51 @@ const OrderDetails = () => {
                     <h3>Order Items</h3>
                     <div className="items-list">
                         {order.orderItems.map((item, index) => (
-                            <Link to={`/product/${item.product}`} key={index} className="order-item-detail" style={{ textDecoration: 'none', color: 'inherit', display: 'flex', alignItems: 'center', gap: '1rem', padding: '1rem', borderBottom: '1px solid #eee' }}>
-                                <img src={item.image} alt={item.name} style={{ width: '80px', height: '80px', objectFit: 'cover', borderRadius: '8px' }} />
-                                <div className="item-info" style={{ flex: 1 }}>
-                                    <h4 style={{ margin: '0 0 0.5rem 0', color: '#333' }}>{item.name}</h4>
-                                    <p className="item-price" style={{ margin: 0, color: '#666' }}>₹{item.price.toLocaleString('en-IN')} × {item.quantity}</p>
-                                    {item.customization && (
-                                        <div className="item-customization" style={{ fontSize: '0.85rem', color: '#888', marginTop: '0.25rem' }}>
-                                            {item.customization.selectedSize && <span>Size: {item.customization.selectedSize} | </span>}
-                                            {item.customization.selectedMaterial && <span>Material: {item.customization.selectedMaterial}</span>}
-                                        </div>
-                                    )}
+                            <div key={index} className="order-item-detail" style={{ display: 'flex', alignItems: 'center', gap: '1rem', padding: '1rem', borderBottom: '1px solid #eee' }}>
+                                <Link to={`/product/${item.product}`} style={{ display: 'flex', alignItems: 'center', gap: '1rem', textDecoration: 'none', color: 'inherit', flex: 1 }}>
+                                    <img src={item.image} alt={item.name} style={{ width: '80px', height: '80px', objectFit: 'cover', borderRadius: '8px' }} />
+                                    <div className="item-info">
+                                        <h4 style={{ margin: '0 0 0.5rem 0', color: '#333' }}>{item.name}</h4>
+                                        <p className="item-price" style={{ margin: 0, color: '#666' }}>₹{item.price.toLocaleString('en-IN')} × {item.quantity}</p>
+                                        {item.customization && (
+                                            <div className="item-customization" style={{ fontSize: '0.85rem', color: '#888', marginTop: '0.25rem' }}>
+                                                {item.customization.selectedSize && <span>Size: {item.customization.selectedSize} | </span>}
+                                                {item.customization.selectedMaterial && <span>Material: {item.customization.selectedMaterial}</span>}
+                                            </div>
+                                        )}
+                                    </div>
+                                </Link>
+
+                                <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end', gap: '8px' }}>
+                                    <div className="item-total" style={{ fontWeight: 'bold', color: '#333' }}>
+                                        ₹{(item.price * item.quantity).toLocaleString('en-IN')}
+                                    </div>
+                                    <button
+                                        className="btn-certificate"
+                                        onClick={() => {
+                                            setSelectedCertificateProduct({
+                                                ...item,
+                                                _id: item.product // Map product ID correctly
+                                            });
+                                            setShowCertificate(true);
+                                        }}
+                                        style={{
+                                            padding: '5px 10px',
+                                            fontSize: '0.75rem',
+                                            background: 'linear-gradient(135deg, #1a1a1a 0%, #333 100%)',
+                                            color: '#C9A961',
+                                            border: '1px solid #C9A961',
+                                            borderRadius: '4px',
+                                            cursor: 'pointer',
+                                            display: 'flex',
+                                            alignItems: 'center',
+                                            gap: '4px'
+                                        }}
+                                    >
+                                        <span>🛡️</span> View Certificate
+                                    </button>
                                 </div>
-                                <div className="item-total" style={{ fontWeight: 'bold', color: '#333' }}>
-                                    ₹{(item.price * item.quantity).toLocaleString('en-IN')}
-                                </div>
-                            </Link>
+                            </div>
                         ))}
                     </div>
                 </div>
@@ -425,6 +458,12 @@ const OrderDetails = () => {
                     </div>
                 </div>
             )}
+
+            <TrustCertificate
+                product={selectedCertificateProduct}
+                isOpen={showCertificate}
+                onClose={() => setShowCertificate(false)}
+            />
         </div>
     );
 };
