@@ -21,6 +21,11 @@ const productSchema = new mongoose.Schema({
         type: String,
         required: true,
     },
+    // Optional video for hover effect
+    videoUrl: {
+        type: String,
+        required: false
+    },
     // Multiple images for gallery
     images: {
         type: [String],

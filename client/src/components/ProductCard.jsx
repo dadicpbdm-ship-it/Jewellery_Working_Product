@@ -7,6 +7,22 @@ const ProductCard = ({ product }) => {
     const { addToWishlist, removeFromWishlist, isInWishlist } = useContext(WishlistContext);
     const isWishlisted = isInWishlist(product._id);
 
+    const [isPlaying, setIsPlaying] = React.useState(false);
+    const videoRef = React.useRef(null);
+    let hoverTimeout = null;
+
+    const handleMouseEnter = () => {
+        if (!product.videoUrl) return;
+        hoverTimeout = setTimeout(() => {
+            setIsPlaying(true);
+        }, 200); // 200ms delay to prevent accidental triggers
+    };
+
+    const handleMouseLeave = () => {
+        if (hoverTimeout) clearTimeout(hoverTimeout);
+        setIsPlaying(false);
+    };
+
     const handleWishlistClick = (e) => {
         e.preventDefault(); // Prevent navigation if clicking the heart
         if (isWishlisted) {
@@ -18,7 +34,11 @@ const ProductCard = ({ product }) => {
 
     return (
         <div className="product-card">
-            <div className="product-image">
+            <div
+                className="product-image"
+                onMouseEnter={handleMouseEnter}
+                onMouseLeave={handleMouseLeave}
+            >
                 <button
                     className={`wishlist-btn ${isWishlisted ? 'active' : ''}`}
                     onClick={handleWishlistClick}
@@ -26,12 +46,26 @@ const ProductCard = ({ product }) => {
                 >
                     ♥
                 </button>
-                <img
-                    src={product.imageUrl}
-                    alt={`${product.name} - ${product.category} jewellery`}
-                    loading="lazy"
-                    decoding="async"
-                />
+
+                {isPlaying && product.videoUrl ? (
+                    <video
+                        ref={videoRef}
+                        src={product.videoUrl}
+                        autoPlay
+                        muted
+                        loop
+                        playsInline
+                        className="product-video"
+                        style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+                    />
+                ) : (
+                    <img
+                        src={product.imageUrl}
+                        alt={`${product.name} - ${product.category} jewellery`}
+                        loading="lazy"
+                        decoding="async"
+                    />
+                )}
             </div>
             <div className="product-info">
                 <span className="product-category">{product.category}</span>

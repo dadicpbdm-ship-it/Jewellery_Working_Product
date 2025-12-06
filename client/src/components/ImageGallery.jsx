@@ -1,14 +1,23 @@
 import React, { useState } from 'react';
 import './ImageGallery.css';
 
-const ImageGallery = ({ images = [], productName = '' }) => {
+const ImageGallery = ({ images = [], productName = '', videoUrl = null }) => {
     const [selectedImage, setSelectedImage] = useState(0);
     const [showLightbox, setShowLightbox] = useState(false);
     const [isZoomed, setIsZoomed] = useState(false);
     const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
 
-    // Ensure images is an array and has at least one image
-    const imageList = Array.isArray(images) && images.length > 0 ? images : [images];
+    // Combine images and video into a single list of media items
+    // If videoUrl exists, it becomes the second item (index 1) usually, or we can prepend it
+    // Strategy: Append video at the end of the images list
+    const mediaList = [...(Array.isArray(images) && images.length > 0 ? images : [images])];
+
+    if (videoUrl) {
+        mediaList.push({ type: 'video', src: videoUrl });
+    }
+
+    const currentMedia = mediaList[selectedImage];
+    const isVideo = typeof currentMedia === 'object' && currentMedia.type === 'video';
 
     const handleThumbnailClick = (index) => {
         setSelectedImage(index);
@@ -16,15 +25,15 @@ const ImageGallery = ({ images = [], productName = '' }) => {
     };
 
     const handlePrevious = () => {
-        setSelectedImage((prev) => (prev === 0 ? imageList.length - 1 : prev - 1));
+        setSelectedImage((prev) => (prev === 0 ? mediaList.length - 1 : prev - 1));
     };
 
     const handleNext = () => {
-        setSelectedImage((prev) => (prev === imageList.length - 1 ? 0 : prev + 1));
+        setSelectedImage((prev) => (prev === mediaList.length - 1 ? 0 : prev + 1));
     };
 
     const handleMouseMove = (e) => {
-        if (!isZoomed) return;
+        if (!isZoomed || isVideo) return; // Disable zoom for video
 
         const rect = e.currentTarget.getBoundingClientRect();
         const x = ((e.clientX - rect.left) / rect.width) * 100;
@@ -38,28 +47,41 @@ const ImageGallery = ({ images = [], productName = '' }) => {
             {/* Main Image */}
             <div className="main-image-container">
                 <div
-                    className={`main-image ${isZoomed ? 'zoomed' : ''}`}
-                    onMouseEnter={() => setIsZoomed(true)}
+                    className={`main-image ${isZoomed && !isVideo ? 'zoomed' : ''}`}
+                    onMouseEnter={() => !isVideo && setIsZoomed(true)}
                     onMouseLeave={() => setIsZoomed(false)}
                     onMouseMove={handleMouseMove}
-                    onClick={() => setShowLightbox(true)}
-                    style={isZoomed ? {
-                        backgroundImage: `url(${imageList[selectedImage]})`,
+                    onClick={() => !isVideo && setShowLightbox(true)}
+                    style={isZoomed && !isVideo ? {
+                        backgroundImage: `url(${currentMedia})`,
                         backgroundPosition: `${mousePosition.x}% ${mousePosition.y}%`,
                         backgroundSize: '200%',
                         backgroundRepeat: 'no-repeat'
                     } : {}}
                 >
-                    <img
-                        src={imageList[selectedImage]}
-                        alt={`${productName} - View ${selectedImage + 1}`}
-                        style={{ opacity: isZoomed ? 0 : 1 }}
-                    />
-                    {!isZoomed && <div className="zoom-hint">🔍 Hover to zoom · Click for fullscreen</div>}
+                    {isVideo ? (
+                        <video
+                            src={currentMedia.src}
+                            controls
+                            autoPlay
+                            muted // Start muted for better UX
+                            loop
+                            style={{ width: '100%', height: '100%', objectFit: 'contain' }}
+                        />
+                    ) : (
+                        <>
+                            <img
+                                src={currentMedia}
+                                alt={`${productName} - View ${selectedImage + 1}`}
+                                style={{ opacity: isZoomed ? 0 : 1 }}
+                            />
+                            {!isZoomed && <div className="zoom-hint">🔍 Hover to zoom · Click for fullscreen</div>}
+                        </>
+                    )}
                 </div>
 
-                {/* Navigation Arrows (if multiple images) */}
-                {imageList.length > 1 && (
+                {/* Navigation Arrows (if multiple items) */}
+                {mediaList.length > 1 && (
                     <>
                         <button className="nav-arrow prev" onClick={handlePrevious}>
                             ‹
@@ -72,32 +94,41 @@ const ImageGallery = ({ images = [], productName = '' }) => {
             </div>
 
             {/* Thumbnails */}
-            {imageList.length > 1 && (
+            {mediaList.length > 1 && (
                 <div className="thumbnails-container">
-                    {imageList.map((image, index) => (
-                        <div
-                            key={index}
-                            className={`thumbnail ${index === selectedImage ? 'active' : ''}`}
-                            onClick={() => handleThumbnailClick(index)}
-                        >
-                            <img src={image} alt={`${productName} thumbnail ${index + 1}`} />
-                        </div>
-                    ))}
+                    {mediaList.map((item, index) => {
+                        const isItemVideo = typeof item === 'object' && item.type === 'video';
+                        return (
+                            <div
+                                key={index}
+                                className={`thumbnail ${index === selectedImage ? 'active' : ''}`}
+                                onClick={() => handleThumbnailClick(index)}
+                            >
+                                {isItemVideo ? (
+                                    <div className="video-thumbnail">
+                                        <span>▶</span>
+                                    </div>
+                                ) : (
+                                    <img src={item} alt={`${productName} thumbnail ${index + 1}`} />
+                                )}
+                            </div>
+                        );
+                    })}
                 </div>
             )}
 
             {/* Lightbox Modal */}
-            {showLightbox && (
+            {showLightbox && !isVideo && (
                 <div className="lightbox-overlay" onClick={() => setShowLightbox(false)}>
                     <div className="lightbox-content" onClick={(e) => e.stopPropagation()}>
                         <button className="lightbox-close" onClick={() => setShowLightbox(false)}>
                             ×
                         </button>
                         <img
-                            src={imageList[selectedImage]}
+                            src={currentMedia}
                             alt={`${productName} - Full view ${selectedImage + 1}`}
                         />
-                        {imageList.length > 1 && (
+                        {mediaList.length > 1 && (
                             <>
                                 <button className="lightbox-arrow prev" onClick={handlePrevious}>
                                     ‹
@@ -106,7 +137,7 @@ const ImageGallery = ({ images = [], productName = '' }) => {
                                     ›
                                 </button>
                                 <div className="lightbox-counter">
-                                    {selectedImage + 1} / {imageList.length}
+                                    {selectedImage + 1} / {mediaList.length}
                                 </div>
                             </>
                         )}
