@@ -4,13 +4,22 @@
     background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
 }
 
+.user-dashboard .container {
+    max-width: 1100px;
+    /* Reduced from default to be more compact */
+    margin: 0 auto;
+    padding: 0 1rem;
+}
+
 .dashboard-header {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    margin-bottom: 1.5rem;
+    margin-bottom: 1rem;
+    /* Reduced spacing */
     background: linear-gradient(135deg, #2c3e50 0%, #34495e 100%);
-    padding: 1.25rem 1.5rem;
+    padding: 1rem 1.25rem;
+    /* Reduced padding */
     border-radius: 12px;
     box-shadow: 0 4px 15px rgba(44, 62, 80, 0.15);
     position: relative;
@@ -43,31 +52,44 @@
 }
 
 .btn-change-password {
-    padding: 10px 20px;
-    background: rgba(255, 255, 255, 0.1);
-    border: 2px solid rgba(255, 255, 255, 0.3);
-    border-radius: 8px;
+    padding: 8px 16px;
+    /* Slightly compacted */
+    background: rgba(255, 255, 255, 0.2);
+    /* Increased opacity for visibility */
+    border: 1px solid rgba(255, 255, 255, 0.5);
+    /* Sharper border */
+    border-radius: 6px;
     cursor: pointer;
-    font-weight: 600;
-    color: white;
-    transition: all 0.3s ease;
-    backdrop-filter: blur(10px);
+    font-weight: 700;
+    /* Bolder text */
+    color: #FFFFFF;
+    transition: all 0.2s ease;
+    backdrop-filter: blur(4px);
     position: relative;
     z-index: 1;
+    text-transform: uppercase;
+    font-size: 0.85rem;
+    letter-spacing: 0.5px;
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+    /* Shadow for text readability */
 }
 
 .btn-change-password:hover {
-    background: rgba(201, 169, 97, 0.2);
-    border-color: #c9a961;
-    transform: translateY(-2px);
+    background: #FFFFFF;
+    color: #2c3e50;
+    border-color: #FFFFFF;
+    transform: translateY(-1px);
+    text-shadow: none;
 }
 
 /* Stats Grid */
 .stats-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-    gap: 1rem;
-    margin-bottom: 1.5rem;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 0.75rem;
+    /* Reduced gap */
+    margin-bottom: 1rem;
+    /* Reduced margin */
 }
 
 .stat-card {
@@ -138,13 +160,15 @@
     flex-wrap: wrap;
     gap: 0.5rem;
     /* Compact gap */
-    margin-bottom: 2rem;
+    margin-bottom: 1.25rem;
+    /* Reduced margin */
     background: white;
-    padding: 0.75rem;
-    border-radius: 16px;
-    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
-    /* Soft, premium shadow */
-    border: 1px solid rgba(0, 0, 0, 0.03);
+    padding: 0.5rem;
+    /* Reduced padding */
+    border-radius: 12px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.03);
+    /* Softer shadow */
+    border: 1px solid rgba(0, 0, 0, 0.05);
 }
 
 .tab-btn {
@@ -858,4 +882,66 @@
 .btn-view-details-sm:hover {
     color: #d4af37;
     text-decoration: underline;
+}
+
+/* Loyalty Summary Card (Extracted from inline styles) */
+.loyalty-summary-card {
+    background: #FFFFFF;
+    border-radius: 12px;
+    padding: 1rem 1.25rem;
+    /* Compact padding */
+    margin-bottom: 1rem;
+    /* Reduced margin */
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border: 1px solid rgba(0, 0, 0, 0.05);
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.03);
+    position: relative;
+    overflow: hidden;
+}
+
+.loyalty-summary-card::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    width: 4px;
+    background: linear-gradient(180deg, #FFD700 0%, #aa8b45 100%);
+}
+
+.loyalty-summary-card h3 {
+    margin: 0 0 0.4rem 0;
+    color: #555;
+    font-size: 0.85rem;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    font-weight: 600;
+}
+
+.loyalty-pill-container {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+
+.loyalty-points {
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: #2c3e50;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.loyalty-tier {
+    background: #2c3e50;
+    color: white;
+    padding: 3px 10px;
+    border-radius: 12px;
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    font-weight: 600;
+    letter-spacing: 0.5px;
 }

@@ -290,31 +290,16 @@ const UserDashboard = () => {
                 )}
 
                 {/* Loyalty Summary */}
+                {/* Loyalty Summary */}
                 {stats && stats.loyalty && (
-                    <div className="loyalty-summary-card" style={{
-                        background: 'linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%)',
-                        borderRadius: '12px',
-                        padding: '20px',
-                        marginBottom: '30px',
-                        display: 'flex',
-                        justifyContent: 'space-between',
-                        alignItems: 'center',
-                        border: '1px solid #dee2e6'
-                    }}>
+                    <div className="loyalty-summary-card">
                         <div>
-                            <h3 style={{ margin: '0 0 5px 0', color: '#333' }}>My Rewards</h3>
-                            <div style={{ display: 'flex', alignItems: 'center', gap: '15px' }}>
-                                <span style={{ fontSize: '1.2rem', fontWeight: 'bold', color: '#FFD700' }}>
+                            <h3>My Rewards</h3>
+                            <div className="loyalty-pill-container">
+                                <span className="loyalty-points">
                                     🪙 {stats.loyalty.points} Points
                                 </span>
-                                <span style={{
-                                    background: '#333',
-                                    color: 'white',
-                                    padding: '2px 8px',
-                                    borderRadius: '12px',
-                                    fontSize: '0.8rem',
-                                    textTransform: 'uppercase'
-                                }}>
+                                <span className="loyalty-tier">
                                     {stats.loyalty.tier} Member
                                 </span>
                             </div>
@@ -322,7 +307,6 @@ const UserDashboard = () => {
                         <button
                             onClick={() => setActiveTab('rewards')}
                             className="btn-primary"
-                            style={{ textDecoration: 'none', cursor: 'pointer' }}
                         >
                             View Rewards
                         </button>

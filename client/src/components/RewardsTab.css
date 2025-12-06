@@ -1,113 +1,167 @@
 .rewards-tab {
-    padding: 20px;
+    padding: 0;
+    animation: fadeIn 0.4s ease-out;
 }
 
+/* --- Summary Cards --- */
 .rewards-summary {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-    gap: 20px;
-    margin-bottom: 30px;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 15px;
+    margin-bottom: 25px;
 }
 
 .summary-card {
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-    color: white;
-    padding: 25px;
+    background: #FFFFFF;
+    border: 1px solid #E0E0E0;
+    padding: 18px;
     border-radius: 12px;
     display: flex;
     align-items: center;
     gap: 15px;
-    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+    transition: all 0.3s ease;
+    position: relative;
+    overflow: hidden;
 }
 
+.summary-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 4px;
+    height: 100%;
+    background: #E0E0E0;
+    transition: background 0.3s ease;
+}
+
+.summary-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.05);
+    border-color: #C9A961;
+}
+
+/* Specific Card Styles */
+.summary-card.balance::before {
+    background: #C9A961;
+}
+
+/* Gold */
 .summary-card.balance {
-    background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+    background: linear-gradient(135deg, #FFFDF5 0%, #FFFFFF 100%);
 }
 
-.summary-card.earned {
-    background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+.summary-card.earned::before {
+    background: #28a745;
 }
 
-.summary-card.redeemed {
-    background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%);
+/* Green */
+.summary-card.redeemed::before {
+    background: #666;
 }
+
+/* Grey */
+
 
 .card-icon {
-    font-size: 3rem;
+    font-size: 2rem;
+    width: 50px;
+    height: 50px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: #FAFAFA;
+    border-radius: 50%;
+    border: 1px solid #EEE;
 }
 
 .card-content h3 {
-    margin: 0 0 5px 0;
-    font-size: 0.9rem;
-    opacity: 0.9;
+    margin: 0 0 2px 0;
+    font-size: 0.8rem;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    color: #666;
+    font-weight: 600;
 }
 
 .points-value {
-    margin: 5px 0;
-    font-size: 2rem;
-    font-weight: bold;
+    margin: 0;
+    font-size: 1.4rem;
+    font-weight: 700;
+    color: #333;
+    font-family: 'Playfair Display', serif;
 }
 
 .card-content small {
-    opacity: 0.8;
+    display: block;
+    margin-top: 2px;
+    font-size: 0.75rem;
+    color: #C9A961;
+    font-weight: 600;
 }
 
+/* --- How It Works --- */
 .how-it-works {
-    background: #f8f9fa;
-    padding: 25px;
+    background: #FFFFFF;
+    padding: 20px;
     border-radius: 12px;
-    margin-bottom: 30px;
+    margin-bottom: 25px;
+    border: 1px solid #EAEAEA;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.02);
 }
 
 .how-it-works h3 {
-    margin-top: 0;
+    margin: 0 0 15px 0;
     color: #333;
+    font-size: 1.1rem;
+    font-family: 'Playfair Display', serif;
+    border-bottom: 1px solid #EEE;
+    padding-bottom: 10px;
 }
 
 .info-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
     gap: 20px;
-    margin-top: 20px;
 }
 
 .info-item {
     display: flex;
-    gap: 15px;
+    gap: 12px;
     align-items: flex-start;
 }
 
 .info-icon {
-    font-size: 2rem;
+    font-size: 1.5rem;
+    color: #C9A961;
 }
 
 .info-item h4 {
-    margin: 0 0 5px 0;
+    margin: 0 0 4px 0;
     color: #333;
+    font-size: 0.95rem;
 }
 
 .info-item p {
     margin: 0;
-    color: #666;
-    font-size: 0.9rem;
+    color: #777;
+    font-size: 0.85rem;
+    line-height: 1.4;
 }
 
+/* --- Transaction History --- */
 .transaction-history {
-    background: white;
-    padding: 25px;
+    background: #FFFFFF;
+    padding: 20px;
     border-radius: 12px;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+    border: 1px solid #EAEAEA;
 }
 
 .transaction-history h3 {
-    margin-top: 0;
+    margin: 0 0 15px 0;
     color: #333;
-}
-
-.no-transactions {
-    text-align: center;
-    color: #999;
-    padding: 40px 20px;
+    font-size: 1.1rem;
+    font-family: 'Playfair Display', serif;
 }
 
 .transactions-table {
@@ -116,39 +170,51 @@
 
 .transactions-table table {
     width: 100%;
-    border-collapse: collapse;
+    border-collapse: separate;
+    border-spacing: 0;
 }
 
 .transactions-table th {
-    background: #f8f9fa;
-    padding: 12px;
+    background: #F8F9FA;
+    padding: 10px 15px;
     text-align: left;
     font-weight: 600;
-    color: #333;
-    border-bottom: 2px solid #dee2e6;
+    color: #555;
+    font-size: 0.85rem;
+    text-transform: uppercase;
+    border-bottom: 1px solid #DDD;
 }
 
 .transactions-table td {
-    padding: 12px;
-    border-bottom: 1px solid #dee2e6;
+    padding: 12px 15px;
+    border-bottom: 1px solid #EEE;
+    font-size: 0.9rem;
+    color: #444;
+}
+
+.transactions-table tr:last-child td {
+    border-bottom: none;
 }
 
 .txn-type {
-    display: inline-block;
-    padding: 4px 12px;
-    border-radius: 20px;
-    font-size: 0.85rem;
-    font-weight: 500;
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    padding: 4px 10px;
+    border-radius: 6px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    text-transform: uppercase;
 }
 
 .txn-type.earned {
-    background: #d4edda;
-    color: #155724;
+    background: #e6f4ea;
+    color: #1e7e34;
 }
 
 .txn-type.redeemed {
-    background: #f8d7da;
-    color: #721c24;
+    background: #fce8e6;
+    color: #c5221f;
 }
 
 .points-positive {
@@ -161,21 +227,33 @@
     font-weight: 600;
 }
 
+.no-transactions {
+    text-align: center;
+    color: #999;
+    padding: 30px;
+    font-size: 0.9rem;
+    font-style: italic;
+}
+
+/* Animation */
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(5px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
 @media (max-width: 768px) {
     .rewards-summary {
         grid-template-columns: 1fr;
     }
 
-    .info-grid {
-        grid-template-columns: 1fr;
-    }
-
-    .transactions-table {
-        font-size: 0.9rem;
-    }
-
-    .transactions-table th,
-    .transactions-table td {
-        padding: 8px;
+    .summary-card {
+        padding: 15px;
     }
 }
