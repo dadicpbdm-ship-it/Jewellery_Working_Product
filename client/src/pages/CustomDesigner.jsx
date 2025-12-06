@@ -189,198 +189,26 @@ const CustomDesigner = () => {
         setShowShareModal(false);
     };
 
-    const styles = {
-        container: {
-            maxWidth: '1400px',
-            margin: '0 auto',
-            padding: '20px'
-        },
-        hero: {
-            textAlign: 'center',
-            marginBottom: '40px',
-            background: 'linear-gradient(135deg, #667eea 0%, #764ba2 50%, #f093fb 100%)',
-            padding: '60px 20px',
-            borderRadius: '16px',
-            color: '#fff',
-            boxShadow: '0 10px 40px rgba(102, 126, 234, 0.3)'
-        },
-        promoBar: {
-            background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
-            color: 'white',
-            padding: '12px',
-            textAlign: 'center',
-            borderRadius: '8px',
-            marginBottom: '30px',
-            fontWeight: '600',
-            animation: 'pulse 2s infinite',
-            boxShadow: '0 4px 15px rgba(102, 126, 234, 0.3)'
-        },
-        templatesSection: {
-            marginBottom: '40px'
-        },
-        templateGrid: {
-            display: 'grid',
-            gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))',
-            gap: '15px',
-            marginBottom: '30px'
-        },
-        templateCard: {
-            background: 'white',
-            padding: '20px',
-            borderRadius: '12px',
-            textAlign: 'center',
-            cursor: 'pointer',
-            border: '2px solid #e0e0e0',
-            transition: 'all 0.3s',
-            boxShadow: '0 2px 8px rgba(0,0,0,0.05)'
-        },
-        occasionFilters: {
-            display: 'flex',
-            gap: '10px',
-            marginBottom: '30px',
-            flexWrap: 'wrap',
-            justifyContent: 'center'
-        },
-        occasionBtn: {
-            padding: '8px 20px',
-            borderRadius: '20px',
-            border: '2px solid #ddd',
-            background: 'white',
-            cursor: 'pointer',
-            transition: 'all 0.3s',
-            fontWeight: '500'
-        },
-        mainGrid: {
-            display: 'grid',
-            gridTemplateColumns: '1fr 1fr',
-            gap: '40px'
-        },
-        controls: {
-            background: 'white',
-            padding: '30px',
-            borderRadius: '12px',
-            boxShadow: '0 4px 15px rgba(0,0,0,0.05)'
-        },
-        controlGroup: {
-            marginBottom: '25px'
-        },
-        label: {
-            display: 'block',
-            marginBottom: '10px',
-            fontWeight: '600',
-            color: '#333'
-        },
-        select: {
-            width: '100%',
-            padding: '12px',
-            borderRadius: '8px',
-            border: '1px solid #ddd',
-            fontSize: '1rem'
-        },
-        priceSection: {
-            background: '#f8f9fa',
-            padding: '20px',
-            borderRadius: '12px',
-            marginBottom: '20px',
-            position: 'relative'
-        },
-        priceTag: {
-            fontSize: '2rem',
-            fontWeight: 'bold',
-            color: '#28a745',
-            marginBottom: '10px'
-        },
-        infoIcon: {
-            cursor: 'pointer',
-            color: '#007bff',
-            marginLeft: '10px',
-            fontSize: '0.9rem'
-        },
-        breakdown: {
-            background: 'white',
-            padding: '15px',
-            borderRadius: '8px',
-            marginTop: '10px',
-            fontSize: '0.9rem'
-        },
-        breakdownRow: {
-            display: 'flex',
-            justifyContent: 'space-between',
-            marginBottom: '8px'
-        },
-        buttonGroup: {
-            display: 'flex',
-            gap: '10px'
-        },
-        button: {
-            flex: 1,
-            padding: '15px',
-            borderRadius: '8px',
-            border: 'none',
-            fontSize: '1.1rem',
-            cursor: 'pointer',
-            fontWeight: '600',
-            transition: 'all 0.3s'
-        },
-        primaryBtn: {
-            background: '#333',
-            color: 'white'
-        },
-        secondaryBtn: {
-            background: '#f0f0f0',
-            color: '#333'
-        },
-        modal: {
-            position: 'fixed',
-            top: 0,
-            left: 0,
-            right: 0,
-            bottom: 0,
-            background: 'rgba(0,0,0,0.7)',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            zIndex: 9999
-        },
-        modalContent: {
-            background: 'white',
-            padding: '30px',
-            borderRadius: '12px',
-            maxWidth: '400px',
-            width: '90%'
-        },
-        shareButtons: {
-            display: 'flex',
-            gap: '10px',
-            marginTop: '20px'
-        }
-    };
-
     return (
         <div className="custom-designer-page">
-            <div style={styles.container}>
+            <div className="designer-container">
                 {/* Promotional Banner */}
-                <div style={styles.promoBar}>
+                <div className="designer-promo-bar">
                     🎉 Limited Time: Design Today & Get 10% Off Your Custom Order! 🎉
                 </div>
 
                 {/* Hero Section */}
-                <div style={styles.hero}>
-                    <h1 style={{ fontSize: '2.5rem', marginBottom: '10px' }}>Design Your Dream Jewellery</h1>
-                    <p style={{ fontSize: '1.2rem', opacity: 0.9 }}>Create unique pieces in 3 easy steps</p>
+                <div className="designer-hero">
+                    <h1>Design Your Dream Jewellery</h1>
+                    <p>Create unique pieces in 3 easy steps</p>
                 </div>
 
                 {/* Occasion Filters */}
-                <div style={styles.occasionFilters}>
+                <div className="occasion-filters">
                     {OCCASIONS.map(occasion => (
                         <button
                             key={occasion}
-                            style={{
-                                ...styles.occasionBtn,
-                                background: selectedOccasion === occasion ? '#667eea' : 'white',
-                                color: selectedOccasion === occasion ? 'white' : '#333',
-                                borderColor: selectedOccasion === occasion ? '#667eea' : '#ddd'
-                            }}
+                            className={`occasion-btn ${selectedOccasion === occasion ? 'active' : ''}`}
                             onClick={() => setSelectedOccasion(occasion)}
                         >
                             {occasion}
@@ -389,27 +217,18 @@ const CustomDesigner = () => {
                 </div>
 
                 {/* Design Templates */}
-                <div style={styles.templatesSection}>
-                    <h2 style={{ textAlign: 'center', marginBottom: '20px' }}>Start with a Template</h2>
-                    <div style={styles.templateGrid}>
+                <div className="templates-section">
+                    <h2>Start with a Template</h2>
+                    <div className="template-grid">
                         {DESIGN_TEMPLATES.map((template, idx) => (
                             <div
                                 key={idx}
-                                style={styles.templateCard}
+                                className="template-card"
                                 onClick={() => applyTemplate(template)}
-                                onMouseEnter={(e) => {
-                                    e.currentTarget.style.transform = 'translateY(-5px)';
-                                    e.currentTarget.style.borderColor = '#667eea';
-                                    e.currentTarget.style.boxShadow = '0 8px 20px rgba(102, 126, 234, 0.2)';
-                                }}
-                                onMouseLeave={(e) => {
-                                    e.currentTarget.style.transform = 'translateY(0)';
-                                    e.currentTarget.style.borderColor = '#e0e0e0';
-                                }}
                             >
-                                <div style={{ fontSize: '3rem', marginBottom: '10px' }}>{template.icon}</div>
-                                <h4 style={{ margin: '0 0 5px 0' }}>{template.name}</h4>
-                                <p style={{ color: '#666', fontSize: '0.85rem', margin: 0 }}>
+                                <div className="template-icon">{template.icon}</div>
+                                <h4>{template.name}</h4>
+                                <p>
                                     {template.metal} • {template.gemstone}
                                 </p>
                             </div>
@@ -420,7 +239,7 @@ const CustomDesigner = () => {
                 {/* Budget Helper */}
                 <BudgetHelper onBudgetChange={setBudgetLimit} />
 
-                <div style={styles.mainGrid}>
+                <div className="designer-main-grid">
                     {/* 3D Preview Section */}
                     <div className="preview-section">
                         <Preview3D
@@ -429,17 +248,17 @@ const CustomDesigner = () => {
                             gemstone={design.gemstone}
                             gemstoneSize={design.gemstoneSize}
                         />
-                        <p style={{ textAlign: 'center', marginTop: '15px', color: '#666' }}>
+                        <p className="preview-instruction">
                             Interactive 3D Preview • Drag to Rotate • Scroll to Zoom
                         </p>
                     </div>
 
                     {/* Customization Controls */}
-                    <div style={styles.controls}>
-                        <div style={styles.controlGroup}>
-                            <label style={styles.label}>Jewellery Type</label>
+                    <div className="designer-controls">
+                        <div className="control-group">
+                            <label className="control-label">Jewellery Type</label>
                             <select
-                                style={styles.select}
+                                className="control-select"
                                 value={design.type}
                                 onChange={(e) => setDesign({ ...design, type: e.target.value })}
                             >
@@ -450,10 +269,10 @@ const CustomDesigner = () => {
                             </select>
                         </div>
 
-                        <div style={styles.controlGroup}>
-                            <label style={styles.label}>Metal</label>
+                        <div className="control-group">
+                            <label className="control-label">Metal</label>
                             <select
-                                style={styles.select}
+                                className="control-select"
                                 value={design.metal}
                                 onChange={(e) => setDesign({ ...design, metal: e.target.value })}
                             >
@@ -463,10 +282,10 @@ const CustomDesigner = () => {
                             </select>
                         </div>
 
-                        <div style={styles.controlGroup}>
-                            <label style={styles.label}>Gemstone</label>
+                        <div className="control-group">
+                            <label className="control-label">Gemstone</label>
                             <select
-                                style={styles.select}
+                                className="control-select"
                                 value={design.gemstone}
                                 onChange={(e) => setDesign({ ...design, gemstone: e.target.value })}
                             >
@@ -479,8 +298,8 @@ const CustomDesigner = () => {
                         </div>
 
                         {design.gemstone !== 'None' && (
-                            <div style={styles.controlGroup}>
-                                <label style={styles.label}>Gemstone Size (Carat): {design.gemstoneSize}</label>
+                            <div className="control-group">
+                                <label className="control-label">Gemstone Size (Carat): {design.gemstoneSize}</label>
                                 <input
                                     type="range"
                                     min="0.5"
@@ -488,15 +307,15 @@ const CustomDesigner = () => {
                                     step="0.1"
                                     value={design.gemstoneSize}
                                     onChange={(e) => setDesign({ ...design, gemstoneSize: parseFloat(e.target.value) })}
-                                    style={{ width: '100%' }}
+                                    className="range-input"
                                 />
                             </div>
                         )}
 
-                        <div style={styles.controlGroup}>
-                            <label style={styles.label}>Ring Size</label>
+                        <div className="control-group">
+                            <label className="control-label">Ring Size</label>
                             <select
-                                style={styles.select}
+                                className="control-select"
                                 value={design.size}
                                 onChange={(e) => setDesign({ ...design, size: parseInt(e.target.value) })}
                             >
@@ -506,35 +325,23 @@ const CustomDesigner = () => {
                             </select>
                         </div>
 
-                        <div style={styles.controlGroup}>
-                            <label style={styles.label}>Engraving (Optional - Max 20 chars)</label>
+                        <div className="control-group">
+                            <label className="control-label">Engraving (Optional - Max 20 chars)</label>
                             <input
                                 type="text"
-                                style={styles.select}
+                                className="control-select"
                                 placeholder="Enter text to engrave..."
                                 maxLength="20"
                                 value={design.engravingText}
                                 onChange={(e) => setDesign({ ...design, engravingText: e.target.value })}
                             />
-                            <small style={{ color: '#666' }}>{design.engravingText.length}/20 characters</small>
+                            <small className="char-count">{design.engravingText.length}/20 characters</small>
                             {design.engravingText && (
-                                <div style={{
-                                    marginTop: '15px',
-                                    padding: '15px 20px',
-                                    background: 'linear-gradient(135deg, #FAF8F3 0%, #F5F2ED 100%)',
-                                    borderRadius: '8px',
-                                    textAlign: 'center',
-                                    fontStyle: 'italic',
-                                    color: '#0F1419',
-                                    border: '2px solid #C9A961',
-                                    fontSize: '1.1rem',
-                                    fontWeight: '500',
-                                    boxShadow: '0 2px 8px rgba(201, 169, 97, 0.2)'
-                                }}>
-                                    <div style={{ fontSize: '0.85rem', color: '#6B6B6B', marginBottom: '5px' }}>
+                                <div className="engraving-preview-box">
+                                    <div className="preview-label">
                                         ✨ Engraving Preview
                                     </div>
-                                    <div style={{ fontFamily: 'serif', fontSize: '1.2rem', color: '#C9A961' }}>
+                                    <div className="preview-text">
                                         "{design.engravingText}"
                                     </div>
                                 </div>
@@ -542,11 +349,11 @@ const CustomDesigner = () => {
                         </div>
 
                         {/* Price Section with Breakdown */}
-                        <div style={styles.priceSection}>
-                            <div style={styles.priceTag}>
+                        <div className="designer-price-section">
+                            <div className="price-tag">
                                 ₹{totalPrice.toLocaleString('en-IN')}
                                 <span
-                                    style={styles.infoIcon}
+                                    className="info-icon"
                                     onClick={() => setShowPriceBreakdown(!showPriceBreakdown)}
                                 >
                                     ℹ️ Price Breakdown
@@ -554,26 +361,26 @@ const CustomDesigner = () => {
                             </div>
 
                             {showPriceBreakdown && (
-                                <div style={styles.breakdown}>
-                                    <div style={styles.breakdownRow}>
+                                <div className="price-breakdown">
+                                    <div className="breakdown-row">
                                         <span>Metal Cost (4g):</span>
                                         <span>₹{breakdown.metal.toLocaleString('en-IN')}</span>
                                     </div>
                                     {breakdown.gemstone > 0 && (
-                                        <div style={styles.breakdownRow}>
+                                        <div className="breakdown-row">
                                             <span>Gemstone ({design.gemstoneSize}ct):</span>
                                             <span>₹{breakdown.gemstone.toLocaleString('en-IN')}</span>
                                         </div>
                                     )}
-                                    <div style={styles.breakdownRow}>
+                                    <div className="breakdown-row">
                                         <span>Making Charges (15%):</span>
                                         <span>₹{breakdown.making.toLocaleString('en-IN')}</span>
                                     </div>
-                                    <div style={styles.breakdownRow}>
+                                    <div className="breakdown-row">
                                         <span>GST (3%):</span>
                                         <span>₹{breakdown.gst.toLocaleString('en-IN')}</span>
                                     </div>
-                                    <div style={{ ...styles.breakdownRow, borderTop: '2px solid #ddd', paddingTop: '8px', fontWeight: 'bold' }}>
+                                    <div className="breakdown-row total-row">
                                         <span>Total:</span>
                                         <span>₹{breakdown.total.toLocaleString('en-IN')}</span>
                                     </div>
@@ -581,16 +388,16 @@ const CustomDesigner = () => {
                             )}
                         </div>
 
-                        <div style={styles.buttonGroup}>
+                        <div className="designer-button-group">
                             <button
-                                style={{ ...styles.button, ...styles.primaryBtn }}
+                                className="designer-btn primary-btn"
                                 onClick={handleSaveDesign}
                                 disabled={saving}
                             >
                                 {saving ? 'Saving...' : '🛒 Add to Cart'}
                             </button>
                             <button
-                                style={{ ...styles.button, ...styles.secondaryBtn }}
+                                className="designer-btn secondary-btn"
                                 onClick={() => setShowShareModal(true)}
                             >
                                 📤 Share
@@ -601,16 +408,16 @@ const CustomDesigner = () => {
 
                 {/* Saved Designs Section */}
                 {savedDesigns.length > 0 && (
-                    <div style={{ marginTop: '40px' }}>
+                    <div className="saved-designs-section">
                         <h2>Your Saved Designs ({savedDesigns.length})</h2>
-                        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(200px, 1fr))', gap: '15px' }}>
+                        <div className="saved-designs-grid">
                             {savedDesigns.slice(0, 4).map(saved => (
-                                <div key={saved._id} style={{ background: 'white', padding: '15px', borderRadius: '8px', boxShadow: '0 2px 8px rgba(0,0,0,0.05)' }}>
-                                    <h4 style={{ margin: '0 0 5px 0', fontSize: '0.9rem' }}>{saved.name}</h4>
-                                    <p style={{ color: '#666', fontSize: '0.85rem', margin: '5px 0' }}>
+                                <div key={saved._id} className="saved-design-card">
+                                    <h4>{saved.name}</h4>
+                                    <p>
                                         {saved.metal} • {saved.gemstone}
                                     </p>
-                                    <p style={{ fontWeight: 'bold', color: '#28a745' }}>
+                                    <p className="saved-price">
                                         ₹{saved.estimatedPrice.toLocaleString('en-IN')}
                                     </p>
                                 </div>
@@ -625,26 +432,26 @@ const CustomDesigner = () => {
 
             {/* Share Modal */}
             {showShareModal && (
-                <div style={styles.modal} onClick={() => setShowShareModal(false)}>
-                    <div style={styles.modalContent} onClick={(e) => e.stopPropagation()}>
+                <div className="designer-modal" onClick={() => setShowShareModal(false)}>
+                    <div className="designer-modal-content" onClick={(e) => e.stopPropagation()}>
                         <h3>Share Your Design</h3>
-                        <p style={{ color: '#666' }}>Let your friends see your amazing creation!</p>
-                        <div style={styles.shareButtons}>
+                        <p>Let your friends see your amazing creation!</p>
+                        <div className="share-buttons">
                             <button
-                                style={{ ...styles.button, ...styles.primaryBtn, background: '#25D366' }}
+                                className="designer-btn share-whatsapp"
                                 onClick={() => shareDesign('whatsapp')}
                             >
                                 WhatsApp
                             </button>
                             <button
-                                style={{ ...styles.button, ...styles.primaryBtn, background: '#1877F2' }}
+                                className="designer-btn share-facebook"
                                 onClick={() => shareDesign('facebook')}
                             >
                                 Facebook
                             </button>
                         </div>
                         <button
-                            style={{ ...styles.button, ...styles.secondaryBtn, marginTop: '10px' }}
+                            className="designer-btn secondary-btn close-btn"
                             onClick={() => setShowShareModal(false)}
                         >
                             Close
