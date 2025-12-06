@@ -31,7 +31,16 @@ const Checkout = () => {
     });
 
     const [paymentMethod, setPaymentMethod] = useState('Cash on Delivery');
+    const [paymentMethod, setPaymentMethod] = useState('Cash on Delivery');
     const [bnplProvider, setBnplProvider] = useState(null);
+
+    // Gifting State
+    const [giftDetails, setGiftDetails] = useState({
+        isGift: false,
+        wrappingPaper: 'Gold', // Default to premium
+        message: '',
+        hidePrice: true
+    });
 
     // Reward Points State - now using RewardsContext balance
     const [pointsToUse, setPointsToUse] = useState(0);
@@ -370,52 +379,54 @@ const Checkout = () => {
                     provider: bnplProvider,
                     installments: bnplProviders.find(p => p.name === bnplProvider)?.installments || 3,
                     bnplStatus: 'completed'
-                } : undefined
+                } : undefined,
+                giftDetails: giftDetails.isGift ? giftDetails : undefined
             };
+        };
 
-            const headers = {
-                'Content-Type': 'application/json'
-            };
+        const headers = {
+            'Content-Type': 'application/json'
+        };
 
-            if (user) {
-                headers['Authorization'] = `Bearer ${user.token}`;
-            }
-
-            const response = await fetch(`${API_URL}/api/orders`, {
-                method: 'POST',
-                headers: headers,
-                body: JSON.stringify(orderData)
-            });
-
-            if (response.ok) {
-                clearCart();
-                navigate('/order-success');
-            } else {
-                const errorData = await response.json();
-                alert(`Order failed: ${errorData.message}`);
-            }
-        } catch (error) {
-            console.error('Error placing order:', error);
-            alert(`Error placing order: ${error.message}`);
+        if (user) {
+            headers['Authorization'] = `Bearer ${user.token}`;
         }
-    };
 
-    if (cartItems.length === 0) {
-        return (
-            <div className="checkout-container empty-cart-message">
-                <h2>Your cart is empty</h2>
-                <button onClick={() => navigate('/shop')}>Go to Shop</button>
-            </div>
-        );
+        const response = await fetch(`${API_URL}/api/orders`, {
+            method: 'POST',
+            headers: headers,
+            body: JSON.stringify(orderData)
+        });
+
+        if (response.ok) {
+            clearCart();
+            navigate('/order-success');
+        } else {
+            const errorData = await response.json();
+            alert(`Order failed: ${errorData.message}`);
+        }
+    } catch (error) {
+        console.error('Error placing order:', error);
+        alert(`Error placing order: ${error.message}`);
     }
+};
 
+if (cartItems.length === 0) {
     return (
-        <div className="checkout-container">
-            <h1 className="checkout-title">Checkout</h1>
-            <div className="checkout-grid">
-                <div className="checkout-form-section">
+        <div className="checkout-container empty-cart-message">
+            <h2>Your cart is empty</h2>
+            <button onClick={() => navigate('/shop')}>Go to Shop</button>
+        </div>
+    );
+}
 
-                    {!user && (
+return (
+    <div className="checkout-container">
+        <h1 className="checkout-title">Checkout</h1>
+        <div className="checkout-grid">
+            <div className="checkout-form-section">
+
+                {!user && (
                         <div className="form-group-section">
                             <h3>Contact Information</h3>
                             <div className="form-row">
@@ -450,8 +461,86 @@ const Checkout = () => {
                                     required
                                 />
                             </div>
-                        </div>
                     )}
+
+                    {/* Premium Gifting Section */}
+                    <div className="gifting-section" style={{
+                        background: '#fffdf5',
+                        border: '1px solid #c9a961',
+                        borderRadius: '12px',
+                        padding: '1.5rem',
+                        marginBottom: '2rem',
+                        position: 'relative',
+                        overflow: 'hidden'
+                    }}>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '1rem' }}>
+                            <span style={{ fontSize: '1.5rem' }}>🎁</span>
+                            <h3 style={{ margin: 0, color: '#333' }}>Send as a Gift?</h3>
+                            <label className="switch" style={{ marginLeft: 'auto' }}>
+                                <input 
+                                    type="checkbox" 
+                                    checked={giftDetails.isGift} 
+                                    onChange={(e) => setGiftDetails({...giftDetails, isGift: e.target.checked})} 
+                                />
+                                <span className="slider round"></span>
+                            </label>
+                        </div>
+
+                        {giftDetails.isGift && (
+                            <div className="gift-options" style={{ animation: 'slideDown 0.3s ease-out' }}>
+                                <h4 style={{ margin: '1rem 0 0.5rem', fontSize: '0.9rem', color: '#666' }}>Select Wrapping</h4>
+                                <div className="wrapping-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '10px' }}>
+                                    {[
+                                        { id: 'Gold', name: 'Royal Gold', color: '#C9A961', desc: 'Premium velvet finish' },
+                                        { id: 'Silver', name: 'Sterling Silver', color: '#C0C0C0', desc: 'Classic elegance' },
+                                        { id: 'Classic', name: 'Signature Box', color: '#333', desc: 'Standard packaging' }
+                                    ].map(wrap => (
+                                        <div 
+                                            key={wrap.id}
+                                            onClick={() => setGiftDetails({...giftDetails, wrappingPaper: wrap.id})}
+                                            style={{
+                                                border: giftDetails.wrappingPaper === wrap.id ? `2px solid ${wrap.color}` : '1px solid #eee',
+                                                borderRadius: '8px',
+                                                padding: '10px',
+                                                cursor: 'pointer',
+                                                background: '#fff',
+                                                textAlign: 'center',
+                                                transition: 'all 0.2s'
+                                            }}
+                                        >
+                                            <div style={{ width: '24px', height: '24px', borderRadius: '50%', background: wrap.color, margin: '0 auto 5px' }}></div>
+                                            <div style={{ fontWeight: '600', fontSize: '0.9rem' }}>{wrap.name}</div>
+                                            <div style={{ fontSize: '0.75rem', color: '#888' }}>{wrap.desc}</div>
+                                        </div>
+                                    ))}
+                                </div>
+
+                                <h4 style={{ margin: '1rem 0 0.5rem', fontSize: '0.9rem', color: '#666' }}>Personal Message</h4>
+                                <textarea
+                                    placeholder="Type your message here... (We'll print it on a card)"
+                                    value={giftDetails.message}
+                                    onChange={(e) => setGiftDetails({...giftDetails, message: e.target.value})}
+                                    style={{
+                                        width: '100%',
+                                        padding: '10px',
+                                        borderRadius: '8px',
+                                        border: '1px solid #ddd',
+                                        minHeight: '80px',
+                                        fontFamily: 'inherit'
+                                    }}
+                                />
+
+                                <label style={{ display: 'flex', alignItems: 'center', gap: '8px', marginTop: '10px', fontSize: '0.9rem', color: '#555', cursor: 'pointer' }}>
+                                    <input 
+                                        type="checkbox" 
+                                        checked={giftDetails.hidePrice} 
+                                        onChange={(e) => setGiftDetails({...giftDetails, hidePrice: e.target.checked})} 
+                                    />
+                                    Hide price on invoice
+                                </label>
+                            </div>
+                        )}
+                    </div>
 
                     {user && savedAddresses.length > 0 && (
                         <div className="saved-addresses-section">
@@ -798,7 +887,7 @@ const Checkout = () => {
                 </div>
             </div>
         </div>
-    );
+        );
 };
 
-export default Checkout;
+        export default Checkout;

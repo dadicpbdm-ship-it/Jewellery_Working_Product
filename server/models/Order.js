@@ -116,6 +116,25 @@ const orderSchema = mongoose.Schema({
             default: 'pending'
         }
     },
+    // Premium Gifting Details
+    giftDetails: {
+        isGift: {
+            type: Boolean,
+            default: false
+        },
+        wrappingPaper: {
+            type: String,
+            enum: ['Standard', 'Gold', 'Silver', 'Classic'],
+            default: 'Standard'
+        },
+        message: {
+            type: String
+        },
+        hidePrice: {
+            type: Boolean,
+            default: false
+        }
+    },
     // Return/Exchange Request
     returnExchangeRequest: {
         type: {
