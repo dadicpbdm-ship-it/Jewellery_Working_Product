@@ -1,0 +1,298 @@
+/* AIStylist.css */
+
+/* --- Trigger Button (Floating) --- */
+.ai-stylist-trigger {
+    position: fixed;
+    bottom: 30px;
+    right: 30px;
+    background: linear-gradient(135deg, #111 0%, #333 100%);
+    color: #C9A961;
+    border: 2px solid #C9A961;
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    box-shadow: 0 4px 20px rgba(201, 169, 97, 0.4);
+    z-index: 1000;
+    transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    font-size: 1.5rem;
+}
+
+.ai-stylist-trigger:hover {
+    transform: scale(1.1) rotate(10deg);
+    box-shadow: 0 8px 30px rgba(201, 169, 97, 0.6);
+}
+
+.trigger-tooltip {
+    position: absolute;
+    right: 70px;
+    background: #FFF;
+    color: #333;
+    padding: 8px 12px;
+    border-radius: 8px;
+    font-size: 0.9rem;
+    font-weight: 600;
+    white-space: nowrap;
+    opacity: 0;
+    transform: translateX(10px);
+    transition: all 0.3s ease;
+    pointer-events: none;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+}
+
+.ai-stylist-trigger:hover .trigger-tooltip {
+    opacity: 1;
+    transform: translateX(0);
+}
+
+/* --- Panel / Modal --- */
+.stylist-panel {
+    position: fixed;
+    bottom: 100px;
+    right: 30px;
+    width: 380px;
+    max-width: 90vw;
+    background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(10px);
+    border-radius: 20px;
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.15);
+    border: 1px solid rgba(201, 169, 97, 0.3);
+    z-index: 1000;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    animation: slideUp 0.4s ease-out;
+    max-height: 600px;
+}
+
+@keyframes slideUp {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* --- Header --- */
+.stylist-header {
+    background: linear-gradient(135deg, #FAF8F3 0%, #FFF 100%);
+    padding: 20px;
+    border-bottom: 1px solid rgba(201, 169, 97, 0.2);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.stylist-title h3 {
+    margin: 0;
+    font-family: 'Playfair Display', serif;
+    color: #333;
+    font-size: 1.2rem;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.close-btn {
+    background: none;
+    border: none;
+    font-size: 1.2rem;
+    cursor: pointer;
+    color: #888;
+    transition: color 0.2s;
+}
+
+.close-btn:hover {
+    color: #333;
+}
+
+/* --- Chat Area --- */
+.stylist-content {
+    padding: 20px;
+    overflow-y: auto;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.chat-message {
+    max-width: 85%;
+    padding: 12px 16px;
+    border-radius: 12px;
+    font-size: 0.95rem;
+    line-height: 1.4;
+    animation: fadeIn 0.3s ease;
+}
+
+.message-bot {
+    background: #F5F5F5;
+    color: #333;
+    align-self: flex-start;
+    border-bottom-left-radius: 2px;
+}
+
+.message-user {
+    background: #333;
+    color: #C9A961;
+    /* Gold Text */
+    align-self: flex-end;
+    border-bottom-right-radius: 2px;
+}
+
+/* --- Options Grid --- */
+.options-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+    margin-top: 10px;
+}
+
+.option-btn {
+    background: #FFF;
+    border: 1px solid #E0E0E0;
+    padding: 14px;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.2s;
+    font-weight: 500;
+    color: #555;
+    text-align: center;
+}
+
+.option-btn:hover {
+    border-color: #C9A961;
+    color: #C9A961;
+    background: #FFFDF5;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+}
+
+/* --- Product Results --- */
+.recommendations-carousel {
+    display: flex;
+    overflow-x: auto;
+    gap: 15px;
+    padding-bottom: 10px;
+    margin-top: 10px;
+}
+
+.rec-card {
+    min-width: 140px;
+    background: #FFF;
+    border-radius: 8px;
+    overflow: hidden;
+    border: 1px solid #EEE;
+    transition: all 0.2s;
+    cursor: pointer;
+    text-decoration: none;
+    color: inherit;
+}
+
+.rec-card:hover {
+    border-color: #C9A961;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+}
+
+.rec-image {
+    width: 100%;
+    height: 140px;
+    object-fit: cover;
+}
+
+.rec-info {
+    padding: 10px;
+    text-align: center;
+}
+
+.rec-info h4 {
+    margin: 0;
+    font-size: 0.85rem;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.rec-info p {
+    margin: 4px 0 0;
+    color: #C9A961;
+    font-weight: 700;
+    font-size: 0.9rem;
+}
+
+/* --- Typing Indicator --- */
+.typing-indicator {
+    display: flex;
+    gap: 4px;
+    padding: 12px 16px;
+    background: #F5F5F5;
+    border-radius: 12px;
+    align-self: flex-start;
+    width: fit-content;
+}
+
+.dot {
+    width: 6px;
+    height: 6px;
+    background: #BBB;
+    border-radius: 50%;
+    animation: bounce 1.4s infinite ease-in-out both;
+}
+
+.dot:nth-child(1) {
+    animation-delay: -0.32s;
+}
+
+.dot:nth-child(2) {
+    animation-delay: -0.16s;
+}
+
+@keyframes bounce {
+
+    0%,
+    80%,
+    100% {
+        transform: scale(0);
+    }
+
+    40% {
+        transform: scale(1);
+    }
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(5px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* --- Restart Button --- */
+.restart-btn {
+    margin-top: 15px;
+    width: 100%;
+    padding: 12px;
+    background: transparent;
+    border: 1px dashed #CCC;
+    color: #666;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.restart-btn:hover {
+    border-color: #333;
+    color: #333;
+}

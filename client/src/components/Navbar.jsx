@@ -5,6 +5,7 @@ import { CartContext } from '../context/CartContext';
 import { WishlistContext } from '../context/WishlistContext';
 import { RewardsContext } from '../context/RewardsContext';
 import { API_URL } from '../config';
+import AIStylist from './AIStylist';
 import './Navbar.css';
 
 const Navbar = () => {
@@ -179,6 +180,7 @@ const Navbar = () => {
                     </ul>
                 </div>
             </div>
+            <AIStylist />
         </nav>
     );
 };
