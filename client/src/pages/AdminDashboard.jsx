@@ -154,6 +154,8 @@ const AdminDashboard = () => {
 
             if (response.ok) {
                 fetchOrders();
+                fetchProducts(); // Refresh stock counts
+                fetchAnalytics(); // Refresh analytics
                 alert(`Request marked as ${status}`);
             } else {
                 const data = await response.json();

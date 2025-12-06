@@ -510,7 +510,28 @@ router.put('/:id/return-exchange-status', protect, async (req, res) => {
             }
 
             // Auto-process refund if Return is Completed
-            if (status === 'Completed' && order.returnExchangeRequest.type === 'Return') {
+            if (status === 'Completed' && ['Return', 'return'].includes(order.returnExchangeRequest.type)) {
+                console.log(`[Return] Processing completion for Order ${order._id}. Restoring stock...`);
+
+                // 1. Restore Stock (Global Mode)
+                try {
+                    const Product = require('../models/Product');
+                    for (const item of order.orderItems) {
+                        const product = await Product.findById(item.product);
+                        if (product) {
+                            const oldStock = product.stock;
+                            product.stock += item.quantity;
+                            await product.save();
+                            console.log(`[Inventory] Restored ${item.quantity} to global stock for ${product.name}. Old: ${oldStock}, New: ${product.stock}`);
+                        } else {
+                            console.error(`[Inventory] Product ${item.product} not found during return restoration.`);
+                        }
+                    }
+                } catch (stockError) {
+                    console.error('[Inventory] Error restoring stock on return:', stockError);
+                }
+
+                // 2. Process Refund
                 order.isRefunded = true;
                 order.refundedAt = Date.now();
                 console.log(`[Refund] Processed refund for Order ${order._id}`);
@@ -530,11 +551,11 @@ router.put('/:id/return-exchange-status', protect, async (req, res) => {
                         console.log(`[Refund] Razorpay refund initiated: ${refund.id}`);
                     } catch (refundError) {
                         console.error(`[Refund] Razorpay refund failed for Order ${order._id}:`, refundError);
-                        // We don't stop the status update, but we log the error. 
-                        // In a production system, we might want to flag this for admin review.
                         order.returnExchangeRequest.adminComment = (order.returnExchangeRequest.adminComment || '') + `\n[System] Refund Failed: ${refundError.message}`;
                     }
                 }
+            } else if (status === 'Completed') {
+                console.log(`[Return] Skipping stock restoration. Type: ${order.returnExchangeRequest.type}, Status: ${status}`);
             }
 
             const updatedOrder = await order.save();
