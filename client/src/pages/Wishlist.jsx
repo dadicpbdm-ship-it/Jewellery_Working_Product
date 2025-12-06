@@ -109,9 +109,9 @@ const Wishlist = () => {
                                     <button
                                         className="btn-add-cart"
                                         onClick={() => handleAddToCart(product)}
-                                        disabled={product.countInStock === 0}
+                                        disabled={product.stock === 0}
                                     >
-                                        {product.countInStock > 0 ? 'Add to Cart' : 'Out of Stock'}
+                                        {product.stock > 0 ? 'Add to Cart' : 'Out of Stock'}
                                     </button>
                                     <button
                                         className="btn-remove"
