@@ -94,6 +94,39 @@ router.post('/', optionalProtect, async (req, res) => {
             console.error('[Order] Error assigning delivery agent:', error);
         }
 
+        // Inventory Management: Reserve Stock
+        try {
+            const { findWarehouseByPincode, reserveStock } = require('../services/warehouseService');
+
+            // 1. Find warehouse serving this pincode
+            const warehouse = await findWarehouseByPincode(shippingAddress.postalCode);
+
+            if (warehouse) {
+                console.log(`[Inventory] Ordering from warehouse: ${warehouse.name} (${warehouse.code})`);
+                order.warehouse = warehouse._id;
+
+                // 2. Prepare items for reservation
+                const reservationItems = orderItems.map(item => ({
+                    productId: item.product,
+                    quantity: item.quantity
+                }));
+
+                // 3. Reserve Stock (Will throw error if insufficient)
+                await reserveStock(warehouse._id, reservationItems);
+                console.log('[Inventory] Stock reserved successfully.');
+            } else {
+                console.warn(`[Inventory] No warehouse found for pincode ${shippingAddress.postalCode}. Proceeding without stock deduction.`);
+                // Decision: We allow the order to proceed even if no warehouse is found (legacy support/fallback),
+                // but we can't deduct stock. 
+            }
+        } catch (error) {
+            console.error('[Inventory] Stock reservation failed:', error.message);
+            return res.status(400).json({
+                message: 'Order failed: One or more items are out of stock at your location.',
+                error: error.message
+            });
+        }
+
         const createdOrder = await order.save();
 
         // Deduct reward points if used (only for logged-in users)
@@ -210,6 +243,24 @@ router.put('/:id/deliver', protect, delivery, async (req, res) => {
                 await decrementActiveOrders(order.deliveryAgent);
             }
 
+            // Inventory Management: Fulfill Order (Deduct Stock)
+            if (order.warehouse) {
+                try {
+                    const { fulfillOrder } = require('../services/warehouseService');
+                    // Prepare items
+                    const fulfillItems = order.orderItems.map(item => ({
+                        productId: item.product,
+                        quantity: item.quantity
+                    }));
+
+                    await fulfillOrder(order.warehouse, fulfillItems);
+                    console.log(`[Inventory] Order fulfilled from warehouse ${order.warehouse}`);
+                } catch (error) {
+                    console.error('[Inventory] Error fulfilling order stock:', error);
+                    // We don't stop the delivery process, but stock sync might be off
+                }
+            }
+
             // Generate Blockchain Certificates for products
             try {
                 const certificateService = require('../services/certificateService');
@@ -279,6 +330,42 @@ router.put('/:id/status', protect, admin, async (req, res) => {
             if (status === 'delivered') {
                 order.isDelivered = true;
                 order.deliveredAt = Date.now();
+
+                // Inventory Management: Fulfill Order (Deduct Stock)
+                if (order.warehouse) {
+                    try {
+                        const { fulfillOrder } = require('../services/warehouseService');
+                        const fulfillItems = order.orderItems.map(item => ({
+                            productId: item.product,
+                            quantity: item.quantity
+                        }));
+                        await fulfillOrder(order.warehouse, fulfillItems);
+                        console.log(`[Inventory] Order fulfilled from warehouse ${order.warehouse}`);
+                    } catch (error) {
+                        console.error('[Inventory] Error fulfilling order stock:', error);
+                    }
+                }
+            }
+
+            // Inventory Management: Fulfill (Deduct) or Release (Restock)
+            if (status === 'delivered' && order.warehouse) {
+                try {
+                    const { fulfillOrder } = require('../services/warehouseService');
+                    const items = order.orderItems.map(item => ({ productId: item.product, quantity: item.quantity }));
+                    await fulfillOrder(order.warehouse, items);
+                    console.log(`[Inventory] Order fulfilled from warehouse ${order.warehouse}`);
+                } catch (error) {
+                    console.error('[Inventory] Error fulfilling stock:', error);
+                }
+            } else if (status === 'cancelled' && order.warehouse) {
+                try {
+                    const { releaseStock } = require('../services/warehouseService');
+                    const items = order.orderItems.map(item => ({ productId: item.product, quantity: item.quantity }));
+                    await releaseStock(order.warehouse, items);
+                    console.log(`[Inventory] Order cancelled. Stock released to warehouse ${order.warehouse}`);
+                } catch (error) {
+                    console.error('[Inventory] Error releasing stock:', error);
+                }
             }
 
             const updatedOrder = await order.save();

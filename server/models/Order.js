@@ -53,6 +53,10 @@ const orderSchema = mongoose.Schema({
         update_time: { type: String },
         email_address: { type: String }
     },
+    warehouse: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'Warehouse'
+    },
     taxPrice: {
         type: Number,
         required: true,
