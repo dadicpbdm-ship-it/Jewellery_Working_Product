@@ -5,7 +5,7 @@ import { API_URL } from '../config';
 import './OTPLogin.css';
 
 const OTPLogin = () => {
-    const [phone, setPhone] = useState('');
+    const [phone, setPhone] = useState('+91');
     const [otp, setOTP] = useState(['', '', '', '', '', '']);
     const [step, setStep] = useState('phone'); // 'phone' or 'otp'
     const [loading, setLoading] = useState(false);
@@ -29,18 +29,22 @@ const OTPLogin = () => {
         setLoading(true);
 
         // Validate phone number
-        const phoneRegex = /^[+]?[0-9]{10,15}$/;
-        if (!phoneRegex.test(phone)) {
-            setError('Please enter a valid phone number');
+        // Check if starts with +91, optionally has spaces, has exactly 10 digits after, and optionally has trailing spaces
+        const indianPhoneRegex = /^\+91\s*[0-9]{10}\s*$/;
+
+        if (!indianPhoneRegex.test(phone)) {
+            setError('Please enter a valid 10-digit phone number starting with +91');
             setLoading(false);
             return;
         }
 
         try {
+            // Remove spaces before sending to backend
+            const cleanPhone = phone.replace(/\s+/g, '');
             const response = await fetch(`${API_URL}/api/auth/send-otp`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ phone })
+                body: JSON.stringify({ phone: cleanPhone })
             });
 
             const data = await response.json();
@@ -101,10 +105,12 @@ const OTPLogin = () => {
         setLoading(true);
 
         try {
+            // Clean phone number before sending
+            const cleanPhone = phone.replace(/\s+/g, '');
             const response = await fetch(`${API_URL}/api/auth/verify-otp`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ phone, otp: fullOTP })
+                body: JSON.stringify({ phone: cleanPhone, otp: fullOTP })
             });
 
             const data = await response.json();
@@ -173,6 +179,7 @@ const OTPLogin = () => {
     const handleChangePhone = () => {
         setStep('phone');
         setOTP(['', '', '', '', '', '']);
+        setPhone('+91');
         setError('');
     };
 
@@ -197,7 +204,17 @@ const OTPLogin = () => {
                             <input
                                 type="tel"
                                 value={phone}
-                                onChange={(e) => setPhone(e.target.value)}
+                                onChange={(e) => {
+                                    const val = e.target.value;
+                                    if (val.startsWith('+91')) {
+                                        setPhone(val);
+                                    } else if (val.startsWith('+9')) {
+                                        setPhone('+91');
+                                    } else {
+                                        // If user deletes everything or tries to change code, reset or keep +91
+                                        setPhone('+91' + val.replace(/^\+91/, '').replace(/[^0-9]/g, ''));
+                                    }
+                                }}
                                 placeholder="+91XXXXXXXXXX"
                                 className="phone-input"
                                 required
