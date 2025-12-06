@@ -449,6 +449,28 @@ const ProductDetails = () => {
                             🏠 Try at Home
                         </button>
 
+                        <button
+                            className="btn-virtual-try-on"
+                            onClick={() => setIsARActive(true)}
+                            title="Virtual Try-On"
+                            style={{
+                                background: 'linear-gradient(135deg, #FF6B6B 0%, #EE5253 100%)',
+                                color: 'white',
+                                border: 'none',
+                                padding: '12px 24px',
+                                borderRadius: '8px',
+                                cursor: 'pointer',
+                                fontWeight: '600',
+                                display: 'flex',
+                                alignItems: 'center',
+                                gap: '8px',
+                                boxShadow: '0 4px 15px rgba(238, 82, 83, 0.2)',
+                                transition: 'transform 0.2s ease'
+                            }}
+                        >
+                            📷 Virtual Try-On
+                        </button>
+
                         {/* Notification Button */}
                         {(() => {
                             let alertType = 'price';

@@ -43,6 +43,29 @@ const Home = () => {
                 </div>
             </section>
 
+            {/* AR Try-On Promo Banner */}
+            <section className="ar-promo-section" style={{
+                background: 'linear-gradient(90deg, #111 0%, #2c3e50 100%)',
+                color: 'white',
+                padding: '3rem 2rem',
+                textAlign: 'center',
+                marginBottom: '2rem'
+            }}>
+                <div className="container" style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '2rem', flexWrap: 'wrap' }}>
+                    <div style={{ flex: 1, minWidth: '300px' }}>
+                        <h2 style={{ fontFamily: '"Playfair Display", serif', fontSize: '2.5rem', marginBottom: '1rem', color: '#C9A961' }}>
+                            Try Before You Buy
+                        </h2>
+                        <p style={{ fontSize: '1.2rem', marginBottom: '1.5rem', color: '#ccc' }}>
+                            Experience our jewellery virtually with our new <strong>AR Virtual Try-On</strong> feature. See how it looks on you instantly!
+                        </p>
+                        <Link to="/shop" className="btn-primary" style={{ background: '#C9A961', borderColor: '#C9A961', color: '#111' }}>
+                            Try It Now 📷
+                        </Link>
+                    </div>
+                </div>
+            </section>
+
             {/* Shop By Category Section */}
             <section className="category-section container">
                 <h2 className="section-title">Shop By Category</h2>
