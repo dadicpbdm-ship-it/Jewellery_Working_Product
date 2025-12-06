@@ -178,26 +178,88 @@
 }
 
 .control-group {
-    margin-bottom: 1.5rem;
+    margin-bottom: 1.25rem;
+    /* Slightly reduced for compactness */
 }
 
 .control-label {
     display: block;
-    margin-bottom: 0.8rem;
+    margin-bottom: 0.5rem;
     font-weight: 600;
-    color: #333;
-    font-size: 0.95rem;
+    color: #4a4a4a;
+    font-size: 0.9rem;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+/* New Visual Selector for Jewellery Type */
+.type-selector-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 12px;
+}
+
+.type-option-card {
+    background: #FFFFFF;
+    border: 1px solid #E0E0E0;
+    border-radius: 8px;
+    padding: 12px 6px;
+    text-align: center;
+    cursor: pointer;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 6px;
+    position: relative;
+    overflow: hidden;
+}
+
+.type-option-card:hover {
+    transform: translateY(-2px);
+    border-color: #C9A961;
+    box-shadow: 0 4px 12px rgba(201, 169, 97, 0.15);
+}
+
+.type-option-card.active {
+    background: linear-gradient(135deg, #C9A961 0%, #aa8b45 100%);
+    border-color: #aa8b45;
+    color: white;
+    box-shadow: 0 4px 15px rgba(201, 169, 97, 0.3);
+}
+
+.type-option-card .type-icon {
+    font-size: 1.5rem;
+    margin-bottom: 2px;
+}
+
+.type-option-card .type-label {
+    font-size: 0.8rem;
+    font-weight: 600;
+    letter-spacing: 0.5px;
 }
 
 .control-select,
 .range-input {
     width: 100%;
-    padding: 12px 16px;
+    padding: 10px 14px;
+    /* Compact padding */
     border-radius: 8px;
-    border: 1px solid #E0E0E0;
-    font-size: 1rem;
-    background-color: #FAFAFA;
-    transition: border-color 0.2s;
+    border: 1px solid #D4C5A9;
+    /* Soft Gold-Grey Border */
+    font-size: 0.95rem;
+    /* Premium Texture: Subtle Gradient */
+    background: linear-gradient(to bottom, #FFFFFF, #FAF8F3);
+    color: #333;
+    transition: all 0.2s ease;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.02);
+    cursor: pointer;
+}
+
+.control-select:hover,
+.range-input:hover {
+    border-color: #C9A961;
+    background: #FFFFFF;
 }
 
 .control-select:focus,
@@ -205,6 +267,8 @@
     border-color: #C9A961;
     outline: none;
     background-color: #FFFFFF;
+    box-shadow: 0 0 0 3px rgba(201, 169, 97, 0.15);
+    /* Soft Gold Glow */
 }
 
 /* Engraving Preview */

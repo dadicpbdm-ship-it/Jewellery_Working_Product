@@ -257,16 +257,23 @@ const CustomDesigner = () => {
                     <div className="designer-controls">
                         <div className="control-group">
                             <label className="control-label">Jewellery Type</label>
-                            <select
-                                className="control-select"
-                                value={design.type}
-                                onChange={(e) => setDesign({ ...design, type: e.target.value })}
-                            >
-                                <option value="Ring">💍 Ring</option>
-                                <option value="Necklace">📿 Necklace</option>
-                                <option value="Earrings">💎 Earrings</option>
-                                <option value="Bracelet">⌚ Bracelet</option>
-                            </select>
+                            <div className="type-selector-grid">
+                                {[
+                                    { id: 'Ring', icon: '💍', label: 'Ring' },
+                                    { id: 'Necklace', icon: '📿', label: 'Necklace' },
+                                    { id: 'Earrings', icon: '💎', label: 'Earrings' },
+                                    { id: 'Bracelet', icon: '⌚', label: 'Bracelet' }
+                                ].map(type => (
+                                    <div
+                                        key={type.id}
+                                        className={`type-option-card ${design.type === type.id ? 'active' : ''}`}
+                                        onClick={() => setDesign({ ...design, type: type.id })}
+                                    >
+                                        <span className="type-icon">{type.icon}</span>
+                                        <span className="type-label">{type.label}</span>
+                                    </div>
+                                ))}
+                            </div>
                         </div>
 
                         <div className="control-group">

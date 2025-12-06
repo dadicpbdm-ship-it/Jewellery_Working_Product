@@ -31,7 +31,6 @@ const Checkout = () => {
     });
 
     const [paymentMethod, setPaymentMethod] = useState('Cash on Delivery');
-    const [paymentMethod, setPaymentMethod] = useState('Cash on Delivery');
     const [bnplProvider, setBnplProvider] = useState(null);
 
     // Gifting State
@@ -382,51 +381,50 @@ const Checkout = () => {
                 } : undefined,
                 giftDetails: giftDetails.isGift ? giftDetails : undefined
             };
-        };
 
-        const headers = {
-            'Content-Type': 'application/json'
-        };
+            const headers = {
+                'Content-Type': 'application/json'
+            };
 
-        if (user) {
-            headers['Authorization'] = `Bearer ${user.token}`;
+            if (user) {
+                headers['Authorization'] = `Bearer ${user.token}`;
+            }
+
+            const response = await fetch(`${API_URL}/api/orders`, {
+                method: 'POST',
+                headers: headers,
+                body: JSON.stringify(orderData)
+            });
+
+            if (response.ok) {
+                clearCart();
+                navigate('/order-success');
+            } else {
+                const errorData = await response.json();
+                alert(`Order failed: ${errorData.message}`);
+            }
+        } catch (error) {
+            console.error('Error placing order:', error);
+            alert(`Error placing order: ${error.message}`);
         }
+    };
 
-        const response = await fetch(`${API_URL}/api/orders`, {
-            method: 'POST',
-            headers: headers,
-            body: JSON.stringify(orderData)
-        });
-
-        if (response.ok) {
-            clearCart();
-            navigate('/order-success');
-        } else {
-            const errorData = await response.json();
-            alert(`Order failed: ${errorData.message}`);
-        }
-    } catch (error) {
-        console.error('Error placing order:', error);
-        alert(`Error placing order: ${error.message}`);
+    if (cartItems.length === 0) {
+        return (
+            <div className="checkout-container empty-cart-message">
+                <h2>Your cart is empty</h2>
+                <button onClick={() => navigate('/shop')}>Go to Shop</button>
+            </div>
+        );
     }
-};
 
-if (cartItems.length === 0) {
     return (
-        <div className="checkout-container empty-cart-message">
-            <h2>Your cart is empty</h2>
-            <button onClick={() => navigate('/shop')}>Go to Shop</button>
-        </div>
-    );
-}
+        <div className="checkout-container">
+            <h1 className="checkout-title">Checkout</h1>
+            <div className="checkout-grid">
+                <div className="checkout-form-section">
 
-return (
-    <div className="checkout-container">
-        <h1 className="checkout-title">Checkout</h1>
-        <div className="checkout-grid">
-            <div className="checkout-form-section">
-
-                {!user && (
+                    {!user && (
                         <div className="form-group-section">
                             <h3>Contact Information</h3>
                             <div className="form-row">
@@ -461,6 +459,7 @@ return (
                                     required
                                 />
                             </div>
+                        </div>
                     )}
 
                     {/* Premium Gifting Section */}
@@ -477,10 +476,10 @@ return (
                             <span style={{ fontSize: '1.5rem' }}>🎁</span>
                             <h3 style={{ margin: 0, color: '#333' }}>Send as a Gift?</h3>
                             <label className="switch" style={{ marginLeft: 'auto' }}>
-                                <input 
-                                    type="checkbox" 
-                                    checked={giftDetails.isGift} 
-                                    onChange={(e) => setGiftDetails({...giftDetails, isGift: e.target.checked})} 
+                                <input
+                                    type="checkbox"
+                                    checked={giftDetails.isGift}
+                                    onChange={(e) => setGiftDetails({ ...giftDetails, isGift: e.target.checked })}
                                 />
                                 <span className="slider round"></span>
                             </label>
@@ -495,9 +494,9 @@ return (
                                         { id: 'Silver', name: 'Sterling Silver', color: '#C0C0C0', desc: 'Classic elegance' },
                                         { id: 'Classic', name: 'Signature Box', color: '#333', desc: 'Standard packaging' }
                                     ].map(wrap => (
-                                        <div 
+                                        <div
                                             key={wrap.id}
-                                            onClick={() => setGiftDetails({...giftDetails, wrappingPaper: wrap.id})}
+                                            onClick={() => setGiftDetails({ ...giftDetails, wrappingPaper: wrap.id })}
                                             style={{
                                                 border: giftDetails.wrappingPaper === wrap.id ? `2px solid ${wrap.color}` : '1px solid #eee',
                                                 borderRadius: '8px',
@@ -519,7 +518,7 @@ return (
                                 <textarea
                                     placeholder="Type your message here... (We'll print it on a card)"
                                     value={giftDetails.message}
-                                    onChange={(e) => setGiftDetails({...giftDetails, message: e.target.value})}
+                                    onChange={(e) => setGiftDetails({ ...giftDetails, message: e.target.value })}
                                     style={{
                                         width: '100%',
                                         padding: '10px',
@@ -531,10 +530,10 @@ return (
                                 />
 
                                 <label style={{ display: 'flex', alignItems: 'center', gap: '8px', marginTop: '10px', fontSize: '0.9rem', color: '#555', cursor: 'pointer' }}>
-                                    <input 
-                                        type="checkbox" 
-                                        checked={giftDetails.hidePrice} 
-                                        onChange={(e) => setGiftDetails({...giftDetails, hidePrice: e.target.checked})} 
+                                    <input
+                                        type="checkbox"
+                                        checked={giftDetails.hidePrice}
+                                        onChange={(e) => setGiftDetails({ ...giftDetails, hidePrice: e.target.checked })}
                                     />
                                     Hide price on invoice
                                 </label>
@@ -887,7 +886,7 @@ return (
                 </div>
             </div>
         </div>
-        );
+    );
 };
 
-        export default Checkout;
+export default Checkout;
