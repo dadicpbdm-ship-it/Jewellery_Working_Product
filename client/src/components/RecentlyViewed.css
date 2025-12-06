@@ -2,14 +2,24 @@
     margin-top: 3rem;
     padding: 2rem 0;
     background-color: #f9f9f9;
+    text-align: center;
+}
+
+.recently-viewed-section .section-title {
+    margin-bottom: 2rem;
+    color: #333;
+    font-size: 1.8rem;
 }
 
 .recently-viewed-grid {
     display: flex;
-    gap: 1rem;
+    gap: 1.5rem;
     overflow-x: auto;
     padding: 1rem;
     scrollbar-width: thin;
+    width: fit-content;
+    max-width: 100%;
+    margin: 0 auto;
 }
 
 .recently-viewed-grid::-webkit-scrollbar {
@@ -22,46 +32,55 @@
 }
 
 .recently-viewed-card {
-    flex: 0 0 160px;
+    flex: 0 0 220px;
     text-decoration: none;
     background: white;
-    border-radius: 8px;
+    border-radius: 12px;
     overflow: hidden;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
-    transition: transform 0.2s;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+    transition: all 0.3s ease;
+    border: 1px solid #eee;
 }
 
 .recently-viewed-card:hover {
-    transform: translateY(-2px);
+    transform: translateY(-5px);
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.12);
 }
 
 .rv-image {
-    height: 160px;
+    height: 220px;
     width: 100%;
+    overflow: hidden;
 }
 
 .rv-image img {
     width: 100%;
     height: 100%;
     object-fit: cover;
+    transition: transform 0.3s ease;
+}
+
+.recently-viewed-card:hover .rv-image img {
+    transform: scale(1.05);
 }
 
 .rv-info {
-    padding: 0.75rem;
+    padding: 1rem;
 }
 
 .rv-info h4 {
-    margin: 0 0 0.25rem 0;
-    font-size: 0.9rem;
-    color: #333;
+    margin: 0 0 0.5rem 0;
+    font-size: 1rem;
+    color: #2c3e50;
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
+    font-weight: 600;
 }
 
 .rv-info p {
     margin: 0;
-    font-size: 0.9rem;
-    color: #666;
-    font-weight: 500;
+    font-size: 1rem;
+    color: #c9a961;
+    font-weight: 700;
 }

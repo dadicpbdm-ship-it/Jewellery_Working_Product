@@ -20,6 +20,15 @@ const alertSchema = new mongoose.Schema({
         type: Number,
         required: function () { return this.type === 'price'; }
     },
+    pincode: {
+        type: String,
+        required: function () { return this.type === 'availability'; }
+    },
+    channels: [{
+        type: String,
+        enum: ['email', 'whatsapp', 'push'],
+        default: 'email'
+    }],
     status: {
         type: String,
         enum: ['active', 'triggered', 'cancelled'],

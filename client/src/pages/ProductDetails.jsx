@@ -366,9 +366,8 @@ const ProductDetails = () => {
                                 <button
                                     className="btn-secondary"
                                     onClick={() => setShowCustomizationModal(true)}
-                                    disabled={!checkResult?.serviceable}
-                                    title={!checkResult?.serviceable ? "Please check delivery availability first" : "Customize this product"}
-                                    style={{ display: 'flex', alignItems: 'center', gap: '5px', opacity: !checkResult?.serviceable ? 0.6 : 1 }}
+                                    title={"Customize this product"}
+                                    style={{ display: 'flex', alignItems: 'center', gap: '5px' }}
                                 >
                                     ✨ Customize
                                 </button>
@@ -383,9 +382,9 @@ const ProductDetails = () => {
                                     addToCart(product);
                                 }
                             }}
-                            disabled={!checkResult?.serviceable}
-                            title={!checkResult?.serviceable ? "Please check delivery availability first" : "Add to Cart"}
-                            style={{ opacity: !checkResult?.serviceable ? 0.6 : 1 }}
+                            // disabled={!checkResult?.serviceable} // User Request: Allow adding to cart for future
+                            title={"Add to Cart"}
+                        // style={{ opacity: !checkResult?.serviceable ? 0.6 : 1 }}
                         >
                             Add to Cart
                         </button>
@@ -393,9 +392,9 @@ const ProductDetails = () => {
                         <button
                             className="btn-secondary"
                             onClick={handleBuyNow}
-                            disabled={!checkResult?.serviceable}
-                            title={!checkResult?.serviceable ? "Please check delivery availability first" : "Buy Now"}
-                            style={{ opacity: !checkResult?.serviceable ? 0.6 : 1 }}
+                            // disabled={!checkResult?.serviceable} // User Request: Allow buying even if check fails (user will be blocked at checkout anyway if address invalid)
+                            title={"Buy Now"}
+                        // style={{ opacity: !checkResult?.serviceable ? 0.6 : 1 }}
                         >
                             Buy Now
                         </button>
@@ -507,6 +506,7 @@ const ProductDetails = () => {
                     product={product}
                     type={alertModal.type}
                     user={user}
+                    pincode={pincode} // Pass checked pincode to modal
                     onClose={() => setAlertModal({ show: false, type: null })}
                 />
             )}

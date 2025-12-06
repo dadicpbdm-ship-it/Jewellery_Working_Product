@@ -3,14 +3,23 @@ import { useToast } from '../context/ToastContext';
 import { API_URL } from '../config';
 import './AlertModal.css';
 
-const AlertModal = ({ product, type, onClose, user }) => {
+const AlertModal = ({ product, type, onClose, user, pincode }) => {
     const { success, error } = useToast();
     const [targetPrice, setTargetPrice] = useState(type === 'price' ? Math.floor(product.price * 0.9) : '');
+    const [channels, setChannels] = useState({ whatsapp: true, email: true });
     const [loading, setLoading] = useState(false);
 
     const handleSubmit = async (e) => {
         e.preventDefault();
         setLoading(true);
+
+        const selectedChannels = Object.keys(channels).filter(key => channels[key]);
+
+        if (selectedChannels.length === 0) {
+            error('Please select at least one notification channel');
+            setLoading(false);
+            return;
+        }
 
         try {
             const response = await fetch(`${API_URL}/api/alerts`, {
@@ -22,12 +31,14 @@ const AlertModal = ({ product, type, onClose, user }) => {
                 body: JSON.stringify({
                     productId: product._id,
                     type,
-                    targetPrice: type === 'price' ? Number(targetPrice) : undefined
+                    targetPrice: type === 'price' ? Number(targetPrice) : undefined,
+                    pincode: type === 'availability' ? pincode : undefined,
+                    channels: selectedChannels
                 })
             });
 
             if (response.ok) {
-                success(`Alert set! We'll notify you on WhatsApp.`);
+                success(`Alert set! We'll notify you via ${selectedChannels.join(' & ')}.`);
                 onClose();
             } else {
                 const data = await response.json();
@@ -58,6 +69,11 @@ const AlertModal = ({ product, type, onClose, user }) => {
                         <div>
                             <h4>{product.name}</h4>
                             <p>Current Price: ₹{product.price.toLocaleString('en-IN')}</p>
+                            {type === 'availability' && pincode && (
+                                <p style={{ fontSize: '0.9rem', color: '#666', marginTop: '4px' }}>
+                                    Location: <strong>{pincode}</strong>
+                                </p>
+                            )}
                         </div>
                     </div>
 
@@ -75,13 +91,35 @@ const AlertModal = ({ product, type, onClose, user }) => {
                         </div>
                     ) : type === 'availability' ? (
                         <p className="stock-alert-text">
-                            We will notify you on WhatsApp (<strong>{user.phone}</strong>) when delivery becomes available to your location.
+                            We will notify you when delivery becomes available to <strong>{pincode}</strong>.
                         </p>
                     ) : (
                         <p className="stock-alert-text">
-                            We will send a WhatsApp message to <strong>{user.phone}</strong> as soon as this item is back in stock.
+                            We will notify you as soon as this item is back in stock.
                         </p>
                     )}
+
+                    <div className="channel-selection" style={{ margin: '15px 0', borderTop: '1px solid #eee', paddingTop: '15px' }}>
+                        <label style={{ display: 'block', marginBottom: '8px', fontWeight: '600' }}>Notify me via:</label>
+                        <div style={{ display: 'flex', gap: '15px' }}>
+                            <label style={{ display: 'flex', alignItems: 'center', gap: '6px', cursor: 'pointer' }}>
+                                <input
+                                    type="checkbox"
+                                    checked={channels.whatsapp}
+                                    onChange={(e) => setChannels({ ...channels, whatsapp: e.target.checked })}
+                                />
+                                WhatsApp
+                            </label>
+                            <label style={{ display: 'flex', alignItems: 'center', gap: '6px', cursor: 'pointer' }}>
+                                <input
+                                    type="checkbox"
+                                    checked={channels.email}
+                                    onChange={(e) => setChannels({ ...channels, email: e.target.checked })}
+                                />
+                                Email
+                            </label>
+                        </div>
+                    </div>
 
                     <button type="submit" className="btn-primary" disabled={loading}>
                         {loading ? 'Setting Alert...' : 'Set Alert'}

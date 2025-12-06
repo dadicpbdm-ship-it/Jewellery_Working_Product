@@ -2,22 +2,26 @@ const express = require('express');
 const router = express.Router();
 const Alert = require('../models/Alert');
 const { protect } = require('../middleware/authMiddleware');
-const whatsappService = require('../services/whatsappService');
+const notificationService = require('../services/notificationService');
 
 // @desc    Create a new alert
 // @route   POST /api/alerts
 // @access  Private
 router.post('/', protect, async (req, res) => {
     try {
-        const { productId, type, targetPrice } = req.body;
+        const { productId, type, targetPrice, pincode, channels } = req.body;
 
         // Check if alert already exists
-        const existingAlert = await Alert.findOne({
+        const query = {
             user: req.user._id,
             product: productId,
             type,
             status: 'active'
-        });
+        };
+
+        if (pincode) query.pincode = pincode;
+
+        const existingAlert = await Alert.findOne(query);
 
         if (existingAlert) {
             return res.status(400).json({ message: 'You already have an active alert for this product.' });
@@ -27,11 +31,18 @@ router.post('/', protect, async (req, res) => {
             user: req.user._id,
             product: productId,
             type,
-            targetPrice
+            targetPrice,
+            pincode,
+            channels
         });
 
-        // Send confirmation WhatsApp (optional, but good UX)
-        // await whatsappService.sendAlertConfirmation(req.user, type); 
+        // Send confirmation through all requested channels
+        await notificationService.sendNotification(
+            req.user,
+            `Alert set for ${type}${pincode ? ` at ${pincode}` : ''}`,
+            channels,
+            { subject: 'Alert Confirmation' }
+        );
 
         res.status(201).json(alert);
     } catch (error) {
